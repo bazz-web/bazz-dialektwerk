@@ -1,0 +1,274 @@
+/* === BENTO GRID LAYOUT === */
+.bento-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    grid-template-rows: auto auto;
+    gap: 20px;
+    max-width: 1300px;
+    width: 100%;
+}
+
+/* === PLATZIERUNG DER KACHELN === */
+/* Profil (Oben Links - nimmt 2 Spalten ein) */
+.card-profile {
+    grid-column: 1 / 3;
+}
+
+/* Navigation Buttons */
+.card-buttons {
+    grid-column: 1 / 3;
+    grid-row: 3 / 4;
+    display: flex;
+    gap: 15px;
+    padding: 20px;
+    justify-content: space-between;
+}
+
+.nav-btn {
+    flex: 1;
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    border: none;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 80px;
+    min-width: 80px;
+    transition: all 0.3s ease;
+    color: #fff;
+}
+
+.nav-btn svg {
+    width: 40px;
+    height: 40px;
+    transition: transform 0.3s ease;
+}
+
+.nav-btn:hover svg {
+    transform: scale(1.2);
+}
+
+/* YouTube (Mitte Links - nimmt 2 Spalten ein) */
+.card-youtube {
+    grid-column: 1 / 3;
+    grid-row: 2 / 3;
+}
+
+/* Game (Swim Home) (Rechte Spalte) */
+.card-game {
+    grid-column: 3 / 4;
+    grid-row: 1 / 4;
+    padding: 0;
+    /*aspect-ratio: 9 / 16;*/
+    /* Protrait Format */
+}
+
+/* Standardmäßig verstecken wir den Mobile-Button auf Desktop */
+.mobile-toggle-btn {
+    display: none;
+}
+
+@media (min-width: 901px) {
+    .mobile-drawer-wrapper {
+        display: contents;
+    }
+}
+
+/* ========================================================= */
+/* MOBILE VERSION (Greift nur auf kleinen Bildschirmen)      */
+/* ========================================================= */
+
+@media (max-width: 900px) {
+
+    /* 1. Echter Fullscreen für die Seite */
+    body,
+    html {
+        margin: 0;
+        padding: 0;
+        height: 100%;
+        overflow: hidden;
+        /* Verhindert das Wackeln/Scrollen auf dem Handy */
+    }
+
+    /* 2. Container nimmt den ganzen Bildschirm ein */
+    .bento-grid {
+        display: block;
+        width: 100vw;
+        height: 100vh;
+        height: 100dvh;
+        /* dvh ist wichtig für iOS/Android wegen der Adressleiste */
+        padding: 0;
+        margin: 0;
+    }
+
+    /* 3. Das Game als echtes Fullscreen-Hintergrund-Element */
+    .card-game {
+        width: 100%;
+        height: 100%;
+        /* Füllt die 100vh komplett aus */
+        margin: 0 !important;
+        padding: 0 !important;
+        border-radius: 0;
+        /* Keine Ränder mehr */
+    }
+
+    .card-game iframe {
+        width: 100%;
+        height: 100%;
+        border: none;
+    }
+
+    /* 1. Haupt-Wrapper */
+    .mobile-drawer-wrapper {
+        position: fixed !important;
+        top: 0 !important;
+        /* Klebt jetzt absolut nahtlos am oberen Rand */
+        right: 0;
+        min-width: 260px;
+        z-index: 1000;
+
+        display: grid;
+        grid-template-columns: 35px 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+            "btn youtube"
+            "btn profile"
+            "none buttons";
+
+        /*
+        background: rgba(25, 25, 25, 0.95) !important;
+        backdrop-filter: blur(10px);
+        */
+        padding: 0;
+        margin: 0;
+
+        /* WICHTIG: Oben komplett flach, nur noch unten links abgerundet */
+        /*border-radius: 0 0 0 18px !important;
+        box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);*/
+        overflow: hidden;
+
+        transform: translateX(calc(100% - 35px));
+        transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    .mobile-drawer-wrapper.open {
+        transform: translateX(0);
+    }
+
+    /*
+    .card-background {
+        grid-area: none;
+    }
+    */
+
+    /* 2. Der Button */
+    .mobile-toggle-btn {
+        grid-area: btn;
+        position: relative !important;
+        width: 100% !important;
+        height: 100% !important;
+
+        background: rgba(25, 25, 25, 0.95) !important;
+        backdrop-filter: blur(10px);
+        border: none;
+        border-radius: 0 0 0 18px !important;
+        /*box-shadow: -5px 5px 20px rgba(0, 0, 0, 0.6);*/
+
+        padding: 15px 0 !important;
+        margin: 0 !important;
+        box-sizing: border-box !important;
+        outline: none !important;
+
+        color: white;
+
+        display: flex !important;
+        flex-direction: column !important;
+        justify-content: space-around !important;
+        align-items: center !important;
+        text-align: center !important;
+        cursor: pointer;
+    }
+
+    .music-note {
+        font-size: 14px;
+        opacity: 0.8;
+    }
+
+    #drawerArrow {
+        font-size: 16px;
+        font-weight: bold;
+    }
+
+    /* 3. YouTube Card */
+    .card-youtube {
+        grid-area: youtube;
+        /* Wir geben nur hier ein kleines Padding, damit das Video atmen kann */
+        padding: 0 !important;
+        background: rgba(25, 25, 25, 0.95) !important;
+        margin: 10px !important;
+        box-shadow: none !important;
+        min-width: 200px;
+    }
+
+    .card-youtube iframe {
+        width: 100%;
+        aspect-ratio: 16 / 9;
+        border-radius: 8px;
+        display: block;
+        border: none;
+    }
+
+    /* 4. Profil Card */
+    .card-profile {
+        grid-area: profile;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        /* NEU: Alles nach links schieben und einen festen Abstand setzen */
+        justify-content: flex-start;
+        gap: 12px;
+        /* Abstand zwischen Profilbild und Name */
+
+        padding: 10px !important;
+        background: rgba(25, 25, 25, 0.95) !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+
+    .profile-info h1 {
+        font-size: 20px;
+        color: white;
+        margin: 0;
+    }
+
+    #profile-img {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+        object-fit: cover;
+    }
+
+    .card-buttons {
+        grid-area: buttons;
+        display: flex;
+        flex-direction: row;
+        align-items: center;
+
+        /* NEU: Alles nach links schieben und einen festen Abstand setzen */
+        justify-content: flex-start;
+        gap: 12px;
+        /* Abstand zwischen Profilbild und Name */
+
+        padding: 10px !important;
+        background: rgba(25, 25, 25, 0.95) !important;
+        box-shadow: none !important;
+        margin: 0 !important;
+    }
+
+    .nav-btn {
+        width: 45px;
+        height: 45px;
+        border-radius: 10px;
+    }
+}

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="../common/kigostyle.css">
+  <link rel="stylesheet" href="swimhome.css">
+  <title>Swim Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+
+
+  <!--<div id="banner"></div>-->
+  <img src="../images/gino.jpg" alt="Artist Image" id="background-img">
+
+  <div class="bento-grid" id="mainContainer">
+    <div class="mobile-drawer-wrapper" id="mobileDrawer">
+
+      <!-- NEU: Der Button ist jetzt HIER drinnen -->
+      <button class="mobile-toggle-btn" onclick="toggleMobilePanel()">
+        <span class="music-note">🎵</span>
+        <span id="drawerArrow">◀</span>
+        <span class="music-note">🎵</span>
+      </button>
+
+      <!-- div class="card-background" -->
+      <div class="bento-card card-buttons">
+        <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="19 20 9 12 19 4 19 20"></polygon>
+            <line x1="5" y1="19" x2="5" y2="5"></line>
+          </svg>
+        </button>
+        <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <polygon points="5 4 15 12 5 20 5 4"></polygon>
+            <line x1="19" y1="5" x2="19" y2="19"></line>
+          </svg>
+        </button>
+        <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+            fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path
+              d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+            </path>
+          </svg>
+
+        </button>
+      </div>
+      <div class="bento-card card-profile">
+        <img src="../images/gino.jpg" alt="Artist Image" id="profile-img">
+        <div class="profile-info">
+          <h1>gino</h1>
+        </div>
+      </div>
+
+      <div class="bento-card card-youtube">
+        <iframe src="https://www.youtube.com/embed/1RxQHtQdG1I?si=RUqgPebGbfPQQ1Ow" title="YouTube video player"
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          allowfullscreen></iframe>
+      </div>
+      <!--/div -->
+    </div>
+    <div class="bento-card card-game">
+      <iframe src="..\game\index.html" title="Swim Home"></iframe>
+    </div>
+
+  </div>
+  <script>
+    // JavaScript für das Handy zum Öffnen/Schließen
+    function toggleMobilePanel() {
+      const drawer = document.getElementById('mobileDrawer');
+      const arrow = document.getElementById('drawerArrow'); // Zielt nur auf den Pfeil
+
+      drawer.classList.toggle('open');
+
+      // Pfeilrichtung ändern
+      if (drawer.classList.contains('open')) {
+        arrow.innerText = "▶";
+      } else {
+        arrow.innerText = "◀";
+      }
+    }
+  </script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+  <script>
+    const colorThief = new ColorThief();
+    const img = document.getElementById('profile-img');
+    const banner = document.getElementById('banner');
+
+    // Sicherstellen, dass das Skript läuft, wenn das Bild geladen ist
+    if (img.complete) {
+      setBannerColor();
+    } else {
+      img.addEventListener('load', function () {
+        setBannerColor();
+      });
+    }
+
+    function setBannerColor() {
+      // Holt die 5 Farben als [R, G, B] Arrays
+      let palette = colorThief.getPalette(img, 5);
+
+      // Sortiert die Farben nach wahrgenommener Helligkeit (Hellste zuerst)
+      palette.sort((a, b) => {
+        // Formel für die Helligkeit: (R * 0.299) + (G * 0.587) + (B * 0.114)
+        const brightnessA = (a[0] * 0.299) + (a[1] * 0.587) + (a[2] * 0.114);
+        const brightnessB = (b[0] * 0.299) + (b[1] * 0.587) + (b[2] * 0.114);
+
+        // Sortierung von Groß (Hell) nach Klein (Dunkel)
+        return brightnessB - brightnessA;
+      });
+
+      // Entpackt die nun sortierten Farben in Variablen
+      const [c1, c2, c3, c4, c5] = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+
+      // Baut den vertikalen Verlauf auf (c1 ist jetzt garantiert die hellste, c5 die dunkelste)
+      banner.style.background = `linear-gradient(to bottom, 
+                ${c1} 0%, 
+                ${c2} 10%, 
+                ${c3} 30%, 
+                ${c4} 50%, 
+                ${c5} 70%
+            )`;
+    }
+  </script>
+
+
+
+</body>
+
+</html>
