@@ -4,7 +4,7 @@
     grid-template-columns: repeat(3, 1fr);
     grid-template-rows: auto auto;
     gap: 20px;
-    max-width: 1300px;
+    max-width: 1200px;
     width: 100%;
 }
 
@@ -68,8 +68,68 @@
     display: none;
 }
 
+.liked {
+    background-color: red;
+}
+
+/* Der abgedunkelte Hintergrund über dem ganzen Bildschirm */
+.modal-overlay {
+    display: none;
+    /* Standardmäßig unsichtbar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Halbtransparentes Schwarz */
+    z-index: 1000;
+    /* Stellt sicher, dass es ÜBER der App liegt */
+
+    /* Flexbox, um den inneren Container mittig zu zentrieren */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Wenn das Modal aktiv ist, wird es als Flex-Container angezeigt */
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Die dunkle Filter-Box selbst (angepasst an dein Design) */
+.modal-content {
+    background-color: #121016;
+    /* Ein sehr dunkles Lila/Schwarz, passend zu deinem Bild */
+    border-radius: 16px;
+    padding: 24px;
+    width: 90%;
+    max-width: 600px;
+    position: relative;
+    /* Wichtig für den Schließen-Button */
+    border: 1px solid #333;
+}
+
+/* Der Schließen-Button oben rechts */
+.close-btn {
+    position: absolute;
+    top: 10px;
+    right: 15px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 24px;
+    cursor: pointer;
+}
+
+.close-btn:hover {
+    color: #ff0055;
+    /* Ein Pink aus deinem Design beim Hovern */
+}
+
 @media (min-width: 901px) {
-    .mobile-drawer-wrapper {
+
+    .mobile-drawer-wrapper,
+    .card-background {
         display: contents;
     }
 }
@@ -129,11 +189,9 @@
 
         display: grid;
         grid-template-columns: 35px 1fr;
-        grid-template-rows: auto auto auto;
+        grid-template-rows: auto;
         grid-template-areas:
-            "btn youtube"
-            "btn profile"
-            "none buttons";
+            "btn card-background";
 
         /*
         background: rgba(25, 25, 25, 0.95) !important;
@@ -155,6 +213,20 @@
         transform: translateX(0);
     }
 
+    .card-background {
+        background-color: rgb(0, 0, 0);
+        border-radius: 0 0 0 18px !important;
+        display: grid;
+        grid-template-columns: 1fr;
+        grid-template-rows: auto auto auto;
+        grid-template-areas:
+            "youtube"
+            "profile"
+            "buttons";
+        background: rgba(25, 25, 25, 0.95) !important;
+        backdrop-filter: blur(10px);
+    }
+
     /*
     .card-background {
         grid-area: none;
@@ -166,7 +238,7 @@
         grid-area: btn;
         position: relative !important;
         width: 100% !important;
-        height: 100% !important;
+        height: 200px !important;
 
         background: rgba(25, 25, 25, 0.95) !important;
         backdrop-filter: blur(10px);
@@ -258,6 +330,7 @@
         /* NEU: Alles nach links schieben und einen festen Abstand setzen */
         justify-content: flex-start;
         gap: 12px;
+        border: none;
         /* Abstand zwischen Profilbild und Name */
 
         padding: 10px !important;
@@ -270,5 +343,10 @@
         width: 45px;
         height: 45px;
         border-radius: 10px;
+    }
+
+    .bento-card:hover {
+        border-color: rgba(255, 255, 255, 0.15);
+        transform: none;
     }
 }

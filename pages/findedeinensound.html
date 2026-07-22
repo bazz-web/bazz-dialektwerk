@@ -1,0 +1,1219 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialektwerk - Discovery Engine</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;700;900&display=swap" rel="stylesheet">
+    <style>
+        /* --- FUTURISTIC & HIGH-END VARIABLES --- */
+        :root {
+            --bg-deep: #030305;
+            --glass-bg: rgba(255, 255, 255, 0.04);
+            --glass-border: rgba(255, 255, 255, 0.08);
+            --accent-1: #FF007F;
+            /* Neon Pink */
+            --accent-2: #7928CA;
+            /* Deep Purple */
+            --accent-3: #FF5E00;
+            /* Neon Orange */
+            --text-main: #FFFFFF;
+            --text-muted: rgba(255, 255, 255, 0.5);
+            --font-main: 'Outfit', sans-serif;
+            --bar-inactive: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            user-select: none;
+        }
+
+        body {
+            background-color: var(--bg-deep);
+            color: var(--text-main);
+            font-family: var(--font-main);
+            height: 100vh;
+            overflow: hidden;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding-top: 80px;
+            /* Platz für den fixierten Header */
+        }
+
+        /* --- AMBIENT BACKGROUND --- */
+        .ambient-mesh {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background:
+                radial-gradient(circle at 20% 40%, rgba(121, 40, 202, 0.15), transparent 50%),
+                radial-gradient(circle at 80% 60%, rgba(255, 0, 127, 0.1), transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* --- TOP HEADER SECTION --- */
+        .main-header {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 80px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 50px;
+            z-index: 1000;
+        }
+
+        .logo-container {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo-container svg {
+            height: 40px;
+            /* Optimale Höhe für den Header */
+            width: auto;
+            transition: transform 0.3s ease;
+            cursor: pointer;
+        }
+
+        .logo-container svg:hover {
+            transform: scale(1.05);
+        }
+
+        .header-controls {
+            display: flex;
+            gap: 15px;
+        }
+
+        .header-item {
+            width: 50px;
+            height: 50px;
+            background: var(--glass-bg);
+            border: 1px solid var(--glass-border);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .header-item:hover {
+            color: white;
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .header-item svg {
+            width: 22px;
+            height: 22px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+        }
+
+
+        /* --- MAIN LAYOUT --- */
+        .discovery-stage {
+            display: flex;
+            width: 100%;
+            max-width: 1400px;
+            height: 85vh;
+            z-index: 10;
+            position: relative;
+            padding: 0 50px;
+        }
+
+        /* --- LEFT: CONFIGURATOR --- */
+        .configurator {
+            flex: 1.2;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding-right: 60px;
+            gap: 35px;
+            position: relative;
+            z-index: 20;
+        }
+
+        .hero-title {
+            font-size: 4rem;
+            font-weight: 900;
+            line-height: 0.95;
+            margin-bottom: 10px;
+            background: linear-gradient(to right, #fff, rgba(255, 255, 255, 0.4));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            letter-spacing: -1.5px;
+        }
+
+        /* --- MODERN CUSTOM DROPDOWNS --- */
+        .dropdown-row {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            z-index: 50;
+        }
+
+        .custom-select-wrapper {
+            position: relative;
+            width: 100%;
+        }
+
+        .custom-select-trigger {
+            width: 100%;
+            padding: 14px 18px;
+            background: var(--glass-bg);
+            color: var(--text-muted);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            font-size: 1rem;
+            font-weight: 500;
+            cursor: pointer;
+            backdrop-filter: blur(10px);
+            transition: all 0.3s;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .custom-select-trigger:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            background: rgba(255, 255, 255, 0.08);
+        }
+
+        .custom-select-trigger .arrow {
+            font-size: 0.6rem;
+            transition: transform 0.3s;
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger .arrow {
+            transform: rotate(180deg);
+        }
+
+        .custom-select-wrapper.open .custom-select-trigger {
+            border-color: var(--text-main);
+            color: var(--text-main);
+        }
+
+        .custom-select-options {
+            position: absolute;
+            top: calc(100% + 10px);
+            left: 0;
+            width: 100%;
+            background: rgba(10, 10, 15, 0.85);
+            backdrop-filter: blur(25px);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 100;
+            overflow: hidden;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+        }
+
+        .custom-select-wrapper.open .custom-select-options {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .custom-option {
+            display: block;
+            padding: 12px 18px;
+            cursor: pointer;
+            color: var(--text-muted);
+            transition: all 0.2s;
+            font-weight: 500;
+        }
+
+        .custom-option:hover {
+            background: rgba(255, 255, 255, 0.08);
+            color: var(--text-main);
+            padding-left: 22px;
+        }
+
+        /* --- ZUHÖRERSPANNE --- */
+        .slider-section {
+            display: flex;
+            flex-direction: column;
+            background: var(--glass-bg);
+            padding: 25px;
+            border-radius: 20px;
+            border: 1px solid var(--glass-border);
+            backdrop-filter: blur(10px);
+        }
+
+        .section-title {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 2px;
+            color: var(--accent-1);
+            margin-bottom: 20px;
+            font-weight: 700;
+        }
+
+        .histogram {
+            display: flex;
+            align-items: flex-end;
+            justify-content: space-between;
+            height: 60px;
+            gap: 3px;
+            margin-bottom: -5px;
+            padding: 0 5px;
+        }
+
+        .bar {
+            flex: 1;
+            background-color: var(--bar-inactive);
+            border-radius: 2px 2px 0 0;
+            transition: all 0.3s ease;
+        }
+
+        .bar.active {
+            background: linear-gradient(to top, var(--accent-2), var(--accent-1));
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.4);
+        }
+
+        .slider-wrapper {
+            position: relative;
+            width: 100%;
+            height: 24px;
+        }
+
+        .slider-track {
+            position: absolute;
+            width: 100%;
+            height: 3px;
+            background: var(--bar-inactive);
+            top: 50%;
+            transform: translateY(-50%);
+            border-radius: 2px;
+        }
+
+        .slider-fill {
+            position: absolute;
+            height: 3px;
+            background: linear-gradient(to right, var(--accent-2), var(--accent-1));
+            top: 50%;
+            transform: translateY(-50%);
+            box-shadow: 0 0 15px var(--accent-1);
+        }
+
+        input[type=range] {
+            position: absolute;
+            width: 100%;
+            top: 50%;
+            transform: translateY(-50%);
+            -webkit-appearance: none;
+            background: transparent;
+            pointer-events: none;
+            margin: 0;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 20px;
+            width: 20px;
+            border-radius: 50%;
+            background: white;
+            border: 2px solid var(--accent-1);
+            box-shadow: 0 0 15px rgba(255, 0, 127, 0.6);
+            cursor: pointer;
+            pointer-events: auto;
+            transition: transform 0.1s;
+        }
+
+        input[type=range]::-webkit-slider-thumb:hover {
+            transform: scale(1.2);
+        }
+
+        .min-max-row {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 20px;
+        }
+
+        .input-group {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+        }
+
+        .input-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            font-weight: 500;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        .input-box {
+            background: rgba(0, 0, 0, 0.3);
+            border: 1px solid var(--glass-border);
+            border-radius: 12px;
+            padding: 10px 15px;
+            color: white;
+            width: 100px;
+            text-align: center;
+            font-size: 1rem;
+            outline: none;
+            font-family: var(--font-main);
+            font-weight: 500;
+            transition: border-color 0.2s;
+        }
+
+        .input-box:focus {
+            border-color: var(--accent-1);
+            box-shadow: 0 0 10px rgba(255, 0, 127, 0.2);
+        }
+
+        /* Toggles (Chips) */
+        .toggles-grid {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 12px;
+            justify-content: flex-start;
+        }
+
+        .pill-toggle {
+            padding: 10px 20px;
+            border-radius: 30px;
+            border: 1px solid var(--glass-border);
+            background: var(--glass-bg);
+            color: var(--text-muted);
+            cursor: pointer;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            font-size: 0.95rem;
+            font-family: var(--font-main);
+            font-weight: 500;
+            backdrop-filter: blur(10px);
+        }
+
+        .pill-toggle:hover {
+            border-color: rgba(255, 255, 255, 0.3);
+            color: white;
+        }
+
+        .pill-toggle.active {
+            background: linear-gradient(135deg, rgba(121, 40, 202, 0.4), rgba(255, 0, 127, 0.4));
+            border-color: var(--accent-1);
+            color: white;
+            box-shadow: 0 5px 15px rgba(255, 0, 127, 0.2);
+        }
+
+        /* --- RIGHT: THE SONIC ORB --- */
+        .orb-container {
+            flex: 1;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        .plasma-orb {
+            width: 350px;
+            height: 350px;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+            box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.5), inset 20px 0 60px #f0f, inset -20px 0 60px var(--accent-2), 0 0 60px rgba(121, 40, 202, 0.4), 0 0 120px rgba(255, 0, 127, 0.2);
+            animation: morph 12s ease-in-out infinite, spin 20s linear infinite;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.5s ease;
+            position: relative;
+            z-index: 2;
+        }
+
+        .plasma-orb::after {
+            content: 'GO';
+            position: absolute;
+            font-family: var(--font-main);
+            font-size: 3rem;
+            font-weight: 900;
+            letter-spacing: 5px;
+            color: white;
+            text-shadow: 0 0 20px rgba(255, 255, 255, 0.8);
+            opacity: 0.8;
+            transition: opacity 0.3s, transform 0.3s;
+        }
+
+        .plasma-orb:hover {
+            transform: scale(1.03);
+            box-shadow: inset 0 0 50px rgba(255, 255, 255, 0.8), 0 0 100px rgba(121, 40, 202, 0.6), 0 0 150px rgba(255, 0, 127, 0.4);
+        }
+
+        .plasma-orb:hover::after {
+            transform: scale(1.05);
+            opacity: 1;
+        }
+
+        .plasma-orb.searching {
+            animation-name: pulse-search !important;
+            animation-duration: 0.4s !important;
+            animation-iteration-count: infinite !important;
+            animation-direction: alternate !important;
+            animation-timing-function: ease-in-out !important;
+        }
+
+        /* --- INTERAKTIONS-ANIMATIONEN --- */
+        .base-ripple {
+            position: absolute;
+            width: 350px;
+            height: 350px;
+            border-radius: 50%;
+            top: 50%;
+            left: 50%;
+            margin-top: -175px;
+            margin-left: -175px;
+            pointer-events: none;
+            z-index: 1;
+            opacity: 1;
+            transform: scale(1);
+        }
+
+        .glow-pink {
+            background: radial-gradient(circle, var(--accent-1) 0%, transparent 65%);
+            mix-blend-mode: screen;
+            opacity: 0.6;
+            transition: transform 0.7s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.7s ease-out;
+        }
+
+        .glow-purple {
+            background: radial-gradient(circle, var(--accent-2) 0%, transparent 70%);
+            mix-blend-mode: screen;
+            opacity: 0.7;
+            transition: transform 0.7s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.7s ease-out;
+        }
+
+        .glow-orange {
+            background: radial-gradient(circle, var(--accent-3) 0%, transparent 65%);
+            mix-blend-mode: screen;
+            opacity: 0.65;
+            transition: transform 0.7s cubic-bezier(0.1, 0.9, 0.2, 1), opacity 0.7s ease-out;
+        }
+
+        @keyframes morph {
+            0% {
+                border-radius: 50%;
+            }
+
+            25% {
+                border-radius: 58% 42% 63% 37% / 45% 55% 41% 59%;
+            }
+
+            50% {
+                border-radius: 41% 59% 42% 58% / 51% 40% 64% 36%;
+            }
+
+            75% {
+                border-radius: 48% 52% 55% 45% / 55% 45% 50% 50%;
+            }
+
+            100% {
+                border-radius: 50%;
+            }
+        }
+
+        @keyframes spin {
+            from {
+                transform: rotate(0deg);
+            }
+
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        @keyframes pulse-search {
+            0% {
+                transform: scale(1);
+                box-shadow: 0 0 50px var(--accent-1), inset 0 0 50px rgba(255, 255, 255, 0.5);
+                filter: hue-rotate(0deg);
+            }
+
+            100% {
+                transform: scale(0.92);
+                box-shadow: 0 0 130px var(--accent-3), inset 0 0 80px #fff;
+                filter: hue-rotate(45deg);
+            }
+        }
+
+        /* --- 8-SLOT DYNAMIC BOTTOM DOCK --- */
+        .dynamic-dock {
+            position: fixed;
+            bottom: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 420px;
+            max-width: 95vw;
+            height: 70px;
+            background: rgba(15, 15, 20, 0.6);
+            backdrop-filter: blur(40px);
+            -webkit-backdrop-filter: blur(40px);
+            border: 1px solid var(--glass-border);
+            border-radius: 35px;
+            padding: 10px 15px;
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            grid-template-rows: 50px;
+            gap: 15px 5px;
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5);
+            z-index: 100;
+            overflow: visible;
+            transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dynamic-dock.expanded {
+            height: 230px;
+            border-radius: 28px;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: 90px 90px;
+        }
+
+        .i-home {
+            order: 1;
+        }
+
+        .i-sound {
+            order: 2;
+        }
+
+        .i-swim {
+            order: 3;
+        }
+
+        .i-artist {
+            order: 4;
+        }
+
+        .dock-toggle-btn {
+            order: 5;
+        }
+
+        .dynamic-dock:not(.expanded) .hidden-closed {
+            opacity: 0;
+            visibility: hidden;
+            position: absolute;
+            pointer-events: none;
+        }
+
+        .dynamic-dock.expanded .hidden-closed {
+            opacity: 1;
+            visibility: visible;
+            position: relative;
+            pointer-events: auto;
+        }
+
+        .dynamic-dock.expanded .i-home {
+            order: 1;
+        }
+
+        .dynamic-dock.expanded .i-sound {
+            order: 2;
+        }
+
+        .dynamic-dock.expanded .i-swim {
+            order: 3;
+        }
+
+        .dynamic-dock.expanded .i-artist {
+            order: 4;
+        }
+
+        .dynamic-dock.expanded .i-about {
+            order: 5;
+        }
+
+        .dynamic-dock.expanded .i-profile {
+            order: 6;
+        }
+
+        .dynamic-dock.expanded .i-setting {
+            order: 7;
+        }
+
+        .dynamic-dock.expanded .dock-toggle-btn {
+            order: 8;
+        }
+
+        .dock-item {
+            width: 100%;
+            height: 50px;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            color: var(--text-muted);
+            cursor: pointer;
+            position: relative;
+            background: transparent;
+            border: none;
+            transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dock-item svg {
+            width: 24px;
+            height: 24px;
+            min-height: 24px;
+            fill: none;
+            stroke: currentColor;
+            stroke-width: 2;
+            transition: all 0.4s;
+        }
+
+        .dock-item:hover {
+            color: white;
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .dock-item.active {
+            color: white;
+            background: linear-gradient(135deg, var(--accent-2), var(--accent-1));
+            border: none;
+            box-shadow: 0 10px 20px rgba(255, 0, 127, 0.3);
+        }
+
+        .dynamic-dock.expanded .dock-item {
+            height: 90px;
+            border-radius: 16px;
+            justify-content: flex-start;
+            padding-top: 15px;
+        }
+
+        .dynamic-dock.expanded .dock-item svg {
+            width: 28px;
+            height: 28px;
+            min-height: 28px;
+        }
+
+        .dock-toggle-btn svg {
+            width: 30px !important;
+            height: 30px !important;
+            stroke-width: 2 !important;
+            transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        .dynamic-dock.expanded .dock-toggle-btn svg {
+            transform: rotate(180deg);
+        }
+
+        .dock-text {
+            font-size: 0.7rem;
+            font-weight: 600;
+            text-align: center;
+            opacity: 0;
+            transform: translateY(5px);
+            height: 0;
+            margin-top: 0;
+            pointer-events: none;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            white-space: normal;
+            line-height: 1.15;
+            padding: 0 2px;
+        }
+
+        .dynamic-dock.expanded .dock-text {
+            opacity: 1;
+            transform: translateY(0);
+            height: auto;
+            margin-top: 10px;
+        }
+
+        .dock-tooltip {
+            position: absolute;
+            top: -45px;
+            background: white;
+            color: #000;
+            font-size: 0.85rem;
+            padding: 6px 14px;
+            border-radius: 8px;
+            font-weight: 700;
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s, transform 0.2s;
+            transform: translateY(10px);
+            white-space: nowrap;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+            z-index: 200;
+        }
+
+        .dock-tooltip::after {
+            content: '';
+            position: absolute;
+            bottom: -5px;
+            left: 50%;
+            transform: translateX(-50%);
+            border-width: 5px 5px 0;
+            border-style: solid;
+            border-color: white transparent transparent transparent;
+        }
+
+        .dynamic-dock:not(.expanded) .dock-item:hover .dock-tooltip {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        /* =========================================
+           MOBILE RESPONSIVE DESIGN
+           ========================================= */
+        @media (max-width: 950px) {
+            body {
+                height: auto;
+                overflow-y: auto;
+                overflow-x: hidden;
+                padding-top: 60px;
+            }
+
+            .main-header {
+                padding: 0 20px;
+                height: 60px;
+            }
+
+            .logo-container svg {
+                height: 30px;
+            }
+
+            /* Etwas kleiner für Mobile */
+
+            .header-item {
+                width: 40px;
+                height: 40px;
+            }
+
+            .header-item svg {
+                width: 18px;
+                height: 18px;
+            }
+
+            .discovery-stage {
+                flex-direction: column;
+                height: auto;
+                min-height: 100vh;
+                padding: 20px 20px 140px 20px;
+            }
+
+            .configurator {
+                padding-right: 0;
+            }
+
+            .hero-title {
+                font-size: 3.2rem;
+                text-align: center;
+                margin-bottom: 25px;
+            }
+
+            .dropdown-row {
+                grid-template-columns: 1fr;
+            }
+
+            .toggles-grid {
+                justify-content: flex-start;
+            }
+
+            .orb-container {
+                margin-top: 40px;
+                margin-bottom: 20px;
+                min-height: 350px;
+            }
+
+            .plasma-orb {
+                width: 280px;
+                height: 280px;
+            }
+
+            .base-ripple {
+                width: 280px;
+                height: 280px;
+                margin-top: -140px;
+                margin-left: -140px;
+            }
+
+            .dynamic-dock {
+                width: 92vw;
+                padding: 10px 5px;
+                gap: 15px 2px;
+            }
+
+            .dynamic-dock.expanded {
+                height: auto;
+                padding-bottom: 20px;
+                grid-template-rows: auto auto;
+            }
+
+            .dynamic-dock.expanded .dock-item {
+                height: 85px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="ambient-mesh"></div>
+
+    <!-- NEW TOP HEADER WITH UPDATED CUSTOM SVG LOGO -->
+    <header class="main-header">
+        <div class="logo-container">
+            <svg id="Ebene_1" data-name="Ebene 1" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 343 487">
+                <defs>
+                    <style>
+                        /* Farben an Dark Theme angepasst (weiß statt #1d1d1b) */
+                        .cls-1 {
+                            fill: none;
+                        }
+
+                        .cls-1,
+                        .cls-2 {
+                            stroke: var(--text-main);
+                            stroke-miterlimit: 10;
+                            stroke-width: 19px;
+                        }
+
+                        .cls-2 {
+                            fill: var(--text-main);
+                            stroke-linecap: round;
+                        }
+                    </style>
+                </defs>
+                <polyline class="cls-1"
+                    points="81.5 429.5 81.5 237.5 153.5 141.5 153.5 237.5 225.5 141.5 225.5 237.5 297.5 141.5 297.5 9.5 333.5 9.5 333.5 429.5" />
+                <ellipse class="cls-2" cx="45.5" cy="429.5" rx="36" ry="48" />
+                <ellipse class="cls-2" cx="297.5" cy="429.5" rx="36" ry="48" />
+            </svg>
+        </div>
+        <div class="header-controls">
+            <!-- Profile Icon -->
+            <div class="header-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                    <circle cx="12" cy="7" r="4" />
+                </svg>
+            </div>
+            <!-- Dark Mode Icon -->
+            <div class="header-item">
+                <svg viewBox="0 0 24 24">
+                    <path d="M21 12.79A9 9 0 1 1 11.21 3 7 7 0 0 0 21 12.79z" />
+                </svg>
+            </div>
+        </div>
+    </header>
+
+    <main class="discovery-stage">
+
+        <section class="configurator">
+            <h1 class="hero-title">Finde<br>deinen Sound.</h1>
+
+            <div class="dropdown-row">
+                <div class="custom-select-wrapper" id="sel-dialekt">
+                    <div class="custom-select-trigger"><span>Dialekt</span>
+                        <div class="arrow">▼</div>
+                    </div>
+                    <div class="custom-select-options">
+                        <span class="custom-option" data-value="be">Bärndütsch</span>
+                        <span class="custom-option" data-value="zh">Züridütsch</span>
+                        <span class="custom-option" data-value="bs">Baseldütsch</span>
+                    </div>
+                    <input type="hidden" class="hidden-val" value="">
+                </div>
+                <div class="custom-select-wrapper" id="sel-genre">
+                    <div class="custom-select-trigger"><span>Genre</span>
+                        <div class="arrow">▼</div>
+                    </div>
+                    <div class="custom-select-options">
+                        <span class="custom-option" data-value="rap">Rap</span>
+                        <span class="custom-option" data-value="drill">Drill</span>
+                        <span class="custom-option" data-value="pop">Pop</span>
+                    </div>
+                    <input type="hidden" class="hidden-val" value="">
+                </div>
+                <div class="custom-select-wrapper" id="sel-aktiv">
+                    <div class="custom-select-trigger"><span>Aktiv seit</span>
+                        <div class="arrow">▼</div>
+                    </div>
+                    <div class="custom-select-options">
+                        <span class="custom-option" data-value="2020">2020+</span>
+                        <span class="custom-option" data-value="2015">2015+</span>
+                        <span class="custom-option" data-value="alle">Alle</span>
+                    </div>
+                    <input type="hidden" class="hidden-val" value="">
+                </div>
+            </div>
+
+            <div class="slider-section">
+                <div class="section-title">Zuhörerspanne (Spotify)</div>
+                <div class="histogram" id="histogram"></div>
+                <div class="slider-wrapper">
+                    <div class="slider-track"></div>
+                    <div class="slider-fill" id="slider-fill"></div>
+                    <input type="range" min="0" max="300" value="0" id="slider-min">
+                    <input type="range" min="0" max="300" value="300" id="slider-max">
+                </div>
+                <div class="min-max-row">
+                    <div class="input-group">
+                        <span class="input-label">Minimum</span>
+                        <input type="text" class="input-box" id="input-min" value="0">
+                    </div>
+                    <div class="input-group" style="align-items: flex-end;">
+                        <span class="input-label">Maximum</span>
+                        <input type="text" class="input-box" id="input-max" value="300k">
+                    </div>
+                </div>
+            </div>
+
+            <div class="toggles-grid">
+                <button class="pill-toggle" onclick="toggleFilter(this)">Musikvideo</button>
+                <button class="pill-toggle" onclick="toggleFilter(this)">Produziert selber</button>
+                <button class="pill-toggle" onclick="toggleFilter(this)">Offen für Livegigs</button>
+                <button class="pill-toggle" onclick="toggleFilter(this)">Offen für Features</button>
+            </div>
+        </section>
+
+        <section class="orb-container" id="orb-container">
+            <div class="plasma-orb" id="master-orb" onclick="initiateDiscovery()"></div>
+        </section>
+
+    </main>
+
+    <!-- 8-SLOT DOCK -->
+    <nav class="dynamic-dock" id="main-dock">
+        <div class="dock-item i-home">
+            <span class="dock-tooltip">Home</span>
+            <svg viewBox="0 0 24 24">
+                <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" />
+                <polyline points="9 22 9 12 15 12 15 22" />
+            </svg>
+            <div class="dock-text">Home</div>
+        </div>
+
+        <div class="dock-item i-sound active">
+            <span class="dock-tooltip">Sound</span>
+            <svg viewBox="0 0 24 24">
+                <circle cx="12" cy="12" r="10" />
+                <circle cx="12" cy="12" r="4" />
+            </svg>
+            <div class="dock-text">Finde deinen Sound</div>
+        </div>
+
+        <div class="dock-item i-swim">
+            <span class="dock-tooltip">SwimHome</span>
+            <svg viewBox="0 0 24 24">
+                <path d="M2 12h4l3-9 5 18 3-9h5" />
+            </svg>
+            <div class="dock-text">Swim Home</div>
+        </div>
+
+        <div class="dock-item i-artist">
+            <span class="dock-tooltip">Artist</span>
+            <svg viewBox="0 0 24 24">
+                <path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2" />
+                <circle cx="8.5" cy="7" r="4" />
+                <line x1="20" y1="8" x2="20" y2="14" />
+                <line x1="23" y1="11" x2="17" y2="11" />
+            </svg>
+            <div class="dock-text">Artist hinzufügen</div>
+        </div>
+
+        <div class="dock-item i-about hidden-closed">
+            <svg viewBox="0 0 24 24">
+                <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2" />
+                <circle cx="12" cy="7" r="4" />
+            </svg>
+            <div class="dock-text">Über uns</div>
+        </div>
+
+        <div class="dock-item i-profile hidden-closed">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M18.12 14.71L12 18.24l-6.12-3.53a8 8 0 0 1-.3-1.12l6.42 3.71 6.42-3.71a8.08 8.08 0 0 1-.3 1.12zM12 20.24l-7.31-4.22A10 10 0 0 0 2 12a10 10 0 1 0 20 0 10 10 0 0 0-2.69-6.02L12 20.24zM12 4a8 8 0 0 1 8 8c0 1.29-.31 2.52-.87 3.6L12 8.24 4.87 15.6A8 8 0 0 1 12 4z" />
+            </svg>
+            <div class="dock-text">Profil</div>
+        </div>
+
+        <div class="dock-item i-setting hidden-closed">
+            <svg viewBox="0 0 24 24">
+                <path
+                    d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z" />
+            </svg>
+            <div class="dock-text">Settings</div>
+        </div>
+
+        <div class="dock-item dock-toggle-btn" onclick="toggleDockGeometry()">
+            <span class="dock-tooltip">Menü öffnen</span>
+            <svg viewBox="0 0 24 24">
+                <polyline points="18 15 12 9 6 15" />
+            </svg>
+            <div class="dock-text">Schliessen</div>
+        </div>
+    </nav>
+
+    <script>
+        function toggleDockGeometry() {
+            document.getElementById('main-dock').classList.toggle('expanded');
+        }
+
+        const orbContainer = document.getElementById('orb-container');
+        let lastGlowTime = 0;
+
+        function triggerRandomGlow() {
+            const now = Date.now();
+            if (now - lastGlowTime < 150) return;
+            lastGlowTime = now;
+
+            const ripple = document.createElement('div');
+            ripple.className = 'base-ripple';
+
+            const glows = ['glow-pink', 'glow-purple', 'glow-orange'];
+            const randomGlow = glows[Math.floor(Math.random() * glows.length)];
+            ripple.classList.add(randomGlow);
+
+            orbContainer.appendChild(ripple);
+
+            setTimeout(() => { ripple.style.transform = 'scale(1.55)'; ripple.style.opacity = '0'; }, 50);
+            setTimeout(() => { ripple.remove(); }, 1000);
+        }
+
+        document.querySelectorAll('.custom-select-wrapper').forEach(wrapper => {
+            const trigger = wrapper.querySelector('.custom-select-trigger');
+            const triggerText = trigger.querySelector('span');
+            const options = wrapper.querySelectorAll('.custom-option');
+            const hiddenInput = wrapper.querySelector('.hidden-val');
+
+            trigger.addEventListener('click', function (e) {
+                e.stopPropagation();
+                document.querySelectorAll('.custom-select-wrapper').forEach(w => {
+                    if (w !== wrapper) w.classList.remove('open');
+                });
+                wrapper.classList.toggle('open');
+            });
+
+            options.forEach(option => {
+                option.addEventListener('click', function (e) {
+                    e.stopPropagation();
+                    triggerText.textContent = this.textContent;
+                    triggerText.style.color = "var(--text-main)";
+                    hiddenInput.value = this.dataset.value;
+                    wrapper.classList.remove('open');
+                    triggerRandomGlow();
+                });
+            });
+        });
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.custom-select-wrapper').forEach(w => w.classList.remove('open'));
+        });
+
+        function toggleFilter(btn) { btn.classList.toggle('active'); triggerRandomGlow(); }
+
+        function initiateDiscovery() {
+            const orb = document.getElementById('master-orb');
+            orb.classList.add('searching');
+            orb.style.pointerEvents = 'none';
+            setTimeout(() => { orb.classList.remove('searching'); orb.style.pointerEvents = 'auto'; }, 2000);
+        }
+
+        function sliderToReal(val) {
+            if (val <= 100) return Math.round((val / 100) * 1000);
+            if (val <= 200) return Math.round(1000 + ((val - 100) / 100) * 9000);
+            return Math.round(10000 + ((val - 200) / 100) * 290000);
+        }
+
+        function realToSlider(val) {
+            if (typeof val === 'string') {
+                val = val.toLowerCase().replace('+', '');
+                if (val.includes('k')) val = parseFloat(val.replace('k', '')) * 1000;
+                else val = parseFloat(val);
+            }
+            if (isNaN(val) || val < 0) val = 0;
+            if (val > 300000) val = 300000;
+            if (val <= 1000) return (val / 1000) * 100;
+            if (val <= 10000) return 100 + ((val - 1000) / 9000) * 100;
+            return 200 + ((val - 10000) / 290000) * 100;
+        }
+
+        function formatNumber(num) { return num >= 1000 ? (num / 1000) + 'k' : num; }
+
+        const histogram = document.getElementById('histogram');
+        const barHeights = [4, 8, 18, 30, 45, 60, 75, 90, 98, 100, 88, 75, 65, 55, 45, 38, 32, 28, 24, 20, 16, 13, 11, 9, 7, 5, 4, 3, 2, 2];
+        const bars = [];
+
+        barHeights.forEach(h => {
+            const bar = document.createElement('div');
+            bar.className = 'bar';
+            bar.style.height = h + '%';
+            histogram.appendChild(bar);
+            bars.push(bar);
+        });
+
+        const sliderMin = document.getElementById('slider-min');
+        const sliderMax = document.getElementById('slider-max');
+        const inputMin = document.getElementById('input-min');
+        const inputMax = document.getElementById('input-max');
+        const sliderFill = document.getElementById('slider-fill');
+
+        function updateUI(source) {
+            let sMin, sMax;
+            if (source === 'input') {
+                sMin = realToSlider(inputMin.value);
+                sMax = realToSlider(inputMax.value);
+                if (sMin > sMax) sMin = sMax;
+                sliderMin.value = sMin;
+                sliderMax.value = sMax;
+            } else {
+                sMin = parseInt(sliderMin.value);
+                sMax = parseInt(sliderMax.value);
+                if (sMin > sMax - 5) {
+                    if (document.activeElement === sliderMin) sMin = sMax - 5;
+                    else sMax = sMin + 5;
+                    sliderMin.value = sMin;
+                    sliderMax.value = sMax;
+                }
+            }
+
+            if (source !== 'input') {
+                inputMin.value = formatNumber(sliderToReal(sMin));
+                inputMax.value = formatNumber(sliderToReal(sMax));
+            }
+
+            const percent1 = (sMin / 300) * 100;
+            const percent2 = (sMax / 300) * 100;
+            sliderFill.style.left = percent1 + "%";
+            sliderFill.style.width = (percent2 - percent1) + "%";
+
+            bars.forEach((bar, index) => {
+                const barStart = index * 10;
+                const barEnd = barStart + 10;
+                if (barEnd > sMin && barStart < sMax) bar.classList.add('active');
+                else bar.classList.remove('active');
+            });
+        }
+
+        sliderMin.addEventListener('input', () => { updateUI('slider'); triggerRandomGlow(); });
+        sliderMax.addEventListener('input', () => { updateUI('slider'); triggerRandomGlow(); });
+        inputMin.addEventListener('input', () => { updateUI('input'); triggerRandomGlow(); });
+        inputMax.addEventListener('input', () => { updateUI('input'); triggerRandomGlow(); });
+
+        updateUI('slider');
+    </script>
+</body>
+
+</html>
