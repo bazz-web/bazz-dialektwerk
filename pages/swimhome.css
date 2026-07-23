@@ -20,7 +20,6 @@
     grid-row: 3 / 4;
     display: flex;
     gap: 15px;
-    padding: 20px;
     justify-content: space-between;
 }
 
@@ -72,59 +71,7 @@
     background-color: red;
 }
 
-/* Der abgedunkelte Hintergrund über dem ganzen Bildschirm */
-.modal-overlay {
-    display: none;
-    /* Standardmäßig unsichtbar */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
-    /* Halbtransparentes Schwarz */
-    z-index: 1000;
-    /* Stellt sicher, dass es ÜBER der App liegt */
 
-    /* Flexbox, um den inneren Container mittig zu zentrieren */
-    align-items: center;
-    justify-content: center;
-}
-
-/* Wenn das Modal aktiv ist, wird es als Flex-Container angezeigt */
-.modal-overlay.active {
-    display: flex;
-}
-
-/* Die dunkle Filter-Box selbst (angepasst an dein Design) */
-.modal-content {
-    background-color: #121016;
-    /* Ein sehr dunkles Lila/Schwarz, passend zu deinem Bild */
-    border-radius: 16px;
-    padding: 24px;
-    width: 90%;
-    max-width: 600px;
-    position: relative;
-    /* Wichtig für den Schließen-Button */
-    border: 1px solid #333;
-}
-
-/* Der Schließen-Button oben rechts */
-.close-btn {
-    position: absolute;
-    top: 10px;
-    right: 15px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 24px;
-    cursor: pointer;
-}
-
-.close-btn:hover {
-    color: #ff0055;
-    /* Ein Pink aus deinem Design beim Hovern */
-}
 
 @media (min-width: 901px) {
 

@@ -1,3 +1,67 @@
+:root {
+    --bg-deep: #030305;
+    --glass-bg: rgba(255, 255, 255, 0.04);
+    --glass-border: rgba(255, 255, 255, 0.08);
+    --accent-1: #FF007F;
+    /* Neon Pink */
+    --accent-2: #7928CA;
+    /* Deep Purple */
+    --accent-3: #FF5E00;
+    /* Neon Orange */
+    --text-main: #FFFFFF;
+    --text-muted: rgba(255, 255, 255, 0.5);
+    --font-main: 'Outfit', sans-serif;
+    --bar-inactive: rgba(255, 255, 255, 0.1);
+}
+
+
+/* Der abgedunkelte Hintergrund über dem ganzen Bildschirm */
+.modal-overlay {
+    display: none;
+    /* Standardmäßig unsichtbar */
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background-color: rgba(0, 0, 0, 0.6);
+    /* Halbtransparentes Schwarz */
+    z-index: 1000;
+    /* Stellt sicher, dass es ÜBER der App liegt */
+
+    /* Flexbox, um den inneren Container mittig zu zentrieren */
+    align-items: center;
+    justify-content: center;
+}
+
+/* Wenn das Modal aktiv ist, wird es als Flex-Container angezeigt */
+.modal-overlay.active {
+    display: flex;
+}
+
+/* Die dunkle Filter-Box selbst (angepasst an dein Design) */
+.filter-card {
+    width: 90%;
+    max-width: 600px;
+    border-top-right-radius: 0px;
+    background: rgba(0, 0, 0, 0.7);
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+/* Der Schließen-Button oben rechts */
+.close-btn {
+    position: absolute;
+    top: 3px;
+    right: 7px;
+    background: none;
+    border: none;
+    color: white;
+    font-size: 20px;
+    cursor: pointer;
+}
+
 .dropdown-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -13,10 +77,10 @@
 .custom-select-trigger {
     width: 100%;
     padding: 14px 18px;
-    background: var(--glass-bg);
-    color: var(--text-muted);
+    background: rgba(255, 255, 255, 0.03);
+    border-radius: 20px;
+    color: #ffffff;
     border: 1px solid var(--glass-border);
-    border-radius: 16px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -90,7 +154,7 @@
     display: flex;
     flex-direction: column;
     background: var(--glass-bg);
-    padding: 25px;
+    padding: 18px;
     border-radius: 20px;
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(10px);
@@ -100,7 +164,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: var(--accent-1);
+    color: #ffffff;
     margin-bottom: 20px;
     font-weight: 700;
 }
@@ -195,7 +259,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 .input-label {
     font-size: 0.75rem;
-    color: var(--text-muted);
+    color: #ffffff;
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;
