@@ -3,7 +3,9 @@
 
 <head>
   <link rel="stylesheet" href="../common/kigostyle.css">
+  <link rel="stylesheet" href="../common/filter.css">
   <link rel="stylesheet" href="swimhome.css">
+  <script src="../common/filter.js" defer></script>
   <title>Swim Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -114,7 +116,62 @@
       <button id="close-filter-btn" class="close-btn">&times;</button>
 
       <!-- Hier fügst du später den HTML-Code für dein Filter-Menü (Dialekt, Slider etc.) ein -->
-      <h3>Filter</h3>
+      <div class="dropdown-row">
+        <div class="custom-select-wrapper" id="sel-dialekt">
+          <div class="custom-select-trigger"><span>Dialekt</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="be">Bärndütsch</span>
+            <span class="custom-option" data-value="zh">Züridütsch</span>
+            <span class="custom-option" data-value="bs">Baseldütsch</span>
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+        <div class="custom-select-wrapper" id="sel-genre">
+          <div class="custom-select-trigger"><span>Genre</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="rap">Rap</span>
+            <span class="custom-option" data-value="drill">Drill</span>
+            <span class="custom-option" data-value="pop">Pop</span>
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+        <div class="custom-select-wrapper" id="sel-aktiv">
+          <div class="custom-select-trigger"><span>Aktiv seit</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="2020">2020+</span>
+            <span class="custom-option" data-value="2015">2015+</span>
+            <span class="custom-option" data-value="alle">Alle</span>
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+      </div>
+
+      <div class="slider-section">
+        <div class="section-title">Zuhörerspanne (Spotify)</div>
+        <div class="histogram" id="histogram"></div>
+        <div class="slider-wrapper">
+          <div class="slider-track"></div>
+          <div class="slider-fill" id="slider-fill"></div>
+          <input type="range" min="0" max="300" value="0" id="slider-min">
+          <input type="range" min="0" max="300" value="300" id="slider-max">
+        </div>
+        <div class="min-max-row">
+          <div class="input-group">
+            <span class="input-label">Minimum</span>
+            <input type="text" class="input-box" id="input-min" value="0">
+          </div>
+          <div class="input-group" style="align-items: flex-end;">
+            <span class="input-label">Maximum</span>
+            <input type="text" class="input-box" id="input-max" value="300k">
+          </div>
+        </div>
+      </div>
 
     </div>
   </div>

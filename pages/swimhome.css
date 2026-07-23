@@ -238,7 +238,7 @@
         grid-area: btn;
         position: relative !important;
         width: 100% !important;
-        height: 200px !important;
+        height: 190px !important;
 
         background: rgba(25, 25, 25, 0.95) !important;
         backdrop-filter: blur(10px);
@@ -341,12 +341,11 @@
 
     .nav-btn {
         width: 45px;
-        height: 45px;
+        height: 50px;
         border-radius: 10px;
     }
 
     .bento-card:hover {
-        border-color: rgba(255, 255, 255, 0.15);
         transform: none;
     }
 }
