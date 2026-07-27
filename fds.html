@@ -1,0 +1,252 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <link rel="stylesheet" href="../common/kigostyle.css">
+  <link rel="stylesheet" href="../common/filter.css">
+  <link rel="stylesheet" href="fds.css">
+  <script src="../common/filter.js" defer></script>
+  <title>Finde deinen Sound</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+
+
+
+  <!--<div id="banner"></div>-->
+  <img src="../images/gino.jpg" alt="Artist Image" id="background-img">
+
+  <div class="bento-grid" id="mainContainer">
+
+    <div class="bento-card card-buttons">
+      <button class="nav-btn" id="like-button"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <path
+            d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z">
+          </path>
+        </svg>
+      </button>
+      <button class="nav-btn" id="open-filter-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+          viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+          stroke-linejoin="round">
+          <!-- Obere Reihe -->
+          <line x1="3" y1="6" x2="11" y2="6"></line>
+          <circle cx="14" cy="6" r="2"></circle>
+          <line x1="17" y1="6" x2="21" y2="6"></line>
+
+          <!-- Mittlere Reihe -->
+          <line x1="3" y1="12" x2="5" y2="12"></line>
+          <circle cx="8" cy="12" r="2"></circle>
+          <line x1="11" y1="12" x2="21" y2="12"></line>
+
+          <!-- Untere Reihe -->
+          <line x1="3" y1="18" x2="13" y2="18"></line>
+          <circle cx="16" cy="18" r="2"></circle>
+          <line x1="19" y1="18" x2="21" y2="18"></line>
+        </svg>
+
+      </button>
+      <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="19 20 9 12 19 4 19 20"></polygon>
+          <line x1="5" y1="19" x2="5" y2="5"></line>
+        </svg>
+      </button>
+      <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
+          fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <polygon points="5 4 15 12 5 20 5 4"></polygon>
+          <line x1="19" y1="5" x2="19" y2="19"></line>
+        </svg>
+      </button>
+
+    </div>
+    <div class="bento-card card-profile">
+      <img src="../images/gino.jpg" alt="Artist Image" id="profile-img">
+      <div class="profile-info">
+        <h1>gino</h1>
+      </div>
+    </div>
+
+    <div class="bento-card card-youtube">
+      <iframe src="https://www.youtube.com/embed/1RxQHtQdG1I?si=RUqgPebGbfPQQ1Ow" title="YouTube video player"
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        allowfullscreen></iframe>
+    </div>
+
+  </div>
+  <!-- Das Pop-up (Modal) -->
+  <div id="filter-modal" class="modal-overlay">
+    <!-- Die eigentliche Filter-Box -->
+    <div class="bento-card filter-card">
+
+      <!-- Ein Schließen-Button (X) -->
+      <button id="close-filter-btn" class="close-btn">&times;</button>
+
+      <!-- Hier fügst du später den HTML-Code für dein Filter-Menü (Dialekt, Slider etc.) ein -->
+      <div class="dropdown-row">
+        <div class="custom-select-wrapper" id="sel-region">
+          <div class="custom-select-trigger"><span>region</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="be">Bern</span>
+            <span class="custom-option" data-value="zh">Zürich</span>
+            <span class="custom-option" data-value="bs">Basel</span>
+            <span class="custom-option" data-value="so">Solothurn</span>
+            <span class="custom-option" data-value="lu">Luzern</span>
+            <span class="custom-option" data-value="vs">Wallis</span>
+            <span class="custom-option" data-value="ag">Aargau</span>
+            <span class="custom-option" data-value="sg">St. Gallen</span>
+            <span class="custom-option" data-value="zg">Zug</span>
+            <span class="custom-option" data-value="uw">Unterwalden</span>
+            <span class="custom-option" data-value="sz">Schwyz</span>
+            <span class="custom-option" data-value="ur">Uri</span>
+            <span class="custom-option" data-value="gl">Glarus</span>
+            <span class="custom-option" data-value="ai">Appenzell</span>
+            <span class="custom-option" data-value="sh">Schaffhausen</span>
+            <span class="custom-option" data-value="gr">Graubünden</span>
+            <span class="custom-option" data-value="fr">Fribourg</span>
+            <span class="custom-option" data-value="tg">Thurgau</span>
+
+
+
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+        <div class="custom-select-wrapper" id="sel-genre">
+          <div class="custom-select-trigger"><span>Genre</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="rap">Rap</span>
+            <span class="custom-option" data-value="drill">Drill</span>
+            <span class="custom-option" data-value="pop">Pop</span>
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+        <div class="custom-select-wrapper" id="sel-aktiv">
+          <div class="custom-select-trigger"><span>Aktiv seit</span>
+            <div class="arrow">▼</div>
+          </div>
+          <div class="custom-select-options">
+            <span class="custom-option" data-value="2020">2020+</span>
+            <span class="custom-option" data-value="2015">2015+</span>
+            <span class="custom-option" data-value="alle">Alle</span>
+          </div>
+          <input type="hidden" class="hidden-val" value="">
+        </div>
+      </div>
+
+      <div class="slider-section">
+        <div class="section-title">Zuhörerspanne (Spotify)</div>
+        <div class="histogram" id="histogram"></div>
+        <div class="slider-wrapper">
+          <div class="slider-track"></div>
+          <div class="slider-fill" id="slider-fill"></div>
+          <input type="range" min="0" max="300" value="0" id="slider-min">
+          <input type="range" min="0" max="300" value="300" id="slider-max">
+        </div>
+        <div class="min-max-row">
+          <div class="input-group">
+            <span class="input-label">Minimum</span>
+            <input type="text" class="input-box" id="input-min" value="0">
+          </div>
+          <div class="input-group" style="align-items: flex-end;">
+            <span class="input-label">Maximum</span>
+            <input type="text" class="input-box" id="input-max" value="300k">
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+  <script>
+    // Wähle den Button aus (hier angenommen, er hat die ID "like-button")
+    const likeButton = document.getElementById('like-button');
+
+    // Füge einen Klick-Zuhörer (Event Listener) hinzu
+    likeButton.addEventListener('click', function () {
+      // 'toggle' fügt die Klasse 'liked' hinzu, wenn sie fehlt, 
+      // und entfernt sie, wenn sie bereits da ist.
+      this.classList.toggle('liked');
+    });
+
+    // Elemente aus dem HTML auswählen
+    const openBtn = document.getElementById('open-filter-btn');
+    const closeBtn = document.getElementById('close-filter-btn');
+    const modal = document.getElementById('filter-modal');
+
+    // Öffnen: Klick auf das Filter-Symbol
+    openBtn.addEventListener('click', () => {
+      modal.classList.add('active');
+    });
+
+    // Schließen: Klick auf das "X"
+    closeBtn.addEventListener('click', () => {
+      modal.classList.remove('active');
+    });
+
+    // Optionaler Bonus: Schließen, wenn man außerhalb der Box auf den dunklen Hintergrund klickt
+    modal.addEventListener('click', (event) => {
+      if (event.target === modal) {
+        modal.classList.remove('active');
+      }
+    });
+  </script>
+
+
+
+
+
+
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
+  <script>
+    const colorThief = new ColorThief();
+    const img = document.getElementById('profile-img');
+    const banner = document.getElementById('banner');
+
+    // Sicherstellen, dass das Skript läuft, wenn das Bild geladen ist
+    if (img.complete) {
+      setBannerColor();
+    } else {
+      img.addEventListener('load', function () {
+        setBannerColor();
+      });
+    }
+
+    function setBannerColor() {
+      // Holt die 5 Farben als [R, G, B] Arrays
+      let palette = colorThief.getPalette(img, 5);
+
+      // Sortiert die Farben nach wahrgenommener Helligkeit (Hellste zuerst)
+      palette.sort((a, b) => {
+        // Formel für die Helligkeit: (R * 0.299) + (G * 0.587) + (B * 0.114)
+        const brightnessA = (a[0] * 0.299) + (a[1] * 0.587) + (a[2] * 0.114);
+        const brightnessB = (b[0] * 0.299) + (b[1] * 0.587) + (b[2] * 0.114);
+
+        // Sortierung von Groß (Hell) nach Klein (Dunkel)
+        return brightnessB - brightnessA;
+      });
+
+      // Entpackt die nun sortierten Farben in Variablen
+      const [c1, c2, c3, c4, c5] = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
+
+      // Baut den vertikalen Verlauf auf (c1 ist jetzt garantiert die hellste, c5 die dunkelste)
+      banner.style.background = `linear-gradient(to bottom, 
+                ${c1} 0%, 
+                ${c2} 10%, 
+                ${c3} 30%, 
+                ${c4} 50%, 
+                ${c5} 70%
+            )`;
+    }
+  </script>
+
+
+
+</body>
+
+</html>
