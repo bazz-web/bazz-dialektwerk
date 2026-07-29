@@ -105,12 +105,17 @@
     transform: rotate(180deg);
 }
 
+
 .custom-select-wrapper.open .custom-select-trigger {
     border-color: var(--text-main);
     color: var(--text-main);
 }
 
 .custom-select-options {
+    max-height: 260px;
+    /* Maximale Höhe der Box (Wert frei anpassbar) */
+    overflow-y: auto;
+    /* Aktiviert das vertikale Scrollen, sobald der Inhalt zu lang ist */
     position: absolute;
     top: calc(100% + 10px);
     left: 0;
@@ -124,8 +129,36 @@
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 100;
-    overflow: hidden;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+}
+
+/* 1. Breite der Scrollbar festlegen */
+.custom-select-options::-webkit-scrollbar {
+    width: 6px;
+}
+
+/* 2. Hintergrund/Schiene (Track) transparent machen */
+.custom-select-options::-webkit-scrollbar-track {
+    background: transparent;
+}
+
+/* 3. Der eigentliche Scrollbalken (Thumb) */
+.custom-select-options::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.2);
+    /* Halbtransparente helle Farbe */
+    border-radius: 10px;
+    /* Schön abgerundet */
+}
+
+/* 4. Scrollbalken bei Hover leicht aufleuchten lassen */
+.custom-select-options::-webkit-scrollbar-thumb:hover {
+    background: rgba(255, 255, 255, 0.4);
+}
+
+/* 5. Firefox-Unterstützung & Standard-Standardisierung */
+.custom-select-options {
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .custom-select-wrapper.open .custom-select-options {

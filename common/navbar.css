@@ -1,0 +1,74 @@
+/* Container oben links fixiert */
+.floating-navbar {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+/* Einzelne Menü-Icons */
+
+/* Aktives Element mit Pink-Lila Verlauf und Glow */
+.nav-item.active {
+    background: linear-gradient(135deg, #8a2be2, #ff007f);
+    color: #ffffff;
+    box-shadow: 0 0 15px rgba(255, 0, 127, 0.5);
+}
+
+/* Styling für den Hamburger Button */
+.nav-toggle {
+    display: none;
+    /* Auf dem PC unsichtbar */
+    position: fixed;
+    top: 20px;
+    left: 20px;
+    z-index: 10000;
+    width: 48px;
+    height: 48px;
+    border-radius: 16px;
+    background-color: #0d0b14;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: #ffffff;
+    cursor: pointer;
+    align-items: center;
+    justify-content: center;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.4);
+    transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.nav-toggle:active {
+    transform: scale(0.95);
+}
+
+/* responsive Anpassung für schmale Bildschirme */
+@media (max-width: 900px) {
+
+    /* Hamburger Button einblenden */
+    .nav-toggle {
+        display: flex;
+    }
+
+    /* Navbar auf schmalen Screens verstecken & absolut drüberlegen */
+    .floating-navbar {
+        top: 78px;
+        /* Direkt unter dem Hamburger-Button */
+        left: 20px;
+        z-index: 9999;
+
+        /* Sanfte Einblend-Animation */
+        opacity: 0;
+        visibility: hidden;
+        transform: translateY(-10px);
+        transition: all 0.3s ease-in-out;
+    }
+
+    /* Klasse zum Ausklappen des Menüs */
+    .floating-navbar.is-open {
+        opacity: 1;
+        visibility: visible;
+        transform: translateY(0);
+    }
+}

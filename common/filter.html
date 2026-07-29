@@ -1,0 +1,157 @@
+<!-- Das Pop-up (Modal) -->
+<div id="filter-modal" class="modal-overlay">
+    <!-- Die eigentliche Filter-Box -->
+    <div class="bento-card filter-card">
+
+        <!-- Ein Schließen-Button (X) -->
+        <button id="close-filter-btn" class="close-btn">&times;</button>
+
+        <!-- Hier fügst du später den HTML-Code für dein Filter-Menü (Dialekt, Slider etc.) ein -->
+        <div class="dropdown-row">
+            <div class="custom-select-wrapper" id="sel-region">
+                <div class="custom-select-trigger"><span>Region</span>
+                    <div class="arrow">▼</div>
+                </div>
+                <div class="custom-select-options">
+                    <span class="custom-option" data-value="all">Alle Regionen</span>
+                    <span class="custom-option" data-value="be">Bern</span>
+                    <span class="custom-option" data-value="zh">Zürich</span>
+                    <span class="custom-option" data-value="ba">Basel</span>
+                    <span class="custom-option" data-value="so">Solothurn</span>
+                    <span class="custom-option" data-value="lu">Luzern</span>
+                    <span class="custom-option" data-value="vs">Wallis</span>
+                    <span class="custom-option" data-value="ag">Aargau</span>
+                    <span class="custom-option" data-value="sg">St. Gallen</span>
+                    <span class="custom-option" data-value="zg">Zug</span>
+                    <span class="custom-option" data-value="uw">Unterwalden</span>
+                    <span class="custom-option" data-value="sz">Schwyz</span>
+                    <span class="custom-option" data-value="ur">Uri</span>
+                    <span class="custom-option" data-value="gl">Glarus</span>
+                    <span class="custom-option" data-value="ap">Appenzell</span>
+                    <span class="custom-option" data-value="sh">Schaffhausen</span>
+                    <span class="custom-option" data-value="gr">Graubünden</span>
+                    <span class="custom-option" data-value="fr">Fribourg</span>
+                    <span class="custom-option" data-value="tg">Thurgau</span>
+                    <span class="custom-option" data-value="li">Liechtenstein</span>
+
+
+
+                </div>
+                <input type="hidden" class="hidden-val" value="">
+            </div>
+            <div class="custom-select-wrapper" id="sel-genre">
+                <div class="custom-select-trigger"><span>Genre</span>
+                    <div class="arrow">▼</div>
+                </div>
+                <div class="custom-select-options">
+                    <span class="custom-option" data-value="all">Alle Genres</span>
+                    <span class="custom-option" data-value="rap">Hip-Hop/Rap</span>
+                    <span class="custom-option" data-value="rock">Rock</span>
+                    <span class="custom-option" data-value="pop">Pop</span>
+                    <span class="custom-option" data-value="pr">Pop/Rock</span>
+                    <span class="custom-option" data-value="alt">Alternative</span>
+                    <span class="custom-option" data-value="singer">Singer-Songwriter:innen</span>
+                    <span class="custom-option" data-value="elec">Electronic</span>
+                    <span class="custom-option" data-value="reggae">Reggae</span>
+                    <span class="custom-option" data-value="world">World/Folk</span>
+                    <span class="custom-option" data-value="rnb">R&B/Soul</span>
+                    <span class="custom-option" data-value="metal">Metal/Punk</span>
+                </div>
+                <input type="hidden" class="hidden-val" value="">
+            </div>
+            <div class="custom-select-wrapper" id="sel-aktiv">
+                <div class="custom-select-trigger"><span>Aktiv seit</span>
+                    <div class="arrow">▼</div>
+                </div>
+                <div class="custom-select-options">
+                    <span class="custom-option" data-value="all">Alle Debütjahre</span>
+                    <span class="custom-option" data-value="2026">2026</span>
+                    <span class="custom-option" data-value="2025">2025</span>
+                    <span class="custom-option" data-value="2024">2024</span>
+                    <span class="custom-option" data-value="2023">2023</span>
+                    <span class="custom-option" data-value="2022">2022</span>
+                    <span class="custom-option" data-value="2021">2021</span>
+                    <span class="custom-option" data-value="2020">2020</span>
+                    <span class="custom-option" data-value="2019">2019</span>
+                    <span class="custom-option" data-value="2018">2018</span>
+                    <span class="custom-option" data-value="2017">2017</span>
+                    <span class="custom-option" data-value="2016">2016</span>
+                    <span class="custom-option" data-value="2015">2015</span>
+                    <span class="custom-option" data-value="2014">2014</span>
+                    <span class="custom-option" data-value="2013">2013</span>
+                    <span class="custom-option" data-value="2012">2012</span>
+                    <span class="custom-option" data-value="2011">2011</span>
+                    <span class="custom-option" data-value="2010">2010</span>
+                    <span class="custom-option" data-value="2009">2009</span>
+                    <span class="custom-option" data-value="2008">2008</span>
+                    <span class="custom-option" data-value="2007">2007</span>
+                    <span class="custom-option" data-value="2006">2006</span>
+                    <span class="custom-option" data-value="2005">2005</span>
+                    <span class="custom-option" data-value="2004">2004</span>
+                    <span class="custom-option" data-value="2003">2003</span>
+                    <span class="custom-option" data-value="2002">2002</span>
+                    <span class="custom-option" data-value="2001">2001</span>
+                    <span class="custom-option" data-value="2000">2000</span>
+                    <span class="custom-option" data-value="1999">1999</span>
+                    <span class="custom-option" data-value="1998">1998</span>
+                    <span class="custom-option" data-value="1997">1997</span>
+                    <span class="custom-option" data-value="1996">1996</span>
+                    <span class="custom-option" data-value="1995">1995</span>
+                    <span class="custom-option" data-value="1994">1994</span>
+                    <span class="custom-option" data-value="1993">1993</span>
+                    <span class="custom-option" data-value="1992">1992</span>
+                    <span class="custom-option" data-value="1991">1991</span>
+                    <span class="custom-option" data-value="1990">1990</span>
+                    <span class="custom-option" data-value="1989">1989</span>
+                    <span class="custom-option" data-value="1988">1988</span>
+                    <span class="custom-option" data-value="1987">1987</span>
+                    <span class="custom-option" data-value="1986">1986</span>
+                    <span class="custom-option" data-value="1985">1985</span>
+                    <span class="custom-option" data-value="1984">1984</span>
+                    <span class="custom-option" data-value="1983">1983</span>
+                    <span class="custom-option" data-value="1982">1982</span>
+                    <span class="custom-option" data-value="1981">1981</span>
+                    <span class="custom-option" data-value="1980">1980</span>
+                    <span class="custom-option" data-value="1979">1979</span>
+                    <span class="custom-option" data-value="1978">1978</span>
+                    <span class="custom-option" data-value="1977">1977</span>
+                    <span class="custom-option" data-value="1976">1976</span>
+                    <span class="custom-option" data-value="1975">1975</span>
+                    <span class="custom-option" data-value="1974">1974</span>
+                    <span class="custom-option" data-value="1973">1973</span>
+                    <span class="custom-option" data-value="1972">1972</span>
+                    <span class="custom-option" data-value="1971">1971</span>
+                    <span class="custom-option" data-value="1970">1970</span>
+                    <span class="custom-option" data-value="1969">1969</span>
+                    <span class="custom-option" data-value="1968">1968</span>
+                    <span class="custom-option" data-value="1967">1967</span>
+                    <span class="custom-option" data-value="1966">1966</span>
+                    <span class="custom-option" data-value="1965">1965</span>
+                </div>
+                <input type="hidden" class="hidden-val" value="">
+            </div>
+        </div>
+
+        <div class="slider-section">
+            <div class="section-title">Zuhörerspanne (Spotify)</div>
+            <div class="histogram" id="histogram"></div>
+            <div class="slider-wrapper">
+                <div class="slider-track"></div>
+                <div class="slider-fill" id="slider-fill"></div>
+                <input type="range" min="0" max="300" value="0" id="slider-min">
+                <input type="range" min="0" max="300" value="300" id="slider-max">
+            </div>
+            <div class="min-max-row">
+                <div class="input-group">
+                    <span class="input-label">Minimum</span>
+                    <input type="text" class="input-box" id="input-min" value="0">
+                </div>
+                <div class="input-group" style="align-items: flex-end;">
+                    <span class="input-label">Maximum</span>
+                    <input type="text" class="input-box" id="input-max" value="300k">
+                </div>
+            </div>
+        </div>
+
+    </div>
+</div>
