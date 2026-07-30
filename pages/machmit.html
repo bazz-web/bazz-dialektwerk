@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="machmit.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <script src="machmit.js" defer></script>
+
+    <title>Mach mit!</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <img src="../images/lila.jpg" alt="background Image" id="background-img">
+    <div class="bento-grid">
+        <!-- Bento Box: Artist hinzufügen -->
+        <div class="bento-card" onclick="toggleModal('modal-add')">
+            <div class="bento-icon">🎵</div>
+            <h2>Artist hinzufügen</h2>
+            <p>Neuen Künstler in die Datenbank eintragen.</p>
+        </div>
+
+        <!-- Bento Box: Fehler melden -->
+        <div class="bento-card" onclick="toggleModal('modal-report')">
+            <div class="bento-icon">🐛</div>
+            <h2>Fehler melden</h2>
+            <p>Korrekturen oder technische Probleme melden.</p>
+        </div>
+
+        <!-- Bento Box: Profil claimen -->
+        <div class="bento-card" onclick="toggleModal('modal-claim')">
+            <div class="bento-icon">✅</div>
+            <h2>Artist Profil claimen</h2>
+            <p>Übernimm die Kontrolle über dein Profil.</p>
+        </div>
+    </div>
+
+    <!-- Modal: Artist hinzufügen -->
+    <div id="modal-add" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal('modal-add')">&times;</span>
+            <h3>Artist hinzufügen</h3>
+            <form id="form-add" onsubmit="event.preventDefault();">
+                <label for="artist-name">Artist Name *</label>
+                <input type="text" id="artist-name" placeholder="Name des Artists" required>
+
+                <label for="artist-region">Region</label>
+                <select id="artist-region">
+                    <option value="">Bitte wählen...</option>
+                    <option value="AG">Aargau</option>
+                    <option value="BE">Bern</option>
+                    <option value="BL">Basel-Landschaft</option>
+                    <option value="BS">Basel-Stadt</option>
+                    <option value="LU">Luzern</option>
+                    <option value="ZH">Zürich</option>
+                    <option value="OTHER">Andere</option>
+                </select>
+
+                <label for="artist-location">Genauer Ort</label>
+                <input type="text" id="artist-location" placeholder="z.B. Köniz">
+
+                <label for="link-spotify">Spotify Link</label>
+                <input type="url" id="link-spotify" placeholder="https://open.spotify.com/...">
+
+                <label for="link-youtube">YouTube Link</label>
+                <input type="url" id="link-youtube" placeholder="https://youtube.com/...">
+
+                <label for="link-ig">Instagram Link</label>
+                <input type="url" id="link-ig" placeholder="https://instagram.com/...">
+
+                <button type="submit" class="submit-btn">Hinzufügen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Fehler melden -->
+    <div id="modal-report" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal('modal-report')">&times;</span>
+            <h3>Fehler melden</h3>
+            <p class="modal-description">Dir ist etwas aufgefallen? Hier kannst du Fehler zu spezifischen Artists
+                (falsche Links, Rechtschreibung) oder allgemeine Probleme auf der Seite melden.</p>
+
+            <form id="form-report" onsubmit="event.preventDefault();">
+                <label for="error-description">Fehlerbeschreibung *</label>
+                <textarea id="error-description" rows="5"
+                    placeholder="Bitte beschreibe den Fehler so genau wie möglich..." required></textarea>
+
+                <button type="submit" class="submit-btn">Melden</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Profil claimen -->
+    <div id="modal-claim" class="modal-overlay">
+        <div class="modal-content">
+            <span class="close-btn" onclick="toggleModal('modal-claim')">&times;</span>
+            <h3>Profil claimen</h3>
+            <form id="form-claim" onsubmit="event.preventDefault();">
+                <label for="claim-artist">Artist auswählen *</label>
+                <!-- In einer echten App würdest du hier die Artists aus der Datenbank laden -->
+                <select id="claim-artist" required>
+                    <option value="">Künstler suchen...</option>
+                    <option value="1">Beispiel Artist 1</option>
+                    <option value="2">Beispiel Artist 2</option>
+                </select>
+
+                <label for="claim-email">E-Mail Adresse *</label>
+                <input type="email" id="claim-email" placeholder="deine@email.ch" required>
+
+                <label for="claim-password">Wunschpasswort *</label>
+                <input type="password" id="claim-password" placeholder="Passwort" required>
+
+                <div class="info-box">
+                    <strong>Verifizierung:</strong> Bitte schreibe uns für die Verifizierung eine Nachricht auf
+                    Instagram. Nutze dafür die gleiche E-Mail-Adresse, die du hier eingegeben hast, und teile uns mit,
+                    dass du dein Dialektwerk-Profil claimen möchtest.
+                </div>
+
+                <button type="submit" class="submit-btn">Anfrage senden</button>
+            </form>
+        </div>
+    </div>
+
+</body>
+
+</html>

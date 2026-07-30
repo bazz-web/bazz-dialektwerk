@@ -87,6 +87,10 @@
 
 @media (max-width: 900px) {
 
+    #background-img {
+        display: none;
+    }
+
     /* 1. Echter Fullscreen für die Seite */
     body,
     html {

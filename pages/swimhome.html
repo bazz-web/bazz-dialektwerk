@@ -4,8 +4,11 @@
 <head>
   <link rel="stylesheet" href="../common/kigostyle.css">
   <link rel="stylesheet" href="../common/filter.css">
+  <link rel="stylesheet" href="../common/navbar.css">
   <link rel="stylesheet" href="swimhome.css">
   <script src="../common/filter.js" defer></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <script src="../common/navbar.js" defer></script>
   <title>Swim Home</title>
   <meta name="viewport" content="width=device-width, initial-scale=1">
 </head>
@@ -13,8 +16,7 @@
 <body>
 
 
-
-  <!--<div id="banner"></div>-->
+  <div id="navbar-placeholder"></div>
   <img src="../images/gino.jpg" alt="Artist Image" id="background-img">
 
   <div class="bento-grid" id="mainContainer">
@@ -223,57 +225,6 @@
       }
     });
   </script>
-
-
-
-
-
-
-
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/color-thief/2.3.0/color-thief.umd.js"></script>
-  <script>
-    const colorThief = new ColorThief();
-    const img = document.getElementById('profile-img');
-    const banner = document.getElementById('banner');
-
-    // Sicherstellen, dass das Skript läuft, wenn das Bild geladen ist
-    if (img.complete) {
-      setBannerColor();
-    } else {
-      img.addEventListener('load', function () {
-        setBannerColor();
-      });
-    }
-
-    function setBannerColor() {
-      // Holt die 5 Farben als [R, G, B] Arrays
-      let palette = colorThief.getPalette(img, 5);
-
-      // Sortiert die Farben nach wahrgenommener Helligkeit (Hellste zuerst)
-      palette.sort((a, b) => {
-        // Formel für die Helligkeit: (R * 0.299) + (G * 0.587) + (B * 0.114)
-        const brightnessA = (a[0] * 0.299) + (a[1] * 0.587) + (a[2] * 0.114);
-        const brightnessB = (b[0] * 0.299) + (b[1] * 0.587) + (b[2] * 0.114);
-
-        // Sortierung von Groß (Hell) nach Klein (Dunkel)
-        return brightnessB - brightnessA;
-      });
-
-      // Entpackt die nun sortierten Farben in Variablen
-      const [c1, c2, c3, c4, c5] = palette.map(color => `rgb(${color[0]}, ${color[1]}, ${color[2]})`);
-
-      // Baut den vertikalen Verlauf auf (c1 ist jetzt garantiert die hellste, c5 die dunkelste)
-      banner.style.background = `linear-gradient(to bottom, 
-                ${c1} 0%, 
-                ${c2} 10%, 
-                ${c3} 30%, 
-                ${c4} 50%, 
-                ${c5} 70%
-            )`;
-    }
-  </script>
-
-
 
 </body>
 
