@@ -97,6 +97,8 @@ textarea {
     font-size: 1rem;
     transition: border-color 0.2s;
     box-sizing: border-box;
+    background-color: #1a1a1a;
+    color: #ffffff;
 }
 
 input:focus,
@@ -136,4 +138,42 @@ textarea:focus {
 /* Toggle Utility Class für JS */
 .show-modal {
     display: flex;
+}
+
+/* --- Für Webkit-Browser (Chrome, Safari, neuere Edge) --- */
+
+/* Die gesamte Scrollbar */
+::-webkit-scrollbar {
+    width: 10px;
+    /* Breite der vertikalen Scrollbar */
+    height: 10px;
+    /* Höhe der horizontalen Scrollbar, falls nötig */
+}
+
+/* Der Hintergrund der Scrollbar (Track) */
+::-webkit-scrollbar-track {
+    background: #1a1a1a;
+    /* Dunkler Hintergrund passend zum Modal */
+    border-radius: 8px;
+}
+
+/* Der eigentliche Scroll-Balken (Thumb) */
+::-webkit-scrollbar-thumb {
+    background: #444;
+    /* Ein mittleres Grau, das sich abhebt */
+    border-radius: 8px;
+}
+
+/* Der Scroll-Balken beim Hovern */
+::-webkit-scrollbar-thumb:hover {
+    background: #666;
+    /* Etwas heller beim Drüberfahren */
+}
+
+/* --- Für Firefox --- */
+* {
+    scrollbar-width: thin;
+    /* Macht die Scrollbar schmaler */
+    scrollbar-color: #444 #1a1a1a;
+    /* Farbe des Balkens (Thumb) und des Hintergrunds (Track) */
 }

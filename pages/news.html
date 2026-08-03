@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>News - DIALEKTWERK</title>
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="news.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <script src="news.js" defer></script>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="layout-container">
+        <!-- Optional: Die weisse Seitenleiste aus deinem alten Design als Navigation -->
+        <aside class="sidebar">
+            <div class="logo">DW</div>
+            <nav>
+                <a href="#">Home</a>
+                <a href="#" class="active">News</a>
+                <a href="#">Artists</a>
+            </nav>
+        </aside>
+
+        <main class="content-area">
+            <header class="page-header">
+                <h1>DIALEKTWERK News</h1>
+                <p>Die neusten Schlagzeilen aus der Schweizer Musikszene.</p>
+            </header>
+
+            <!-- Pinterest x Bento Grid -->
+            <div class="bento-masonry">
+
+                <!-- Artikel 1: Gross & Dunkel -->
+                <article class="bento-card large bg-dark" onclick="window.location.href='artikel.html?id=1'">
+                    <span class="category">Comeback</span>
+                    <h2>Züri West sind zurück: Neues Album bricht alle Rekorde</h2>
+                    <p>Die Berner Legenden liefern den Soundtrack für den Sommer. Wir haben reingehört und analysieren
+                        den neuen Sound, der alte Fans abholt und neue begeistert.</p>
+                </article>
+
+                <!-- Artikel 2: Hochformat & Zeitungspapier-Look -->
+                <article class="bento-card tall bg-paper" onclick="window.location.href='artikel.html?id=2'">
+                    <span class="category">Charts</span>
+                    <h2>Lo & Leduc dominieren die Streaming-Zahlen</h2>
+                    <p>Wieder einmal zeigt das Duo, wie moderner Mundart-Pop funktioniert. Ihr neuester Track läuft auf
+                        allen Radiostationen rauf und runter.</p>
+                </article>
+
+                <!-- Artikel 3: Standard & Akzentfarbe -->
+                <article class="bento-card bg-accent" onclick="window.location.href='artikel.html?id=3'">
+                    <span class="category">Newcomer</span>
+                    <h2>5 neue Acts aus Bern, die du kennen musst</h2>
+                    <p>Frischer Wind in der Hauptstadt. Diese fünf Künstlerinnen und Künstler solltest du auf dem Radar
+                        haben.</p>
+                </article>
+
+                <!-- Artikel 4: Breit & Hell -->
+                <article class="bento-card wide bg-light" onclick="window.location.href='artikel.html?id=4'">
+                    <span class="category">Festival</span>
+                    <h2>Gurtenfestival 2026: Das Line-up für den Hausberg steht</h2>
+                    <p>Viel lokale Prominenz und internationale Headliner. Ein Blick auf das Programm des diesjährigen
+                        Güsche-Festivals.</p>
+                </article>
+
+                <!-- Artikel 5: Standard & Dunkel -->
+                <article class="bento-card bg-dark" onclick="window.location.href='artikel.html?id=5'">
+                    <span class="category">Interview</span>
+                    <h2>"Mundart ist ehrlicher" – Black Sea Dahu im Gespräch</h2>
+                    <p>Warum die Wahl der Sprache beim Songwriting den ganzen Vibe eines Tracks verändert.</p>
+                </article>
+
+                <!-- Artikel 6: Hochformat & Hell -->
+                <article class="bento-card tall bg-light" onclick="window.location.href='artikel.html?id=6'">
+                    <span class="category">History</span>
+                    <h2>Die Evolution des Schweizer Hip-Hop</h2>
+                    <p>Von den Anfängen in den 90ern bis zu den heutigen Autotune-Tracks. Wie sich die Szene gewandelt
+                        hat und welche Crews den Weg geebnet haben.</p>
+                </article>
+
+                <!-- Artikel 7: Breit & Zeitungspapier-Look -->
+                <article class="bento-card wide bg-paper" onclick="window.location.href='artikel.html?id=7'">
+                    <span class="category">International</span>
+                    <h2>Nemos ESC-Erfolg: Was bedeutet das für die Schweizer Szene?</h2>
+                    <p>Ein Sieg, der über die Landesgrenzen hinausstrahlt. Öffnet dies Türen für andere nationale Acts?
+                    </p>
+                </article>
+
+                <!-- Artikel 8: Standard & Hell -->
+                <article class="bento-card bg-light" onclick="window.location.href='artikel.html?id=8'">
+                    <span class="category">Release</span>
+                    <h2>Neue EP "drü für drü" veröffentlicht</h2>
+                    <p>Ein spannendes neues Maturaarbeit-Projekt zeigt, wie professionell der Nachwuchs heute
+                        produziert.</p>
+                </article>
+
+                <!-- Artikel 9: Breit & Akzentfarbe -->
+                <article class="bento-card wide bg-accent" onclick="window.location.href='artikel.html?id=9'">
+                    <span class="category">Kultur</span>
+                    <h2>Das Vinyl-Revival in der Schweizer Mundart-Szene</h2>
+                    <p>Warum immer mehr lokale Künstler ihre Alben wieder auf Schallplatte pressen lassen.</p>
+                </article>
+
+                <!-- Artikel 10: Standard & Dunkel -->
+                <article class="bento-card bg-dark" onclick="window.location.href='artikel.html?id=10'">
+                    <span class="category">Tech</span>
+                    <h2>Die Apple Music API für Mundart-Katalogisierung nutzen</h2>
+                    <p>Ein Blick hinter die Kulissen: Wie Plattformen Metadaten bereinigen und lokale Genres besser
+                        abbilden können.</p>
+                </article>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Plus-Button für neue News -->
+    <button id="addNewsBtn" class="fab-button">+</button>
+
+    <!-- Modal (Instruktion) -->
+    <div id="instructionModal" class="modal">
+        <div class="modal-content bento-card bg-paper">
+            <span class="close-btn">&times;</span>
+            <h2 style="font-family: 'Playfair Display', serif; margin-top: 0;">Neuen Artikel verfassen</h2>
+            <p>Willst du etwas Neues aus der Mundart-Szene teilen? Beachte folgendes:</p>
+            <ul style="margin-bottom: 2rem;">
+                <li>Schreibe eine packende Headline (Zeitungs-Stil).</li>
+                <li>Ordne den Artikel einer Kategorie zu (z.B. Newcomer, Release, Festival).</li>
+                <li>Der Text kann auf Hochdeutsch oder Bärndeutsch verfasst sein.</li>
+            </ul>
+            <button id="createNewsBtn" class="action-btn">Weiter zum Editor</button>
+        </div>
+    </div>
+</body>
+
+</html>
