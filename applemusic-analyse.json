@@ -1,0 +1,89 @@
+{
+  "kuenstlerUrl": "https://music.apple.com/ch/artist/morow/1304726590",
+  "meistVorkommendesGenre": "Hip-Hop/Rap",
+  "genreGewichtungPunkte": {
+    "Hip-Hop/Rap": 65
+  },
+  "letzte10Releases": [
+    {
+      "nr": 1,
+      "titel": "Unbekannter Titel",
+      "typ": "Album",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "10x (Album)",
+      "url": "https://music.apple.com/ch/album/odyssee/1777025326"
+    },
+    {
+      "nr": 2,
+      "titel": "Unbekannter Titel",
+      "typ": "Album",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "10x (Album)",
+      "url": "https://music.apple.com/ch/album/clouds-gsehn-us-wie-ghosts/1618739850"
+    },
+    {
+      "nr": 3,
+      "titel": "Unbekannter Titel",
+      "typ": "Album",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "10x (Album)",
+      "url": "https://music.apple.com/ch/album/blessed/1561989451"
+    },
+    {
+      "nr": 4,
+      "titel": "Unbekannter Titel",
+      "typ": "Album",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "10x (Album)",
+      "url": "https://music.apple.com/ch/album/gfange-in-gedanke/1534126209"
+    },
+    {
+      "nr": 5,
+      "titel": "Unbekannter Titel",
+      "typ": "Album",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "10x (Album)",
+      "url": "https://music.apple.com/ch/album/dream-flow/1465594839"
+    },
+    {
+      "nr": 6,
+      "titel": "Unbekannter Titel",
+      "typ": "Single/EP",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/gwitter-single/1895851135"
+    },
+    {
+      "nr": 7,
+      "titel": "Unbekannter Titel",
+      "typ": "Single/EP",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/pinocchio-ep/1887507998"
+    },
+    {
+      "nr": 8,
+      "titel": "Unbekannter Titel",
+      "typ": "Single/EP",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/kette-baggies-single/1854399826"
+    },
+    {
+      "nr": 9,
+      "titel": "Unbekannter Titel",
+      "typ": "Single/EP",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/kenn-nur-dech-single/1842059423"
+    },
+    {
+      "nr": 10,
+      "titel": "Unbekannter Titel",
+      "typ": "Single/EP",
+      "genre": "Hip-Hop/Rap",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/was-w%C3%A4r-wenn-single/1804140430"
+    }
+  ]
+}
