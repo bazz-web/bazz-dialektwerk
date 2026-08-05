@@ -1,0 +1,879 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Editor - DIALEKTWERK</title>
+    <link rel="stylesheet" href="../common/navbar.css">
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #09090b;
+            --color-dark: #18181b;
+            --color-paper: #27272a;
+            --color-light: #3f3f46;
+            --color-accent: #7c3aed;
+            --text-main: #a1a1aa;
+            --text-heading: #ffffff;
+            --border-color: rgba(255, 255, 255, 0.1);
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            margin: 0;
+            padding: 0;
+        }
+
+        .editor-layout {
+            display: flex;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 2rem;
+        }
+
+        .editor-container {
+            width: 100%;
+            max-width: 900px;
+            /* Zentrierter, angenehmer Lesebereich */
+            display: flex;
+            flex-direction: column;
+            gap: 2rem;
+        }
+
+        .toolbar-wrapper {
+            position: sticky;
+            top: 1rem;
+            z-index: 100;
+        }
+
+        .toolbar {
+            background-color: rgba(39, 39, 42, 0.85);
+            /* Halbtransparent für Glas-Effekt */
+            backdrop-filter: blur(12px);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 0.75rem 1rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.5);
+        }
+
+        .tools-left,
+        .tools-right {
+            display: flex;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .tool-divider {
+            width: 1px;
+            height: 24px;
+            background-color: var(--border-color);
+            margin: 0 0.5rem;
+        }
+
+        .tool-btn {
+            background: none;
+            border: none;
+            color: var(--text-main);
+            width: 36px;
+            height: 36px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+            font-size: 1.1rem;
+        }
+
+        .tool-btn:hover {
+            background-color: var(--color-light);
+            color: var(--text-heading);
+        }
+
+        /* Aktiver Status für Tools (z.B. wenn Text fett ist) */
+        .tool-btn.active {
+            background-color: rgba(124, 58, 237, 0.2);
+            color: var(--color-accent);
+        }
+
+        .publish-btn {
+            background-color: var(--text-heading);
+            color: var(--bg-main);
+            border: none;
+            padding: 0.5rem 1.2rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .publish-btn:hover {
+            background-color: var(--color-accent);
+            color: white;
+        }
+
+        .title-input {
+            width: 100%;
+            background: none;
+            border: none;
+            color: var(--text-heading);
+            font-family: 'Playfair Display', serif;
+            font-size: 3rem;
+            font-weight: 700;
+            line-height: 1.2;
+            outline: none;
+            resize: none;
+            overflow: hidden;
+        }
+
+        .title-input::placeholder {
+            color: #52525b;
+        }
+
+        .meta-inputs {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .category-select {
+            background-color: var(--color-paper);
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            font-weight: 600;
+            outline: none;
+            cursor: text;
+            width: 300px;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .category-select::placeholder {
+            text-transform: none;
+            letter-spacing: normal;
+            color: #52525b;
+        }
+
+        .content-input {
+            width: 100%;
+            min-height: 400px;
+            color: var(--text-heading);
+            /* Hellerer Text für besseres Lesen beim Schreiben */
+            font-size: 1.15rem;
+            line-height: 1.8;
+            outline: none;
+            padding-bottom: 300px;
+            /* Grosser Abstand nach unten */
+        }
+
+        .content-input[empty]:before {
+            content: attr(placeholder);
+            color: #52525b;
+            pointer-events: none;
+            display: block;
+        }
+
+        .content-input p {
+            margin-bottom: 1.5em;
+        }
+
+        /* Styling für Zwischentitel (H2) im Editor */
+        .content-input h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: var(--text-heading);
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-input a,
+        .content-input a:visited {
+            color: #3b82f6 !important;
+            text-decoration: underline !important;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .content-input a:hover {
+            color: #60a5fa !important;
+        }
+
+        .content-input ul {
+            padding-left: 2rem;
+            margin-bottom: 1.5em;
+        }
+
+        .content-input li {
+            margin-bottom: 0.5em;
+        }
+
+        /* Der Rahmen und Hintergrund beim Figure-Block wird komplett entfernt */
+        .content-input figure {
+            margin: 2rem 0;
+        }
+
+        /* Die Abrundung wird jetzt direkt auf das Bild angewendet */
+        .content-input img {
+            max-width: 100%;
+            height: auto;
+            display: block;
+            border-radius: 8px;
+        }
+
+        /* Die Bildunterschrift schwebt nun frei unten links */
+        .content-input figcaption {
+            padding: 0.5rem 0 0 0;
+            font-size: 0.85rem;
+            color: #71717a;
+            text-align: left;
+            font-style: italic;
+            outline: none;
+        }
+
+        .content-input figcaption:empty:before {
+            content: "Bildunterschrift & Credits...";
+            opacity: 0.5;
+        }
+
+        /* Cover Image Styling */
+        .cover-image-container {
+            width: 100%;
+            height: 300px;
+            background-color: var(--color-paper);
+            border: 2px dashed var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            overflow: hidden;
+            position: relative;
+            transition: border-color 0.2s;
+        }
+
+        .cover-image-container:hover {
+            border-color: var(--color-accent);
+        }
+
+        .cover-image-container img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            display: none;
+            position: absolute;
+            top: 0;
+            left: 0;
+            z-index: 1;
+        }
+
+        .cover-placeholder {
+            text-align: center;
+            color: #52525b;
+            z-index: 2;
+        }
+
+        .cover-placeholder i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .cover-caption-input {
+            width: 100%;
+            background: none;
+            border: none;
+            outline: none;
+            font-size: 0.85rem;
+            color: #71717a;
+            font-style: italic;
+            padding: 0 0.5rem;
+            text-align: left;
+        }
+
+        .cover-caption-input::placeholder {
+            color: #71717a;
+            opacity: 0.5;
+        }
+
+        .toast {
+            position: fixed;
+            bottom: -100px;
+            left: 50%;
+            transform: translateX(-50%);
+            background-color: #10b981;
+            color: white;
+            padding: 1rem 2rem;
+            border-radius: 30px;
+            font-weight: 600;
+            box-shadow: 0 10px 25px rgba(16, 185, 129, 0.4);
+            transition: bottom 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+            z-index: 1000;
+        }
+
+        .toast.show {
+            bottom: 2rem;
+        }
+
+        /* Styling für das Veröffentlichen-Modal */
+        .modal {
+            display: none;
+            /* Standardmässig versteckt */
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            backdrop-filter: blur(5px);
+            z-index: 2000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background-color: var(--color-paper);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 2.5rem;
+            max-width: 550px;
+            width: 90%;
+            position: relative;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        .modal-content h3 {
+            color: var(--text-heading);
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            margin-top: 0;
+            margin-bottom: 1.5rem;
+        }
+
+        .modal-warning {
+            color: #f87171;
+            /* Sanftes Rot für Dark Mode */
+            background-color: rgba(248, 113, 113, 0.1);
+            border-left: 4px solid #f87171;
+            padding: 1rem;
+            border-radius: 4px 8px 8px 4px;
+            font-weight: 600;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 1rem;
+        }
+
+        .modal-text {
+            line-height: 1.7;
+            margin-bottom: 2rem;
+        }
+
+        .modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 1rem;
+        }
+
+        .btn-cancel {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--text-main);
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .btn-cancel:hover {
+            color: var(--text-heading);
+            border-color: var(--text-heading);
+        }
+
+        .btn-confirm {
+            background-color: var(--color-accent);
+            color: white;
+            border: none;
+            padding: 0.75rem 1.5rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.2s;
+        }
+
+        .btn-confirm:hover {
+            background-color: #6d28d9;
+            /* Etwas dunkleres Violett beim Hover */
+        }
+
+        /* Styling für den neuen Guideline Button und dessen Inhalt */
+        .guideline-btn {
+            background-color: transparent;
+            color: var(--text-main);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 6px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .guideline-btn:hover {
+            color: var(--text-heading);
+            border-color: var(--text-heading);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .close-btn {
+            position: absolute;
+            top: 1.5rem;
+            right: 1.5rem;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: var(--text-main);
+            transition: color 0.2s;
+        }
+
+        .close-btn:hover {
+            color: var(--text-heading);
+        }
+
+        .guideline-content {
+            color: var(--text-main);
+            line-height: 1.6;
+            margin-bottom: 2rem;
+        }
+
+        .guideline-content ul {
+            padding-left: 1.5rem;
+            margin-top: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .guideline-content li {
+            margin-bottom: 0.75rem;
+        }
+
+        .guideline-content strong {
+            color: var(--text-heading);
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <div class="editor-layout">
+        <main class="editor-container">
+
+            <!-- Toolbar Sticky oben -->
+            <div class="toolbar-wrapper">
+                <div class="toolbar">
+                    <div class="tools-left">
+                        <button class="tool-btn" onclick="window.location.href='news.html'" title="Zurück">
+                            <i class="fa-solid fa-arrow-left"></i>
+                        </button>
+                        <div class="tool-divider"></div>
+
+                        <!-- Textformatierungen mit data-command für Statusprüfung -->
+                        <button class="tool-btn" data-command="bold" onclick="formatText('bold')" title="Fett">
+                            <i class="fa-solid fa-bold"></i>
+                        </button>
+                        <button class="tool-btn" data-command="italic" onclick="formatText('italic')" title="Kursiv">
+                            <i class="fa-solid fa-italic"></i>
+                        </button>
+                        <button class="tool-btn" data-command="underline" onclick="formatText('underline')"
+                            title="Unterstrichen">
+                            <i class="fa-solid fa-underline"></i>
+                        </button>
+
+                        <div class="tool-divider"></div>
+
+                        <button class="tool-btn" id="btn-h2" onclick="toggleHeading()" title="Zwischentitel">
+                            <i class="fa-solid fa-heading"></i>
+                        </button>
+                        <button class="tool-btn" data-command="insertUnorderedList"
+                            onclick="formatText('insertUnorderedList')" title="Aufzählung">
+                            <i class="fa-solid fa-list-ul"></i>
+                        </button>
+                        <button class="tool-btn" onclick="triggerInlineImageUpload()" title="Bild in Text einfügen">
+                            <i class="fa-solid fa-image"></i>
+                        </button>
+                    </div>
+
+                    <div class="tools-right">
+                        <button class="guideline-btn" id="guidelineBtn" title="Rahmenbedingungen anzeigen">
+                            <i class="fa-solid fa-book-open"></i> Guidelines
+                        </button>
+                        <button class="publish-btn" id="publishBtn">
+                            <i class="fa-solid fa-paper-plane"></i> Veröffentlichen
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Meta Daten: Kategorie (Jetzt als Textfeld mit Vorschlägen) -->
+            <div class="meta-inputs">
+                <input type="text" class="category-select" id="articleCategory" list="categoryOptions"
+                    placeholder="Kategorie wählen o. tippen..." autocomplete="off">
+                <datalist id="categoryOptions">
+                    <option value="News"></option>
+                    <option value="Release"></option>
+                    <option value="Interview"></option>
+                    <option value="Festival"></option>
+                    <option value="Newcomer"></option>
+                </datalist>
+            </div>
+
+            <!-- Titel -->
+            <textarea class="title-input" id="articleTitle" placeholder="Packende Schlagzeile..." rows="1"
+                oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+
+            <!-- Cover Bild Wrapper (Damit die Credits direkt am Bild kleben) -->
+            <div class="cover-wrapper" style="display: flex; flex-direction: column; gap: 0.5rem;">
+                <div class="cover-image-container" onclick="document.getElementById('coverImageUpload').click()">
+                    <div class="cover-placeholder" id="coverPlaceholder">
+                        <i class="fa-solid fa-camera"></i>
+                        <p>Titelbild hochladen</p>
+                    </div>
+                    <img id="coverPreview" src="" alt="Cover Vorschau">
+                    <input type="file" id="coverImageUpload" accept="image/*" style="display: none;"
+                        onchange="previewCoverImage(event)">
+                </div>
+                <input type="text" id="coverCaption" class="cover-caption-input"
+                    placeholder="Bildunterschrift & Credits für Titelbild..." style="display: none;">
+            </div>
+
+            <!-- Versteckter Upload für Bilder INNERT des Textes -->
+            <input type="file" id="inlineImageUpload" accept="image/*" style="display: none;"
+                onchange="insertInlineImage(event)">
+
+            <!-- Der eigentliche Text-Editor (WYSIWYG) -->
+            <div class="content-input" id="articleContent" contenteditable="true"
+                placeholder="Was gibt's Neues in der Szene? Beginne hier zu schreiben..."></div>
+
+        </main>
+    </div>
+
+    <!-- Veröffentlichen Modal -->
+    <div id="publishModal" class="modal">
+        <div class="modal-content">
+            <h3>Artikel einreichen</h3>
+            <div class="modal-warning">
+                <i class="fa-solid fa-triangle-exclamation fa-lg"></i>
+                <span>Wichtig: Der Artikel kann nach der Veröffentlichung nicht mehr bearbeitet werden.</span>
+            </div>
+            <p class="modal-text">
+                Bitte beachte, dass dein Beitrag unseren Rahmenbedingungen entsprechen muss. Er wird von unserem Team
+                sorgfältig geprüft, bevor er online geht. Dies kann in der Regel <strong>1-2 Tage</strong> in Anspruch
+                nehmen.
+            </p>
+            <div class="modal-actions">
+                <button class="btn-cancel" id="cancelPublish">Abbrechen</button>
+                <button class="btn-confirm" id="confirmPublish">Verstanden & Einreichen</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Guideline Modal -->
+    <div id="guidelineModal" class="modal">
+        <div class="modal-content">
+            <span class="close-btn" id="closeGuideline">&times;</span>
+            <h3>Rahmenbedingungen</h3>
+            <div class="guideline-content">
+                <p>Damit dein Artikel auf DIALEKTWERK veröffentlicht wird, beachte bitte folgende Punkte:</p>
+                <ul>
+                    <li><strong>Fokus:</strong> Der Artikel muss sich zwingend auf die Schweizer Musikszene,
+                        Mundart-Kultur oder lokale Events beziehen.</li>
+                    <li><strong>Qualität:</strong> Achte auf eine gute Rechtschreibung, Lesbarkeit und sinnvolle Absätze
+                        (Zwischentitel nutzen!).</li>
+                    <li><strong>Respektvoll:</strong> Keine Beleidigungen, Diskriminierung oder hasserfüllte Inhalte.
+                    </li>
+                    <li><strong>Urheberrecht:</strong> Verwende nur Bilder und Texte, für die du die Rechte besitzt. Gib
+                        Fotografen in den Credits an.</li>
+                    <li><strong>Kein Spam:</strong> Reine Werbetexte ohne echten redaktionellen Mehrwert werden
+                        abgelehnt.</li>
+                </ul>
+                <p>Jeder Artikel wird vor der Freischaltung von unserem Team manuell auf diese Kriterien geprüft.</p>
+            </div>
+            <div class="modal-actions">
+                <button class="btn-confirm" id="acceptGuideline">Alles klar</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification (Erfolgsmeldung) -->
+    <div class="toast" id="successToast">
+        Artikel erfolgreich veröffentlicht!
+    </div>
+
+    <script>
+        const contentInput = document.getElementById('articleContent');
+        const publishBtn = document.getElementById('publishBtn');
+        const formatButtons = document.querySelectorAll('.tool-btn[data-command]');
+        const h2Btn = document.getElementById('btn-h2');
+        let savedRange = null; // Speichert Cursor-Position für Bilder-Upload
+
+        // Formatierungsbefehle ausführen (Bold, Italic etc.)
+        function formatText(command) {
+            document.execCommand(command, false, null);
+            contentInput.focus();
+            checkActiveFormats();
+        }
+
+        // Toggle für Zwischentitel (H2 an/aus)
+        function toggleHeading() {
+            // Prüfen, ob wir gerade in einem H2 sind
+            let isAlreadyH2 = false;
+            let node = document.getSelection().anchorNode;
+
+            if (node != null) {
+                while (node && node.nodeName !== 'DIV') {
+                    if (node.nodeName === 'H2') {
+                        isAlreadyH2 = true;
+                        break;
+                    }
+                    node = node.parentNode;
+                }
+            }
+
+            if (isAlreadyH2) {
+                // Zurück zu normalem Paragraph
+                document.execCommand('formatBlock', false, 'p');
+            } else {
+                // Mach H2 daraus
+                document.execCommand('formatBlock', false, 'H2');
+            }
+            contentInput.focus();
+            checkActiveFormats();
+        }
+
+        // Prüft, welche Formate an der Cursorposition aktiv sind, um Buttons lila zu färben
+        function checkActiveFormats() {
+            formatButtons.forEach(btn => {
+                const command = btn.getAttribute('data-command');
+                if (document.queryCommandState(command)) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            // H2 separat prüfen
+            let isH2 = false;
+            let node = document.getSelection().anchorNode;
+            if (node != null) {
+                while (node && node.nodeName !== 'DIV') {
+                    if (node.nodeName === 'H2') { isH2 = true; break; }
+                    node = node.parentNode;
+                }
+            }
+            if (isH2) h2Btn.classList.add('active');
+            else h2Btn.classList.remove('active');
+        }
+
+        // Event-Listener, um Toolbar-Status beim Tippen und Klicken upzudaten
+        contentInput.addEventListener('keyup', checkActiveFormats);
+        contentInput.addEventListener('mouseup', checkActiveFormats);
+        contentInput.addEventListener('click', checkActiveFormats);
+
+        contentInput.addEventListener('paste', (e) => {
+            e.preventDefault();
+            let text = (e.originalEvent || e).clipboardData.getData('text/plain');
+
+            // Check ob der kopierte Text eine URL ist
+            const urlRegex = /^(https?:\/\/[^\s]+)$/i;
+
+            if (urlRegex.test(text.trim())) {
+                // Text ist eine Web-Adresse -> als echten Link einfügen
+                document.execCommand('insertHTML', false, `<a href="${text.trim()}" target="_blank">${text.trim()}</a>`);
+            } else {
+                // Normaler Text -> ohne Formatierung einfügen
+                document.execCommand('insertText', false, text);
+            }
+        });
+
+
+        // 1. Titelbild
+        function previewCoverImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    const img = document.getElementById('coverPreview');
+                    img.src = e.target.result;
+                    img.style.display = 'block';
+                    document.getElementById('coverPlaceholder').style.display = 'none';
+                    document.getElementById('coverCaption').style.display = 'block'; // Zeigt das Credits-Feld an
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // 2. Bilder im Text (Inline)
+        function triggerInlineImageUpload() {
+            // Speichere die Cursor-Position, bevor das File-Fenster öffnet
+            const selection = window.getSelection();
+            if (selection.getRangeAt && selection.rangeCount) {
+                savedRange = selection.getRangeAt(0);
+            }
+            document.getElementById('inlineImageUpload').click();
+        }
+
+        function insertInlineImage(event) {
+            const file = event.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (e) {
+                    // Fokus zurück auf Editor und gemerkten Cursor wiederherstellen
+                    contentInput.focus();
+                    if (savedRange) {
+                        const selection = window.getSelection();
+                        selection.removeAllRanges();
+                        selection.addRange(savedRange);
+                    }
+
+                    // Bild als <figure> Block mit <figcaption> für Credits einfügen
+                    const htmlToInsert = `
+                        <figure contenteditable="false">
+                            <img src="${e.target.result}" alt="Artikel Bild">
+                            <figcaption contenteditable="true"></figcaption>
+                        </figure>
+                        <p><br></p>
+                    `;
+                    document.execCommand('insertHTML', false, htmlToInsert);
+
+                    // Reset File Input, damit man dasselbe Bild nochmal wählen könnte
+                    document.getElementById('inlineImageUpload').value = '';
+                }
+                reader.readAsDataURL(file);
+            }
+        }
+
+        // Modal Logik
+        const publishModal = document.getElementById('publishModal');
+        const confirmPublishBtn = document.getElementById('confirmPublish');
+        const cancelPublishBtn = document.getElementById('cancelPublish');
+
+        // Guideline Modal Logik
+        const guidelineBtn = document.getElementById('guidelineBtn');
+        const guidelineModal = document.getElementById('guidelineModal');
+        const closeGuideline = document.getElementById('closeGuideline');
+        const acceptGuideline = document.getElementById('acceptGuideline');
+
+        // Guidelines öffnen & schliessen
+        guidelineBtn.addEventListener('click', () => {
+            guidelineModal.style.display = 'flex';
+        });
+
+        closeGuideline.addEventListener('click', () => {
+            guidelineModal.style.display = 'none';
+        });
+
+        acceptGuideline.addEventListener('click', () => {
+            guidelineModal.style.display = 'none';
+        });
+
+        publishBtn.addEventListener('click', () => {
+            const title = document.getElementById('articleTitle').value.trim();
+            const category = document.getElementById('articleCategory').value;
+            const content = contentInput.innerHTML.trim();
+
+            // Simple Validierung VOR dem Pop-up
+            if (!category) {
+                alert("Bitte wähle eine Kategorie aus oder tippe eine eigene ein.");
+                return;
+            }
+            if (!title) {
+                alert("Bitte gib eine Schlagzeile ein.");
+                return;
+            }
+            if (content.length < 20 || content === '<br>') {
+                alert("Der Artikel ist noch etwas zu kurz.");
+                return;
+            }
+
+            // Zeige das Pop-up an, wenn die Validierung bestanden ist
+            publishModal.style.display = 'flex';
+        });
+
+        // Pop-up schliessen bei "Abbrechen"
+        cancelPublishBtn.addEventListener('click', () => {
+            publishModal.style.display = 'none';
+        });
+
+        // Pop-up schliessen bei Klick neben das Fenster
+        window.addEventListener('click', (e) => {
+            if (e.target === publishModal) {
+                publishModal.style.display = 'none';
+            }
+            if (e.target === guidelineModal) {
+                guidelineModal.style.display = 'none';
+            }
+        });
+
+        // Das eigentliche Absenden nach dem Bestätigen im Pop-up
+        confirmPublishBtn.addEventListener('click', () => {
+            // Modal schliessen
+            publishModal.style.display = 'none';
+
+            // Button Loading State auf dem Hauptbutton zeigen
+            publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lädt...';
+            publishBtn.style.opacity = "0.8";
+            publishBtn.style.pointerEvents = "none"; // Verhindert Doppelklicks
+
+            // Simuliere einen Upload zur Datenbank (1.5 Sekunden)
+            setTimeout(() => {
+                const toast = document.getElementById('successToast');
+                // Text der Toast-Notification anpassen
+                toast.innerHTML = '<i class="fa-solid fa-check"></i> Artikel zur Überprüfung eingereicht!';
+                toast.classList.add('show');
+
+                // Nach 2.5 Sekunden zurück zur News-Seite
+                setTimeout(() => {
+                    window.location.href = "news.html";
+                }, 2500);
+            }, 1500);
+        });
+
+        // Placeholder Logik für das contenteditable Div
+        contentInput.addEventListener('input', function () {
+            if (this.innerHTML.trim() === '' || this.innerHTML === '<br>') {
+                this.setAttribute('empty', '');
+            } else {
+                this.removeAttribute('empty');
+            }
+        });
+
+        // Initialer Check für Placeholder
+        if (contentInput.innerHTML.trim() === '') {
+            contentInput.setAttribute('empty', '');
+        }
+    </script>
+</body>
+
+</html>
