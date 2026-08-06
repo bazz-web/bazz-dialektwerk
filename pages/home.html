@@ -1,0 +1,348 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3D Bento Carousel Landingpage</title>
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Hier kommen die separaten Stylesheets für deine Karten rein -->
+    <link rel="stylesheet" href="../cards/card1.css">
+    <link rel="stylesheet" href="../cards/card2.css">
+    <link rel="stylesheet" href="../cards/card3.css">
+    <link rel="stylesheet" href="../cards/card4.css">
+    <link rel="stylesheet" href="../cards/card5.css">
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        gray: {
+                            900: '#0f1117',
+                            800: '#1a1d27',
+                            700: '#272b3a'
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body,
+        html {
+            margin: 0;
+            padding: 0;
+            color: white;
+            font-family: 'Inter', sans-serif;
+            /* Hide default scrollbar for cleaner look */
+            scrollbar-width: none;
+            -ms-overflow-style: none;
+            overflow: hidden;
+            /* Verhindert natives Scrollen für den Endlos-Effekt */
+        }
+
+        body::-webkit-scrollbar {
+            display: none;
+        }
+
+        /* 3D Scene Setup */
+        .scene {
+            perspective: 2500px;
+            transform-style: preserve-3d;
+        }
+
+        .bento-card {
+            transform-style: preserve-3d;
+            /* Subtle transition for effects outside of requestAnimationFrame */
+            transition: box-shadow 0.3s ease, border-color 0.3s ease;
+        }
+
+        /*.bento-card.active {
+            box-shadow: 0 20px 50px -10px rgba(177, 99, 241, 0.3);
+            border-color: rgba(174, 0, 255, 0.5);
+        }*/
+
+        /* Glassmorphism utilities */
+        .glass {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        /* Responsive 3D Scene */
+        .dynamic-scene {
+            perspective: 2500px;
+
+            /* 1. MOBILE (unter 900px) */
+            top: calc(50% + 20px);
+            /* Schiebt die Karte etwas nach unten, weg vom Hamburger-Menü */
+            left: 50%;
+            transform: translate(-50%, -50%);
+
+            width: 75vw;
+            /* Macht die Karte schmaler (vorher 85vw), für mehr Platz zu den Dots */
+            height: 70vh;
+            /* Macht die Karte etwas niedriger für mehr "Atemraum" oben und unten */
+        }
+
+        @media (min-width: 900px) {
+            .dynamic-scene {
+                /* 2. DESKTOP (ab 900px) */
+                top: 50%;
+                /* Auf Desktop wieder exakt in der vertikalen Mitte */
+                left: max(265px, calc(50vw - min(35vw, 550px)));
+                transform: translateY(-50%);
+
+                width: min(70vw, 1100px, calc(100vw - 230px - 120px));
+                height: 70vh;
+                /* Auf Desktop wieder die volle, großzügige Höhe */
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <img src="../images/lila.jpg" alt="background Image" id="background-img">
+
+    <!-- The actual visual part stays fixed on screen -->
+    <!-- The actual visual part stays fixed on screen -->
+    <main class="fixed inset-0 w-full h-full overflow-hidden pointer-events-none z-10">
+
+        <!-- NACHHER (super aufgeräumt): -->
+        <div class="dynamic-scene absolute pointer-events-auto">
+
+            <!-- Carousel Container -->
+            <div id="carousel" class="w-full h-full relative" style="transform-style: preserve-3d;">
+
+                <!-- Karte 1 -->
+                <!-- 'inset-0' sorgt dafür, dass die Karte exakt so groß ist wie der Container, ohne weitere Positionierung -->
+                <div class="bento-card absolute inset-0 rounded-[2rem] glass p-6" data-content="../cards/card1.html">
+                    <div class="flex justify-center items-center w-full h-full text-white/50">Lade Inhalt...</div>
+                </div>
+
+                <!-- Karte 2 -->
+                <div class="bento-card absolute inset-0 rounded-[2rem] glass p-6" data-content="../cards/card2.html">
+                    <!-- Platzhalter für Karte 2 -->
+                    <div class="flex justify-center items-center w-full h-full text-white/50">Lade Inhalt...</div>
+                </div>
+
+                <!-- Karte 3 -->
+                <div class="bento-card absolute inset-0 rounded-[2rem] glass p-6" data-content="../cards/card3.html">
+                    <!-- Platzhalter für Karte 3 -->
+                    <div class="flex justify-center items-center w-full h-full text-white/50">Lade Inhalt...</div>
+                </div>
+
+                <!-- Karte 4 -->
+                <div class="bento-card absolute inset-0 rounded-[2rem] glass p-6" data-content="../cards/card4.html">
+                    <!-- Platzhalter für Karte 4 -->
+                    <div class="flex justify-center items-center w-full h-full text-white/50">Lade Inhalt...</div>
+                </div>
+
+                <!-- Karte 5 -->
+                <div class="bento-card absolute inset-0 rounded-[2rem] glass p-6" data-content="../cards/card5.html">
+                    <!-- Platzhalter für Karte 5 -->
+                    <div class="flex justify-center items-center w-full h-full text-white/50">Lade Inhalt...</div>
+                </div>
+
+            </div>
+        </div>
+
+        <!-- Scroll Progress Indicators (Dots) -->
+        <div
+            class="absolute right-2 min-[900px]:right-6 top-1/2 -translate-y-1/2 flex flex-col gap-3 z-50 pointer-events-auto">
+            <button class="w-2 h-2 rounded-full bg-white transition-all duration-300"></button>
+            <button class="w-2 h-2 rounded-full bg-white/30 hover:bg-white/60 transition-all duration-300"></button>
+            <button class="w-2 h-2 rounded-full bg-white/30 hover:bg-white/60 transition-all duration-300"></button>
+            <button class="w-2 h-2 rounded-full bg-white/30 hover:bg-white/60 transition-all duration-300"></button>
+            <button class="w-2 h-2 rounded-full bg-white/30 hover:bg-white/60 transition-all duration-300"></button>
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const carousel = document.getElementById('carousel');
+            const cards = document.querySelectorAll('.bento-card');
+            const navDots = document.querySelectorAll('.nav-dot');
+
+            const numCards = cards.length;
+            const angleStep = 360 / numCards;
+            let radius = 0;
+
+            function setupCarousel() {
+                // Höhe der Karte plus etwas Abstand
+                const cardHeight = cards[0].offsetHeight;
+                const gap = 30;
+
+                // Radius dynamisch berechnen, damit die Karten perfekt in den 3D-Zylinder passen
+                radius = Math.round(((cardHeight + gap) / 2) / Math.tan(Math.PI / numCards));
+
+                cards.forEach((card, index) => {
+                    const angle = index * -angleStep;
+                    card.style.transform = `rotateX(${angle}deg) translateZ(${radius}px)`;
+                });
+            }
+
+            // Initiale Einrichtung und Update bei Fenstergrößenänderung (Responsive)
+            setupCarousel();
+            window.addEventListener('resize', () => {
+                setupCarousel();
+                // Sofortiges Anwenden der Rotation, damit das Layout nicht zuckt
+                carousel.style.transform = `rotateX(${currentRotation}deg)`;
+            });
+
+            // State variables for infinite virtual scroll
+            let currentRotation = 0;
+            let targetRotation = 0;
+            let scrollTimeout;
+            const SENSITIVITY = 0.15; // Scroll-Geschwindigkeit
+
+            window.addEventListener('wheel', (e) => {
+                // Add rotation directly based on mouse wheel direction
+                targetRotation += e.deltaY * SENSITIVITY;
+
+                // Auto-Snap after scrolling stops
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    targetRotation = Math.round(targetRotation / angleStep) * angleStep;
+                }, 150);
+            }, { passive: false });
+
+            let touchStartY = 0;
+            let touchLastY = 0;
+
+            window.addEventListener('touchstart', (e) => {
+                touchStartY = e.touches[0].clientY;
+                touchLastY = touchStartY;
+                clearTimeout(scrollTimeout);
+            }, { passive: true });
+
+            window.addEventListener('touchmove', (e) => {
+                const touchCurrentY = e.touches[0].clientY;
+                const deltaY = touchLastY - touchCurrentY;
+                // Move rotation based on swipe distance
+                targetRotation += deltaY * (SENSITIVITY * 1.5);
+                touchLastY = touchCurrentY;
+            }, { passive: true });
+
+            window.addEventListener('touchend', () => {
+                // Auto-Snap after swipe ends
+                clearTimeout(scrollTimeout);
+                scrollTimeout = setTimeout(() => {
+                    targetRotation = Math.round(targetRotation / angleStep) * angleStep;
+                }, 100);
+            });
+
+            navDots.forEach(dot => {
+                dot.addEventListener('click', (e) => {
+                    const index = parseInt(e.target.dataset.index);
+
+                    // Smart shortest-path calculation so the carousel doesn't spin backwards wildly
+                    const currentSnapIndex = Math.round(targetRotation / angleStep);
+                    let diff = index - (currentSnapIndex % numCards);
+
+                    // Handle negative modulo logic
+                    if (currentSnapIndex < 0 && diff > 0) diff -= numCards;
+                    if (currentSnapIndex > 0 && diff < 0) diff += numCards;
+
+                    // Optimize path to take the shortest route
+                    if (diff > numCards / 2) diff -= numCards;
+                    if (diff < -numCards / 2) diff += numCards;
+
+                    targetRotation = (currentSnapIndex + diff) * angleStep;
+                });
+            });
+
+            function animate() {
+                // Smooth Lerp
+                currentRotation += (targetRotation - currentRotation) * 0.08;
+                carousel.style.transform = `rotateX(${currentRotation}deg)`;
+
+                // Determine active index for dots, wrapped properly for infinite loop
+                let activeIndex = Math.round(currentRotation / angleStep) % numCards;
+                if (activeIndex < 0) activeIndex += numCards;
+
+                cards.forEach((card, index) => {
+                    let worldAngle = (index * -angleStep + currentRotation) % 360;
+                    if (worldAngle > 180) worldAngle -= 360;
+                    if (worldAngle < -180) worldAngle += 360;
+
+                    const distance = Math.abs(worldAngle);
+
+                    // Fade out and blur as card moves away
+                    const opacity = Math.max(0, 1 - (distance / 60));
+                    const blurAmount = Math.min(20, distance / 3);
+
+                    card.style.opacity = opacity;
+                    card.style.filter = `blur(${blurAmount}px)`;
+
+                    if (distance < 15) {
+                        card.style.pointerEvents = 'auto';
+                        card.classList.add('active');
+                    } else {
+                        card.style.pointerEvents = 'none';
+                        card.classList.remove('active');
+                    }
+                });
+
+                // Update dots based on dynamically calculated active index
+                navDots.forEach((d, i) => {
+                    if (i === activeIndex) {
+                        d.classList.remove('bg-white/20', 'w-3', 'h-3');
+                        d.classList.add('bg-white', 'w-4', 'h-4');
+                    } else {
+                        d.classList.remove('bg-white', 'w-4', 'h-4');
+                        d.classList.add('bg-white/20', 'w-3', 'h-3');
+                    }
+                });
+
+                requestAnimationFrame(animate);
+            }
+
+            // Start animation loop
+            animate();
+        });
+        // --- DYNAMISCHES HTML INJECTING ---
+        async function loadCardContents() {
+            const cards = document.querySelectorAll('.bento-card');
+
+            for (let card of cards) {
+                // Welches Dokument soll geladen werden?
+                const url = card.getAttribute('data-content');
+                if (!url) continue;
+
+                try {
+                    // Hole die Datei
+                    const response = await fetch(url);
+
+                    if (response.ok) {
+                        // Wandle sie in Text (HTML) um und füge sie in die Karte ein
+                        const html = await response.text();
+                        card.innerHTML = html;
+                    } else {
+                        console.error('Fehler: Datei nicht gefunden ->', url);
+                        card.innerHTML = `<div class="text-red-500">Konnte ${url} nicht laden.</div>`;
+                    }
+                } catch (error) {
+                    console.error('Netzwerkfehler beim Laden von ->', url, error);
+                }
+            }
+        }
+
+        // Führe die Funktion aus, sobald die Hauptseite geladen ist
+        window.addEventListener('DOMContentLoaded', loadCardContents);
+    </script>
+</body>
+
+</html>

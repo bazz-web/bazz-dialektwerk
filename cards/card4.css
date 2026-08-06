@@ -1,0 +1,124 @@
+/* Grund-Layout */
+.card4-wrapper {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+    gap: 1.5rem;
+    font-family: sans-serif;
+    color: white;
+}
+
+/* Header Styling */
+.card4-header {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.card4-header h2 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    /* Neuer Farbverlauf für diese Karte: Cyan zu Blau */
+    background: linear-gradient(to right, #00f2fe, #4facfe);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.card4-header p {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Galerie Container */
+.card4-gallery {
+    display: flex;
+    flex-direction: row;
+    flex: 1;
+    gap: 1rem;
+    width: 100%;
+    overflow: hidden;
+    border-radius: 1.5rem;
+}
+
+/* Einzelnes Panel */
+.card4-panel {
+    position: relative;
+    flex: 1;
+    background-image: var(--bg);
+    background-size: cover;
+    background-position: center;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: flex 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+}
+
+/* Hover-Effekt: Panel wird breiter */
+.card4-panel:hover {
+    flex: 4;
+}
+
+/* Dunkles Overlay für Lesbarkeit */
+.card4-panel::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.1) 100%);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.card4-panel:hover::before {
+    opacity: 0.85;
+}
+
+/* Inhalt im Panel (Icon + Text) */
+.card4-panel-content {
+    position: relative;
+    z-index: 1;
+    padding: 1.25rem;
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    white-space: nowrap;
+}
+
+.card4-icon {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
+}
+
+.card4-panel h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: all 0.4s ease;
+    transition-delay: 0.1s;
+}
+
+/* Blendet den Text sanft ein, wenn das Panel aufklappt */
+.card4-panel:hover h3 {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Responsive: Auf dem Handy untereinander stapeln */
+@media (max-width: 768px) {
+    .card4-gallery {
+        flex-direction: column;
+    }
+}
