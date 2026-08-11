@@ -4,7 +4,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>News - DIALEKTWERK</title>
+    <title>DW Magazin</title>
     <link rel="stylesheet" href="../common/kigostyle.css">
     <link rel="stylesheet" href="news.css">
     <link rel="stylesheet" href="../common/navbar.css">
@@ -20,7 +20,7 @@
 
         <main class="content-area">
             <header class="page-header">
-                <h1>DW News</h1>
+                <h1>DW Magazin</h1>
                 <p>Schlagzeilen aus der Schweizer Musikszene.</p>
             </header>
 
@@ -28,12 +28,15 @@
             <div class="bento-masonry">
 
                 <!-- Artikel 1: Gross & Dunkel -->
-                <article class="bento-card large bg-dark" onclick="window.location.href='artikel.html?id=1'">
+
+                <article class="bento-card large bg-dark" onclick="window.location.href='artikel.html'">
                     <span class="category">Comeback</span>
                     <h2>Züri West sind zurück: Neues Album bricht alle Rekorde</h2>
-                    <p>Die Berner Legenden liefern den Soundtrack für den Sommer. Wir haben reingehört und analysieren
+                    <p>Die Berner Legenden liefern den Soundtrack für den Sommer. Wir haben reingehört und
+                        analysieren
                         den neuen Sound, der alte Fans abholt und neue begeistert.</p>
                 </article>
+
 
                 <!-- Artikel 2: Hochformat & Zeitungspapier-Look -->
                 <article class="bento-card tall bg-paper" onclick="window.location.href='artikel.html?id=2'">
@@ -110,22 +113,8 @@
     </div>
 
     <!-- Plus-Button für neue News -->
-    <button id="addNewsBtn" class="fab-button">+</button>
+    <button id="createNewsBtn" class="fab-button">+</button>
 
-    <!-- Modal (Instruktion) -->
-    <div id="instructionModal" class="modal">
-        <div class="modal-content bento-card bg-paper">
-            <span class="close-btn">&times;</span>
-            <h2 style="font-family: 'Playfair Display', serif; margin-top: 0;">Neuen Artikel verfassen</h2>
-            <p>Willst du etwas Neues aus der Mundart-Szene teilen? Beachte folgendes:</p>
-            <ul style="margin-bottom: 2rem;">
-                <li>Schreibe eine packende Headline (Zeitungs-Stil).</li>
-                <li>Ordne den Artikel einer Kategorie zu (z.B. Newcomer, Release, Festival).</li>
-                <li>Der Text kann auf Hochdeutsch oder Bärndeutsch verfasst sein.</li>
-            </ul>
-            <button id="createNewsBtn" class="action-btn">Weiter zum Editor</button>
-        </div>
-    </div>
 </body>
 
 </html>

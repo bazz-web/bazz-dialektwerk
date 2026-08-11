@@ -17,6 +17,7 @@
 .card2-header h2 {
     font-size: 2rem;
     margin: 0 0 0.5rem 0;
+    /* Ein passender, heller Farbverlauf */
     background: linear-gradient(to right, #ffffff, #a78bfa);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
@@ -33,7 +34,6 @@
 .card2-gallery {
     display: flex;
     flex-direction: row;
-    /* Auf dem Desktop nebeneinander */
     flex: 1;
     gap: 1rem;
     width: 100%;
@@ -41,24 +41,24 @@
     border-radius: 1.5rem;
 }
 
-/* Einzelnes Panel */
+/* Einzelnes Panel (als klickbarer Link) */
 .card2-panel {
     position: relative;
     flex: 1;
-    /* Startgröße */
     background-image: var(--bg);
     background-size: cover;
     background-position: center;
     border-radius: 1rem;
     overflow: hidden;
     transition: flex 0.6s cubic-bezier(0.25, 1, 0.5, 1);
-    /* Die weiche, federnde Animation */
     cursor: pointer;
     display: flex;
     align-items: flex-end;
+    text-decoration: none;
+    color: white;
 }
 
-/* Hover-Effekt: Panel wird breiter */
+/* Hover-Effekt: Panel wird deutlich breiter */
 .card2-panel:hover {
     flex: 4;
 }
@@ -107,7 +107,6 @@
     margin: 0;
     font-size: 1.25rem;
     opacity: 0;
-    /* Text ist anfangs unsichtbar */
     transform: translateX(-15px);
     transition: all 0.4s ease;
     transition-delay: 0.1s;
@@ -119,7 +118,7 @@
     transform: translateX(0);
 }
 
-/* Responsive: Auf dem Handy untereinander stapeln (Höhe ändert sich statt Breite) */
+/* Responsive: Auf dem Handy untereinander stapeln */
 @media (max-width: 768px) {
     .card2-gallery {
         flex-direction: column;

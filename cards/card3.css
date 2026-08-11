@@ -1,174 +1,126 @@
-/* Wrapper füllt die Karte nahtlos aus */
+/* Grund-Layout */
 .card3-wrapper {
-    position: relative;
+    display: flex;
+    flex-direction: column;
     height: 100%;
-    width: 100%;
-    border-radius: 1.5rem;
-    overflow: hidden;
+    gap: 1.5rem;
     font-family: sans-serif;
-    background: #111;
-}
-
-/* Badge oben mittig */
-.card3-badge-top {
-    position: absolute;
-    top: 1.5rem;
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 10;
-    background: rgba(255, 255, 255, 0.1);
-    backdrop-filter: blur(10px);
-    -webkit-backdrop-filter: blur(10px);
-    padding: 0.5rem 1.5rem;
-    border-radius: 9999px;
     color: white;
-    font-size: 0.85rem;
-    font-weight: 700;
-    letter-spacing: 2px;
-    text-transform: uppercase;
-    border: 1px solid rgba(255, 255, 255, 0.2);
-    pointer-events: none;
 }
 
-/* Das 3er-Grid */
-.card3-grid {
+/* Header Styling */
+.card3-header {
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.card3-header h2 {
+    font-size: 2rem;
+    margin: 0 0 0.5rem 0;
+    /* Neuer Farbverlauf: Pink zu Lila */
+    background: linear-gradient(to right, #ec4899, #c084fc);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 800;
+}
+
+.card3-header p {
+    color: rgba(255, 255, 255, 0.6);
+    margin: 0;
+    font-size: 1.1rem;
+}
+
+/* Galerie Container */
+.card3-gallery {
     display: flex;
-    flex-direction: column;
-    height: 100%;
-    width: 100%;
-}
-
-@media (min-width: 768px) {
-    .card3-grid {
-        flex-direction: row;
-    }
-}
-
-/* Die einzelnen Boxen */
-.card3-box {
+    flex-direction: row;
     flex: 1;
-    position: relative;
-    display: flex;
-    flex-direction: column;
-    justify-content: flex-end;
-    /* Text bleibt unten */
-    text-decoration: none;
-    color: white;
-    padding: 2.5rem 1.5rem;
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    border-right: 1px solid rgba(255, 255, 255, 0.05);
+    gap: 1rem;
+    width: 100%;
     overflow: hidden;
+    border-radius: 1.5rem;
 }
 
-.card3-box:last-child {
-    border-right: none;
-}
-
-/* Hover: Box dehnt sich aus */
-.card3-box:hover {
-    flex: 1.6;
-}
-
-/* Hintergrundbilder: Anfangs dunkel und farblos */
-.card3-bg {
-    position: absolute;
-    inset: 0;
+/* Einzelnes Panel (als klickbarer Link) */
+.card3-panel {
+    position: relative;
+    flex: 1;
     background-image: var(--bg);
     background-size: cover;
     background-position: center;
-    filter: grayscale(100%) brightness(0.3);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-    z-index: 0;
+    border-radius: 1rem;
+    overflow: hidden;
+    transition: flex 0.6s cubic-bezier(0.25, 1, 0.5, 1);
+    cursor: pointer;
+    display: flex;
+    align-items: flex-end;
+    text-decoration: none;
+    color: white;
 }
 
-/* Schwarzer Verlauf von unten für perfekten Text-Kontrast - IMMER AKTIV */
-.card3-box::before {
+/* Hover-Effekt: Panel wird breiter */
+.card3-panel:hover {
+    flex: 4;
+}
+
+/* Dunkles Overlay für Lesbarkeit */
+.card3-panel::before {
     content: '';
     position: absolute;
     inset: 0;
-    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, transparent 60%);
+    background: linear-gradient(to top, rgba(0, 0, 0, 0.95) 0%, rgba(0, 0, 0, 0.1) 100%);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.card3-panel:hover::before {
+    opacity: 0.85;
+}
+
+/* Inhalt im Panel (Icon + Text) */
+.card3-panel-content {
+    position: relative;
     z-index: 1;
-    opacity: 0.7;
-    /* Standardmäßig leicht sichtbar für gute Lesbarkeit */
-    transition: opacity 0.6s ease;
-}
-
-/* Hover-Bild: Farbe an, Zoom rein */
-.card3-box:hover .card3-bg {
-    filter: grayscale(0%) brightness(0.8);
-    transform: scale(1.05);
-}
-
-.card3-box:hover::before {
-    opacity: 1;
-    /* Schatten wird beim Hovern noch etwas kräftiger */
-}
-
-/* Das Glas-Icon in der Mitte */
-.card3-icon-wrapper {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    transform: translate(-50%, -50%);
-    z-index: 2;
+    padding: 1.25rem;
     display: flex;
-    justify-content: center;
     align-items: center;
-    width: 5rem;
-    height: 5rem;
-    border-radius: 50%;
-    background: rgba(255, 255, 255, 0.05);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
-    border: 1px solid rgba(255, 255, 255, 0.15);
-    transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+    gap: 1rem;
+    white-space: nowrap;
 }
 
 .card3-icon {
-    font-size: 2rem;
-    transition: transform 0.3s ease;
-}
-
-/* Hover: Icon schwebt nach oben und wird kleiner */
-.card3-box:hover .card3-icon-wrapper {
-    top: 30%;
-    transform: translate(-50%, -50%) scale(0.8);
-    background: rgba(255, 255, 255, 0.15);
-    border-color: rgba(255, 255, 255, 0.4);
-    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-}
-
-/* Der Textbereich (jetzt IMMER sichtbar) */
-.card3-content {
-    position: relative;
-    z-index: 2;
-    text-align: center;
-    transition: transform 0.6s cubic-bezier(0.16, 1, 0.3, 1);
-}
-
-/* Hover: Text fährt als dynamischer Effekt ein winziges Stück nach oben */
-.card3-box:hover .card3-content {
-    transform: translateY(-8px);
-}
-
-.card3-content h2 {
-    font-size: clamp(1.3rem, 2.5vw, 1.8rem);
-    font-weight: 800;
-    margin: 0 0 0.5rem 0;
-    line-height: 1.1;
-    text-transform: uppercase;
-    letter-spacing: 1px;
-    text-shadow: 0 2px 10px rgba(0, 0, 0, 0.8);
-}
-
-.card3-arrow {
+    background: rgba(255, 255, 255, 0.2);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    border-radius: 50%;
     font-size: 1.5rem;
-    color: #ff416c;
-    /* Der Pfeil macht auch eine kleine Bewegung beim Hovern */
-    transition: transform 0.4s ease;
-    display: inline-block;
+    flex-shrink: 0;
+    border: 1px solid rgba(255, 255, 255, 0.3);
 }
 
-.card3-box:hover .card3-arrow {
-    transform: translateX(5px);
+.card3-panel h3 {
+    margin: 0;
+    font-size: 1.25rem;
+    opacity: 0;
+    transform: translateX(-15px);
+    transition: all 0.4s ease;
+    transition-delay: 0.1s;
+}
+
+/* Blendet den Text sanft ein, wenn das Panel aufklappt */
+.card3-panel:hover h3 {
+    opacity: 1;
+    transform: translateX(0);
+}
+
+/* Responsive: Auf dem Handy untereinander stapeln */
+@media (max-width: 768px) {
+    .card3-gallery {
+        flex-direction: column;
+    }
 }
