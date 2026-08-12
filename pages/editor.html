@@ -14,6 +14,11 @@
         href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,700;1,700&family=Inter:wght@400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="../favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="../favicon/favicon.svg" />
+    <link rel="shortcut icon" href="../favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="../favicon/site.webmanifest" />
     <style>
         :root {
             --bg-main: #09090b;
@@ -483,6 +488,63 @@
         .guideline-content strong {
             color: var(--text-heading);
         }
+
+        /* 1. Macht das innere Tag-Eingabefeld komplett unsichtbar im Rahmen, 
+      sodass der Container selbst wie das Eingabefeld wirkt */
+        .tagInput {
+            background: transparent !important;
+            border: none !important;
+            outline: none !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            width: 100% !important;
+            box-shadow: none !important;
+            color: inherit;
+            font-size: inherit;
+            color: #ffffff;
+        }
+
+        /* 2. Zwingt den Tag-Container, exakt dieselben Innenabstände wie dein Kategorie-Feld zu haben */
+        .tagContainer.category-select {
+            display: flex;
+            flex-direction: column;
+            height: auto;
+            /* Wächst automatisch mit, wenn viele Tags dazukommen */
+            padding: 10px 16px;
+            /* Übernehme hier exakt das Padding, das dein .category-select-Feld oben hat */
+            box-sizing: border-box;
+        }
+
+        .tagInput::placeholder {
+            color: rgba(255, 255, 255, 0.4);
+        }
+
+        .tagInput:focus {
+            border-color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Style für die fertigen Tag-Badges, die darin auftauchen */
+        .tag-badge {
+            background-color: rgba(255, 255, 255, 0.15);
+            color: #ffffff;
+            padding: 4px 10px;
+            border-radius: 15px;
+            font-size: 0.8rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            margin-right: 4px;
+            margin-bottom: 4px;
+        }
+
+        .tag-badge .remove-tag {
+            cursor: pointer;
+            opacity: 0.7;
+        }
+
+        .tag-badge .remove-tag:hover {
+            opacity: 1;
+        }
     </style>
 </head>
 
@@ -539,15 +601,21 @@
 
             <!-- Meta Daten: Kategorie (Jetzt als Textfeld mit Vorschlägen) -->
             <div class="meta-inputs">
-                <input type="text" class="category-select" id="articleCategory" list="categoryOptions"
+                <input type="text" class="tagContainer category-select" id="articleCategory" list="categoryOptions"
                     placeholder="Kategorie wählen o. tippen..." autocomplete="off">
-                <datalist id="categoryOptions">
+                <datalist id="categoryOptions" class="tagInput">
                     <option value="News"></option>
                     <option value="Release"></option>
                     <option value="Interview"></option>
                     <option value="Festival"></option>
                     <option value="Newcomer"></option>
                 </datalist>
+            </div>
+            <!-- Der Tag-Bereich, der sich nahtlos einfügt -->
+            <div id="tagContainer" class="tagContainer category-select">
+                <div id="tagList" class="tagList" style="display: flex; gap: 6px; margin-bottom: 4px;"></div>
+                <input type="text" id="tagInput" class="tagInput" placeholder="+ Tag hinzufügen (Enter drücken)..."
+                    style="width: 100%;">
             </div>
 
             <!-- Titel -->
@@ -873,6 +941,40 @@
         // Initialer Check für Placeholder
         if (contentInput.innerHTML.trim() === '') {
             contentInput.setAttribute('empty', '');
+        }
+        const tagInput = document.getElementById('tagInput');
+        const tagList = document.getElementById('tagList');
+        let tags = [];
+
+        tagInput.addEventListener('keydown', function (e) {
+            if (e.key === 'Enter' || e.key === ',') {
+                e.preventDefault();
+                const tagText = tagInput.value.trim().replace(',', '');
+
+                if (tagText && !tags.includes(tagText)) {
+                    tags.push(tagText);
+                    renderTags();
+                    tagInput.value = '';
+                }
+            }
+        });
+
+        function renderTags() {
+            tagList.innerHTML = '';
+            tags.forEach((tag, index) => {
+                const badge = document.createElement('div');
+                badge.className = 'tag-badge';
+                badge.innerHTML = `
+            #${tag} 
+            <span class="remove-tag" onclick="removeTag(${index})">&times;</span>
+        `;
+                tagList.appendChild(badge);
+            });
+        }
+
+        function removeTag(index) {
+            tags.splice(index, 1);
+            renderTags();
         }
     </script>
 </body>
