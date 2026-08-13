@@ -545,6 +545,215 @@
         .tag-badge .remove-tag:hover {
             opacity: 1;
         }
+
+        /* Container für das korrekte Alignment */
+        .ai-toggle-wrapper {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            /* Abstand zum Tag-Widget darüber */
+            margin-bottom: 25px;
+            /* Abstand zur großen Schlagzeile darunter */
+        }
+
+        /* Text neben dem Toggle */
+        .ai-toggle-label {
+            margin-left: 12px;
+            color: #888888;
+            /* Entspricht in etwa der Farbe deines Platzhalter-Textes */
+            font-family: inherit;
+            font-size: 14px;
+            cursor: pointer;
+            user-select: none;
+        }
+
+        /* Der Toggle-Container */
+        .ai-switch {
+            position: relative;
+            display: inline-block;
+            width: 44px;
+            height: 24px;
+        }
+
+        /* Versteckt die Standard-HTML-Checkbox */
+        .ai-switch input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        /* Der Schieberegler (Slider) */
+        .ai-slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #2a2a2a;
+            /* Dunkles Grau für den Inaktiv-Zustand */
+            border: 1px solid #444;
+            transition: .3s;
+            border-radius: 24px;
+        }
+
+        /* Der Punkt im Schieberegler */
+        .ai-slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 3px;
+            bottom: 3px;
+            background-color: #777;
+            /* Grau im inaktiven Zustand */
+            transition: .3s;
+            border-radius: 50%;
+        }
+
+        /* Wenn der Toggle aktiviert ist */
+        input:checked+.ai-slider {
+            background-color: #4CAF50;
+            /* Ein dezentes Grün signalisiert "Aktiviert" */
+            border-color: #4CAF50;
+        }
+
+        /* Weißer Punkt, wenn aktiviert */
+        input:checked+.ai-slider:before {
+            transform: translateX(20px);
+            background-color: #ffffff;
+        }
+
+        /* Hover-Effekt für den Text */
+        .ai-toggle-label:hover {
+            color: #aaaaaa;
+        }
+
+        /* Container für Autor und Lesezeit */
+        .meta-row {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-bottom: 20px;
+        }
+
+        /* Lesezeit-Anzeige */
+        .reading-time {
+            color: #888888;
+            font-size: 0.9rem;
+            font-family: inherit;
+        }
+
+        /* Der Lead-Text (Untertitel) */
+        .lead-input {
+            width: 100%;
+            background: transparent;
+            border: none;
+            color: #cccccc;
+            /* Etwas heller als der Haupttext, dunkler als die Headline */
+            font-size: 1.25rem;
+            /* Zwischengröße */
+            font-family: 'Inter', sans-serif;
+            /* Oder deine gewählte serifenlose Schrift */
+            line-height: 1.5;
+            resize: none;
+            outline: none;
+            margin-bottom: 30px;
+            padding: 0;
+            min-height: 60px;
+            overflow: hidden;
+            /* Versteckt den unschönen Scrollbalken */
+            resize: none;
+        }
+
+        .lead-input::placeholder {
+            color: rgba(255, 255, 255, 0.3);
+        }
+
+        /* Optional: Zitat-Block Vorschau im Haupt-Textfeld (falls du ein div mit contenteditable nutzt) */
+        blockquote {
+            border-left: 4px solid #781eb4;
+            /* Ein schickes Lila als Akzent */
+            margin: 1.5em 10px;
+            padding: 0.5em 10px;
+            color: #e0e0e0;
+            font-style: italic;
+            background: rgba(255, 255, 255, 0.05);
+        }
+
+        /* ==========================================
+   FANCY ZITATE (Pixelgenau auf Text-Höhe)
+   ========================================== */
+        .content-input blockquote {
+            position: relative;
+            margin: 2.5rem 0;
+            padding: 1.5rem 5.5rem;
+            border: none;
+            background: rgba(124, 58, 237, 0.05);
+            border-radius: 12px;
+            font-family: 'Playfair Display', serif;
+            font-size: 1.6rem;
+            font-style: italic;
+            color: #ffffff;
+            line-height: 1.6;
+            display: block;
+        }
+
+        /* Das öffnende Wasserzeichen */
+        .content-input blockquote::before {
+            content: "«";
+            position: absolute;
+            left: 15px;
+            bottom: 0.7rem;
+            /* Schiebt das Zeichen nach unten auf die Mitte der 1. Zeile */
+            font-size: 6rem;
+            color: rgba(124, 58, 237, 0.15);
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        /* Das schliessende Wasserzeichen */
+        .content-input blockquote::after {
+            content: "»";
+            position: absolute;
+            right: 15px;
+            bottom: 0.7rem;
+            /* Schiebt das Zeichen nach oben auf die Mitte der letzten Zeile */
+            font-size: 6rem;
+            color: rgba(124, 58, 237, 0.15);
+            font-family: 'Playfair Display', serif;
+            line-height: 1;
+            pointer-events: none;
+        }
+
+        /* ==========================================
+   EMBEDS (Videos & Audio)
+   ========================================== */
+        .embed-wrapper {
+            margin: 2em 0;
+            display: flex;
+            justify-content: center;
+            width: 100%;
+        }
+
+        /* Basis-Styling für alle iframes (z.B. Spotify, Apple Music) */
+        .embed-wrapper iframe {
+            width: 100%;
+            max-width: 100%;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
+            border: none;
+        }
+
+        /* Spezial-Trick für YouTube & Vimeo: Zwingt sie immer ins 16:9 Format */
+        .embed-wrapper iframe[src*="youtube.com"],
+        .embed-wrapper iframe[src*="youtu.be"],
+        .embed-wrapper iframe[src*="vimeo.com"] {
+            aspect-ratio: 16 / 9;
+            height: auto !important;
+            /* Überschreibt die feste, zerquetschte Höhe aus dem YouTube-Code */
+        }
     </style>
 </head>
 
@@ -586,6 +795,23 @@
                         <button class="tool-btn" onclick="triggerInlineImageUpload()" title="Bild in Text einfügen">
                             <i class="fa-solid fa-image"></i>
                         </button>
+                        <button type="button" id="quoteBtn" class="tool-btn" title="Zitat einfügen">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 11h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6c0 2.5-2 4-4 4">
+                                </path>
+                                <path d="M19 11h-4a1 1 0 0 1-1-1V7a1 1 0 0 1 1-1h3a1 1 0 0 1 1 1v6c0 2.5-2 4-4 4">
+                                </path>
+                            </svg>
+                        </button>
+
+                        <button type="button" id="embedBtn" class="tool-btn" title="Code/Embed einfügen">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+                                stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+                                <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+                            </svg>
+                        </button>
                     </div>
 
                     <div class="tools-right">
@@ -617,10 +843,28 @@
                 <input type="text" id="tagInput" class="tagInput" placeholder="+ Tag hinzufügen (Enter drücken)..."
                     style="width: 100%;">
             </div>
+            <div class="ai-toggle-wrapper">
+                <label class="ai-switch">
+                    <input type="checkbox" id="ai-content-toggle" name="ai_generated_content" value="1">
+                    <span class="ai-slider round"></span>
+                </label>
+                <label for="ai-content-toggle" class="ai-toggle-label">enthält KI generierte Inhalte</label>
+            </div>
 
             <!-- Titel -->
             <textarea class="title-input" id="articleTitle" placeholder="Packende Schlagzeile..." rows="1"
                 oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
+
+            <!-- Autoren-Auswahl und Lesezeit -->
+            <div class="meta-row">
+                <input type="text" id="authorInput" name="article_author" class="category-select"
+                    placeholder="Autor (z.B. Ty P)" style="width: 180px;">
+                <span id="readingTimeDisplay" class="reading-time">0 Min. Lesezeit</span>
+            </div>
+
+            <!-- Der Lead-Text (Untertitel) -->
+            <textarea id="leadInput" name="article_lead" class="lead-input"
+                placeholder="Kurzer Anreisser: Worum geht es in diesem Artikel? (Teaser)"></textarea>
 
             <!-- Cover Bild Wrapper (Damit die Credits direkt am Bild kleben) -->
             <div class="cover-wrapper" style="display: flex; flex-direction: column; gap: 0.5rem;">
@@ -705,18 +949,19 @@
         const publishBtn = document.getElementById('publishBtn');
         const formatButtons = document.querySelectorAll('.tool-btn[data-command]');
         const h2Btn = document.getElementById('btn-h2');
-        let savedRange = null; // Speichert Cursor-Position für Bilder-Upload
+        const quoteBtn = document.getElementById('quoteBtn');
+        const embedBtn = document.getElementById('embedBtn');
+        let savedRange = null;
 
-        // Formatierungsbefehle ausführen (Bold, Italic etc.)
+        // --- TEXTFORMATIERUNG ---
         function formatText(command) {
             document.execCommand(command, false, null);
             contentInput.focus();
             checkActiveFormats();
         }
 
-        // Toggle für Zwischentitel (H2 an/aus)
+        // --- ZWISCHENTITEL (H2) TOGGLE ---
         function toggleHeading() {
-            // Prüfen, ob wir gerade in einem H2 sind
             let isAlreadyH2 = false;
             let node = document.getSelection().anchorNode;
 
@@ -731,17 +976,68 @@
             }
 
             if (isAlreadyH2) {
-                // Zurück zu normalem Paragraph
                 document.execCommand('formatBlock', false, 'p');
             } else {
-                // Mach H2 daraus
                 document.execCommand('formatBlock', false, 'H2');
             }
             contentInput.focus();
             checkActiveFormats();
         }
 
-        // Prüft, welche Formate an der Cursorposition aktiv sind, um Buttons lila zu färben
+        // --- ZITAT TOGGLE (Repariert: Ausbrechen möglich) ---
+        if (quoteBtn && contentInput) {
+            quoteBtn.addEventListener('mousedown', function (e) {
+                e.preventDefault(); // Verhindert Fokusverlust beim Klicken
+
+                // 1. Prüfen, ob der Cursor gerade IN einem Zitat steht
+                let isInsideQuote = false;
+                let node = document.getSelection().anchorNode;
+
+                if (node != null) {
+                    // Sichert ab, dass auch Text-Nodes korrekt behandelt werden
+                    let el = node.nodeType === 3 ? node.parentNode : node;
+                    if (el.closest && el.closest('blockquote')) {
+                        isInsideQuote = true;
+                    }
+                }
+
+                // 2. Toggle Logik ausführen
+                if (isInsideQuote) {
+                    // Befreit uns aus dem Zitat: Wandelt den Block in einen normalen Paragraph zurück
+                    document.execCommand('formatBlock', false, 'p');
+
+                    // (Sicherheits-Fallback, falls ein älterer Browser 'p' ignoriert)
+                    document.execCommand('outdent', false, null);
+                } else {
+                    // Macht den aktuellen Text zum Zitat
+                    document.execCommand('formatBlock', false, 'blockquote');
+                }
+
+                contentInput.focus();
+                checkActiveFormats();
+            });
+        }
+        // --- ECHTEN CODE-BLOCK/EMBED EINFÜGEN ---
+        if (embedBtn && contentInput) {
+            embedBtn.addEventListener('mousedown', function (e) {
+                e.preventDefault();
+
+                const embedCode = prompt("Füge hier den kompletten Embed-Code ein (z.B. <iframe> von YouTube/Spotify):");
+
+                if (embedCode && embedCode.trim() !== '') {
+                    const wrapperHtml = `
+                    <div class="embed-wrapper" contenteditable="false">
+                        ${embedCode}
+                    </div>
+                    <p><br></p>
+                `;
+                    document.execCommand('insertHTML', false, wrapperHtml);
+                }
+                contentInput.focus();
+            });
+        }
+
+        // --- STATUS PRÜFEN (Buttons einfärben) ---
         function checkActiveFormats() {
             formatButtons.forEach(btn => {
                 const command = btn.getAttribute('data-command');
@@ -752,42 +1048,52 @@
                 }
             });
 
-            // H2 separat prüfen
+            // H2 und Blockquote separat prüfen
             let isH2 = false;
+            let isQuote = false;
             let node = document.getSelection().anchorNode;
+
             if (node != null) {
-                while (node && node.nodeName !== 'DIV') {
-                    if (node.nodeName === 'H2') { isH2 = true; break; }
+                while (node && node !== contentInput && node.nodeName !== 'DIV') {
+                    if (node.nodeName === 'H2') isH2 = true;
+                    if (node.nodeName === 'BLOCKQUOTE') isQuote = true;
                     node = node.parentNode;
                 }
             }
+
             if (isH2) h2Btn.classList.add('active');
             else h2Btn.classList.remove('active');
+
+            if (isQuote) quoteBtn.classList.add('active');
+            else quoteBtn.classList.remove('active');
         }
 
-        // Event-Listener, um Toolbar-Status beim Tippen und Klicken upzudaten
         contentInput.addEventListener('keyup', checkActiveFormats);
         contentInput.addEventListener('mouseup', checkActiveFormats);
         contentInput.addEventListener('click', checkActiveFormats);
 
+        // --- LESEZEIT BERECHNEN ---
+        const readingTimeDisplay = document.getElementById('readingTimeDisplay');
+        contentInput.addEventListener('input', function () {
+            const text = this.innerText || "";
+            const wordCount = text.trim().split(/\s+/).filter(word => word.length > 0).length;
+            const time = Math.ceil(wordCount / 200);
+            readingTimeDisplay.textContent = (time === 0) ? '0 Min. Lesezeit' : time + ' Min. Lesezeit';
+        });
+
+        // --- PASTE LOGIK (Für einfache Links) ---
         contentInput.addEventListener('paste', (e) => {
             e.preventDefault();
             let text = (e.originalEvent || e).clipboardData.getData('text/plain');
-
-            // Check ob der kopierte Text eine URL ist
             const urlRegex = /^(https?:\/\/[^\s]+)$/i;
-
             if (urlRegex.test(text.trim())) {
-                // Text ist eine Web-Adresse -> als echten Link einfügen
                 document.execCommand('insertHTML', false, `<a href="${text.trim()}" target="_blank">${text.trim()}</a>`);
             } else {
-                // Normaler Text -> ohne Formatierung einfügen
                 document.execCommand('insertText', false, text);
             }
         });
 
-
-        // 1. Titelbild
+        // --- BILDER UPLOAD LOGIK ---
         function previewCoverImage(event) {
             const file = event.target.files[0];
             if (file) {
@@ -797,15 +1103,13 @@
                     img.src = e.target.result;
                     img.style.display = 'block';
                     document.getElementById('coverPlaceholder').style.display = 'none';
-                    document.getElementById('coverCaption').style.display = 'block'; // Zeigt das Credits-Feld an
+                    document.getElementById('coverCaption').style.display = 'block';
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // 2. Bilder im Text (Inline)
         function triggerInlineImageUpload() {
-            // Speichere die Cursor-Position, bevor das File-Fenster öffnet
             const selection = window.getSelection();
             if (selection.getRangeAt && selection.rangeCount) {
                 savedRange = selection.getRangeAt(0);
@@ -818,118 +1122,72 @@
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (e) {
-                    // Fokus zurück auf Editor und gemerkten Cursor wiederherstellen
                     contentInput.focus();
                     if (savedRange) {
                         const selection = window.getSelection();
                         selection.removeAllRanges();
                         selection.addRange(savedRange);
                     }
-
-                    // Bild als <figure> Block mit <figcaption> für Credits einfügen
                     const htmlToInsert = `
-                        <figure contenteditable="false">
-                            <img src="${e.target.result}" alt="Artikel Bild">
-                            <figcaption contenteditable="true"></figcaption>
-                        </figure>
-                        <p><br></p>
-                    `;
+                    <figure contenteditable="false">
+                        <img src="${e.target.result}" alt="Artikel Bild">
+                        <figcaption contenteditable="true"></figcaption>
+                    </figure>
+                    <p><br></p>
+                `;
                     document.execCommand('insertHTML', false, htmlToInsert);
-
-                    // Reset File Input, damit man dasselbe Bild nochmal wählen könnte
                     document.getElementById('inlineImageUpload').value = '';
                 }
                 reader.readAsDataURL(file);
             }
         }
 
-        // Modal Logik
+        // --- MODALS & PUBLISH LOGIK ---
         const publishModal = document.getElementById('publishModal');
         const confirmPublishBtn = document.getElementById('confirmPublish');
         const cancelPublishBtn = document.getElementById('cancelPublish');
-
-        // Guideline Modal Logik
         const guidelineBtn = document.getElementById('guidelineBtn');
         const guidelineModal = document.getElementById('guidelineModal');
         const closeGuideline = document.getElementById('closeGuideline');
         const acceptGuideline = document.getElementById('acceptGuideline');
 
-        // Guidelines öffnen & schliessen
-        guidelineBtn.addEventListener('click', () => {
-            guidelineModal.style.display = 'flex';
-        });
-
-        closeGuideline.addEventListener('click', () => {
-            guidelineModal.style.display = 'none';
-        });
-
-        acceptGuideline.addEventListener('click', () => {
-            guidelineModal.style.display = 'none';
-        });
+        guidelineBtn.addEventListener('click', () => guidelineModal.style.display = 'flex');
+        closeGuideline.addEventListener('click', () => guidelineModal.style.display = 'none');
+        acceptGuideline.addEventListener('click', () => guidelineModal.style.display = 'none');
 
         publishBtn.addEventListener('click', () => {
             const title = document.getElementById('articleTitle').value.trim();
             const category = document.getElementById('articleCategory').value;
             const content = contentInput.innerHTML.trim();
 
-            // Simple Validierung VOR dem Pop-up
-            if (!category) {
-                alert("Bitte wähle eine Kategorie aus oder tippe eine eigene ein.");
-                return;
-            }
-            if (!title) {
-                alert("Bitte gib eine Schlagzeile ein.");
-                return;
-            }
-            if (content.length < 20 || content === '<br>') {
-                alert("Der Artikel ist noch etwas zu kurz.");
-                return;
-            }
+            if (!category) { alert("Bitte wähle eine Kategorie aus oder tippe eine eigene ein."); return; }
+            if (!title) { alert("Bitte gib eine Schlagzeile ein."); return; }
+            if (content.length < 20 || content === '<br>') { alert("Der Artikel ist noch etwas zu kurz."); return; }
 
-            // Zeige das Pop-up an, wenn die Validierung bestanden ist
             publishModal.style.display = 'flex';
         });
 
-        // Pop-up schliessen bei "Abbrechen"
-        cancelPublishBtn.addEventListener('click', () => {
-            publishModal.style.display = 'none';
-        });
-
-        // Pop-up schliessen bei Klick neben das Fenster
+        cancelPublishBtn.addEventListener('click', () => publishModal.style.display = 'none');
         window.addEventListener('click', (e) => {
-            if (e.target === publishModal) {
-                publishModal.style.display = 'none';
-            }
-            if (e.target === guidelineModal) {
-                guidelineModal.style.display = 'none';
-            }
+            if (e.target === publishModal) publishModal.style.display = 'none';
+            if (e.target === guidelineModal) guidelineModal.style.display = 'none';
         });
 
-        // Das eigentliche Absenden nach dem Bestätigen im Pop-up
         confirmPublishBtn.addEventListener('click', () => {
-            // Modal schliessen
             publishModal.style.display = 'none';
-
-            // Button Loading State auf dem Hauptbutton zeigen
             publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lädt...';
             publishBtn.style.opacity = "0.8";
-            publishBtn.style.pointerEvents = "none"; // Verhindert Doppelklicks
+            publishBtn.style.pointerEvents = "none";
 
-            // Simuliere einen Upload zur Datenbank (1.5 Sekunden)
             setTimeout(() => {
                 const toast = document.getElementById('successToast');
-                // Text der Toast-Notification anpassen
                 toast.innerHTML = '<i class="fa-solid fa-check"></i> Artikel zur Überprüfung eingereicht!';
                 toast.classList.add('show');
-
-                // Nach 2.5 Sekunden zurück zur News-Seite
-                setTimeout(() => {
-                    window.location.href = "news.html";
-                }, 2500);
+                setTimeout(() => window.location.href = "news.html", 2500);
             }, 1500);
         });
 
-        // Placeholder Logik für das contenteditable Div
+        // --- PLACEHOLDER LOGIK CONTENTEDITABLE ---
         contentInput.addEventListener('input', function () {
             if (this.innerHTML.trim() === '' || this.innerHTML === '<br>') {
                 this.setAttribute('empty', '');
@@ -937,11 +1195,18 @@
                 this.removeAttribute('empty');
             }
         });
+        if (contentInput.innerHTML.trim() === '') contentInput.setAttribute('empty', '');
 
-        // Initialer Check für Placeholder
-        if (contentInput.innerHTML.trim() === '') {
-            contentInput.setAttribute('empty', '');
+        // --- LEAD-TEXT AUTO-RESIZE ---
+        const leadInput = document.getElementById('leadInput');
+        if (leadInput) {
+            leadInput.addEventListener('input', function () {
+                this.style.height = 'auto';
+                this.style.height = (this.scrollHeight) + 'px';
+            });
         }
+
+        // --- TAG LOGIK ---
         const tagInput = document.getElementById('tagInput');
         const tagList = document.getElementById('tagList');
         let tags = [];
@@ -950,7 +1215,6 @@
             if (e.key === 'Enter' || e.key === ',') {
                 e.preventDefault();
                 const tagText = tagInput.value.trim().replace(',', '');
-
                 if (tagText && !tags.includes(tagText)) {
                     tags.push(tagText);
                     renderTags();
@@ -964,18 +1228,15 @@
             tags.forEach((tag, index) => {
                 const badge = document.createElement('div');
                 badge.className = 'tag-badge';
-                badge.innerHTML = `
-            #${tag} 
-            <span class="remove-tag" onclick="removeTag(${index})">&times;</span>
-        `;
+                badge.innerHTML = `#${tag} <span class="remove-tag" onclick="removeTag(${index})">&times;</span>`;
                 tagList.appendChild(badge);
             });
         }
 
-        function removeTag(index) {
+        window.removeTag = function (index) {
             tags.splice(index, 1);
             renderTags();
-        }
+        };
     </script>
 </body>
 
