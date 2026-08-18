@@ -62,19 +62,22 @@
 /* MOBILE VERSION (Greift nur auf kleinen Bildschirmen)      */
 /* ========================================================= */
 
-@media (max-width: 750px) {
+@media (max-width: 900px) {
 
-    .body {
+    /* Punkt entfernt! Jetzt wird der richtige <body> Tag angesprochen */
+    body {
         display: flex;
         flex-direction: column;
         justify-content: flex-start;
-        /* richtet alles oben an */
         align-items: center;
-        /* richtet es nur HORIZONTAL mittig aus */
     }
 
     .bento-grid {
         grid-template-columns: 1fr;
+        margin: 0 auto;
+        /* Zentriert den Container horizontal */
+        width: 90%;
+        /* Gibt dem Grid links und rechts ein wenig Luft zum Rand */
     }
 
     .card-profile {

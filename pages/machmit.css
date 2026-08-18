@@ -177,3 +177,20 @@ textarea:focus {
     scrollbar-color: #444 #1a1a1a;
     /* Farbe des Balkens (Thumb) und des Hintergrunds (Track) */
 }
+
+@media (max-width: 900px) {
+    body {
+        display: flex;
+        flex-direction: column;
+        justify-content: flex-start;
+        align-items: center;
+    }
+
+    .bento-grid {
+        grid-template-columns: 1fr;
+        margin: 40px auto;
+        /* Zentriert den Container horizontal */
+        width: 90%;
+        /* Gibt dem Grid links und rechts ein wenig Luft zum Rand */
+    }
+}

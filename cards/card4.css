@@ -54,6 +54,8 @@
     cursor: pointer;
     display: flex;
     align-items: flex-end;
+    text-decoration: none;
+    color: white;
 }
 
 /* Hover-Effekt: Panel wird breiter */

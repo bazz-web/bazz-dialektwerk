@@ -1,0 +1,32 @@
+{
+    "title": "utopisch",
+    "artist": "Ty P",
+    "spotifyTrackId": "0u1KC6wxBdzhGssrhBSz1w",
+    "links": [
+        {
+            "platform": "spotify",
+            "label": "Spotify",
+            "url": "https://open.spotify.com/intl-de/album/0u1KC6wxBdzhGssrhBSz1w"
+        },
+        {
+            "platform": "appleMusic",
+            "label": "Apple Music",
+            "url": "https://music.apple.com/ch/album/utopisch-single/1760947275"
+        },
+        {
+            "platform": "youtubeMusic",
+            "label": "YouTube",
+            "url": "https://youtu.be/L5A4bXQfpho?si=VYHIog0DOIfE3iZe"
+        },
+        {
+            "platform": "deezer",
+            "label": "Deezer",
+            "url": "https://www.deezer.com/de/album/624313051"
+        },
+        {
+            "platform": "soundcloud",
+            "label": "SoundCloud",
+            "url": "https://soundcloud.com/user-986370873/utopisch"
+        }
+    ]
+}

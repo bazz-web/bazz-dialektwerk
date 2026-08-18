@@ -42,11 +42,6 @@ body {
     overflow: hidden;
 }
 
-.bento-card:hover {
-    border-color: rgba(255, 255, 255, 0.15);
-    transform: translateY(-4px);
-}
-
 .bento-item {
     flex: 1;
     background: rgba(255, 255, 255, 0.03);
@@ -69,6 +64,11 @@ body {
 
 .bento-item:hover svg {
     transform: scale(1.2);
+}
+
+.bento-card:hover {
+    border-color: rgba(255, 255, 255, 0.15);
+    transform: translateY(-4px);
 }
 
 /* === PLATZIERUNG DER KACHELN === */
@@ -262,8 +262,6 @@ iframe {
 @media (max-width: 900px) {
     .bento-grid {
         grid-template-columns: 1fr;
-        margin-left: auto !important;
-        margin-right: auto !important;
     }
 
     .card-profile,
@@ -295,5 +293,15 @@ iframe {
         z-index: -1;
         -webkit-mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
         mask-image: linear-gradient(to bottom, rgba(0, 0, 0, 1) 70%, rgba(0, 0, 0, 0) 100%);
+    }
+
+    .bento-item {
+        min-height: 60px;
+        min-width: 60px;
+    }
+
+    .bento-item svg {
+        width: 30px;
+        height: 30px;
     }
 }

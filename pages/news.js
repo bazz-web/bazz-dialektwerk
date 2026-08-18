@@ -1,8 +1,11 @@
-// Elemente aus dem DOM holen
-const createNewsBtn = document.getElementById("createNewsBtn");
+document.addEventListener("DOMContentLoaded", () => {
+    const createNewsBtn = document.getElementById("createNewsBtn");
 
-// 4. Klick auf "Erstellen" leitet zur Editor-Seite weiter
-createNewsBtn.addEventListener("click", () => {
-    // Hier geben wir den Pfad zur neuen Seite an, die wir noch programmieren
-    window.location.href = "editor.html";
+    if (createNewsBtn) {
+        createNewsBtn.addEventListener("click", () => {
+            window.location.href = "editor.html";
+        });
+    } else {
+        console.error("Button 'createNewsBtn' wurde im DOM nicht gefunden!");
+    }
 });

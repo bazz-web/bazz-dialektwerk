@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Artikel lesen - DW News</title>
+
+    <!-- Google Fonts für Zeitungs-Flair und moderne Lesbarkeit -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600&family=Playfair+Display:ital,wght@0,400;0,600;0,700;1,400&display=swap"
+        rel="stylesheet">
+
+    <!-- FontAwesome für Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="icon" type="image/png" href="../favicon/favicon-96x96.png" sizes="96x96" />
+    <link rel="icon" type="image/svg+xml" href="../favicon/favicon.svg" />
+    <link rel="shortcut icon" href="../favicon/favicon.ico" />
+    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png" />
+    <link rel="manifest" href="../favicon/site.webmanifest" />
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <link rel="stylesheet" href="../common/navbar.css">
+    <link rel="stylesheet" href="../common/kigostyle.css">
+
+    <style>
+        :root {
+            --bg-color: #0b0b0e;
+            /* Sehr dunkler Hintergrund wie im Editor */
+            --surface-color: #16161b;
+            /* Leiste/Karten */
+            --border-color: #272730;
+            --text-main: #e2e2e8;
+            --text-muted: #8b8b9d;
+            --accent-color: #6d42c7;
+            /* Violett aus deiner Sidebar */
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-main);
+            font-family: 'Inter', sans-serif;
+            display: flex;
+            min-height: 100vh;
+        }
+
+        /* Hauptbereich (Sidebar-Abstand entfernt) */
+        .main-content {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+        }
+
+        /* Schwebende Top-Bar wie im Editor */
+        .editor-toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 12px;
+            padding: 8px 16px;
+            width: 100%;
+            max-width: 800px;
+            margin-bottom: 50px;
+            position: sticky;
+            top: 20px;
+            z-index: 100;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        .toolbar-group {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .icon-btn {
+            background: transparent;
+            border: none;
+            color: var(--text-muted);
+            font-size: 1.1rem;
+            cursor: pointer;
+            padding: 8px;
+            border-radius: 6px;
+            transition: all 0.2s;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .icon-btn:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: var(--text-main);
+        }
+
+        .separator {
+            width: 1px;
+            height: 20px;
+            background-color: var(--border-color);
+        }
+
+        /* Artikel-Container */
+        .article-container {
+            width: 100%;
+            max-width: 680px;
+            /* Optimale Breite zum Lesen */
+            padding-bottom: 100px;
+        }
+
+        /* Kategorie-Pill */
+        .category-pill {
+            display: inline-block;
+            background-color: #22222d;
+            color: #9d9db6;
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.75rem;
+            font-weight: 600;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 24px;
+            border: 1px solid var(--border-color);
+        }
+
+        /* Überschrift (Zeitungs-Stil) */
+        .article-title {
+            font-family: 'Playfair Display', serif;
+            font-size: 3.2rem;
+            line-height: 1.15;
+            color: #ffffff;
+            margin-bottom: 24px;
+            letter-spacing: -0.5px;
+        }
+
+        /* Metadaten (Autor, Datum) */
+        .article-meta {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin-bottom: 40px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .author-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background-color: var(--surface-color);
+            object-fit: cover;
+        }
+
+        .meta-text {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+        }
+
+        .author-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+            color: var(--text-main);
+        }
+
+        .publish-info {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        /* Hero Image */
+        .hero-image {
+            width: 100%;
+            aspect-ratio: 16 / 9;
+            object-fit: cover;
+            border-radius: 12px;
+            margin-bottom: 40px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+        }
+
+        /* Fließtext / Body */
+        .article-body {
+            font-size: 1.15rem;
+            line-height: 1.8;
+            color: #d1d1db;
+            font-weight: 300;
+
+        }
+
+        .article-body p {
+            margin-bottom: 24px;
+        }
+
+        /* Der Newspaper-Effekt: Drop Cap (Initiale) */
+        .drop-cap::first-letter {
+            float: left;
+            font-family: 'Playfair Display', serif;
+            font-size: 4.5rem;
+            line-height: 0.7;
+            padding-top: 8px;
+            padding-right: 12px;
+            padding-left: 2px;
+            color: #ffffff;
+        }
+
+        /* Zwischenüberschriften */
+        .article-body h2 {
+            font-family: 'Playfair Display', serif;
+            font-size: 2rem;
+            color: #ffffff;
+            margin: 48px 0 20px 0;
+            line-height: 1.3;
+        }
+
+        /* Zitate im Text */
+        .article-body blockquote {
+            border-left: 3px solid var(--accent-color);
+            margin: 40px 0;
+            padding: 10px 0 10px 24px;
+            font-family: 'Playfair Display', serif;
+            font-style: italic;
+            font-size: 1.5rem;
+            line-height: 1.5;
+            color: #ffffff;
+        }
+
+        /* Universelle Regel für alle Bilder im Artikeltext */
+        .article-body img {
+            max-width: 100%;
+            /* Das Bild wird nie breiter als der Textbereich */
+            height: auto;
+            /* Die Höhe berechnet sich AUTOMATISCH, das Ratio bleibt immer zu 100% perfekt */
+            border-radius: 8px;
+            /* Schicke Ecken passend zu deinem restlichen Design */
+            display: block;
+            /* Verhindert komische Text-Umbrüche */
+            margin: 2rem auto;
+            /* Zentriert das Bild schön mit Abstand nach oben und unten */
+        }
+
+        @media (max-width: 900px) {
+            .main-content {
+                display: flex;
+                margin-top: max(0px, calc(50vw - 550px));
+            }
+
+            /* NEU: Macht Platz für den Hamburger-Button */
+            .editor-toolbar {
+                width: calc(100% - 50px) !important;
+                /* Zieht 70px von der Breite ab */
+                margin-left: auto !important;
+                /* Drückt die verkürzte Leiste an den rechten Rand */
+            }
+        }
+
+        /* Container, damit das Dropdown weiss, wo unten ist */
+        .options-menu-container {
+            position: relative;
+        }
+
+        /* Das Dropdown-Menü selbst */
+        .options-dropdown {
+            display: none;
+            /* Standardmässig versteckt */
+            position: absolute;
+            top: 100%;
+            right: 0;
+            margin-top: 12px;
+            background-color: var(--surface-color);
+            border: 1px solid var(--border-color);
+            border-radius: 8px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.7);
+            min-width: 180px;
+            z-index: 200;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        /* Wird per JavaScript hinzugefügt, um es anzuzeigen */
+        .options-dropdown.show {
+            display: flex;
+        }
+
+        /* Die einzelnen Buttons im Menü */
+        .dropdown-item {
+            background: none;
+            border: none;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--text-main);
+            padding: 14px 16px;
+            text-align: left;
+            font-size: 0.95rem;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            font-family: inherit;
+            transition: background-color 0.2s, color 0.2s;
+        }
+
+        .dropdown-item:last-child {
+            border-bottom: none;
+        }
+
+        /* Hover-Effekte */
+        .dropdown-item:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        /* Der Melden-Button wird beim drüberfahren rot als Warnung */
+        .dropdown-item:first-child:hover {
+            color: #f87171;
+        }
+    </style>
+</head>
+
+<body>
+    <div id="navbar-placeholder"></div>
+    <main class="main-content">
+
+        <!-- Editor-Style Top Bar -->
+        <header class="editor-toolbar">
+            <div class="toolbar-group">
+                <button class="icon-btn" onclick="history.back()" title="Zurück"><i
+                        class="fas fa-arrow-left"></i></button>
+                <div class="separator"></div>
+                <span style="color: var(--text-muted); font-size: 0.85rem;">Artikel lesen</span>
+            </div>
+            <div class="toolbar-group">
+                <button class="icon-btn" id="save-btn" title="Lesezeichen" onclick="toggleSaveArticle()"><i
+                        class="far fa-bookmark"></i></button>
+                <button class="icon-btn" id="share-btn" title="Teilen" onclick="shareArticle()"><i
+                        class="fas fa-share-alt"></i></button>
+                <div class="separator"></div>
+                <div class="options-menu-container">
+                    <button class="icon-btn" id="options-btn" title="Optionen" onclick="toggleOptionsMenu()">
+                        <i class="fas fa-ellipsis-h"></i>
+                    </button>
+
+                    <!-- Das versteckte Dropdown-Menü -->
+                    <div class="options-dropdown" id="options-dropdown">
+                        <button class="dropdown-item" onclick="reportArticle()">
+                            <i class="fas fa-flag"></i> Artikel melden
+                        </button>
+                        <button class="dropdown-item" onclick="copyLink()">
+                            <i class="fas fa-link"></i> Link kopieren
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Dynamischer Artikel-Container -->
+        <article class="article-container">
+
+            <span id="article-category" class="category-pill">Kategorie</span>
+
+            <h1 id="article-title" class="article-title">Lade Artikel...</h1>
+
+            <div class="article-meta" id="article-meta-container" style="display: none;">
+                <img src="../images/chicochicao.jpg" id="article-avatar" alt="Autor" class="author-avatar">
+                <div class="meta-text">
+                    <span id="article-author" class="author-name">Autor</span>
+                    <span id="article-date" class="publish-info">Datum</span>
+                    <span id="article-kilabel" class="publish-info">KI-Label</span>
+                </div>
+            </div>
+
+            <!-- Titelbild -->
+            <img id="article-image" src="" alt="Artikel Bild" class="hero-image" style="display: none;">
+
+            <div id="article-content" class="article-body">
+                <!-- Text wird per JavaScript geladen -->
+            </div>
+
+        </article>
+    </main>
+
+    <script>
+        // Datenbank-Simulation: Hier liegen alle Artikel
+        const articleDatabase = {
+            "zueri-west": {
+                category: "Comback",
+                title: "Ty P musigdichter",
+                author: "Von der DW Redaktion",
+                date: "10. August 2026 • 3 Min. Lesezeit",
+                image: "../images/ty-partikel.jpeg",
+                kilabel: "",
+                content: `
+                    <p class="drop-cap">Im bärner nordä geborä u ufgwachsä het säch Ty P scho vo afang a vom Rap distanziert. Er würd säch niemaus us rapper bezeichnä, wägdäm het er ä eigetä begriff für sis musig da si erfundä. Er isch dr musigdichter. Utopisch het sini reis us musiker agfangä, doch es si viu hindernis i wäg cho. Vo depressionä bis psychosä het er vieles durchläbt u wimä hüt o merkt überstandä. Er het sis läbä ändläch widr im griff u isch fully a sim aubum drannä. Bliibet gspannt uf me u begleitet Ty P uf sirä reis iz utopischä land.</p>
+                    <img src="../images/Un210knownXTy_P.jpg">
+                    <p>Dr erscht artiku im DW Magazin. Baud chunnt aubum, baud chunnt es konzert vo 4stung. Es aubum mit viunä features. Us erschtes ufem aubum isch Porcukor, sie isch mini fründin. U da chunnt o scho dr sonny, mit sim melancholischä rap. Liebi für liebi so startet dkolaboration vom Oberdiesbacher Un210known. N!vel der Kollege von neben an. Breitsch 1314. Toujour leitet es neues kapitu i mit sonny de boy. Es folgt Shouré, wieder mit N!vel. Die Beiden von neben an. Sencillo usem dorf, mitem atzäsuff im hingerhof. Er seit schwiizrap tönt mies wag. Der Ateragizman beendet das "musigdichter mixtape" passend.</p>
+                    <img src="../images/cannabissocks.png">
+                    <p>Iz kensch mi.</p>
+                `
+            },
+        };
+
+        // Artikel anhand der URL laden (z.B. artikel.html?id=lo-leduc)
+        document.addEventListener("DOMContentLoaded", () => {
+            const urlParams = new URLSearchParams(window.location.search);
+            // Standardmäßig den Züri West Artikel laden, wenn keine ID in der URL steht
+            const articleId = urlParams.get('id') || 'zueri-west';
+
+            const articleData = articleDatabase[articleId];
+
+            if (articleData) {
+                // Daten ins HTML einfügen
+                document.getElementById('article-content').innerHTML = articleData.content;
+                document.getElementById('article-image').src = articleData.image;
+                document.getElementById('article-category').textContent = articleData.category;
+                document.getElementById('article-title').textContent = articleData.title;
+                document.getElementById('article-author').textContent = articleData.author;
+                document.getElementById('article-date').textContent = articleData.date;
+                document.getElementById('article-kilabel').textContent = articleData.kilabel;
+
+                // Profilbild dynamisch generieren (basierend auf dem Autorennamen)
+                document.getElementById('article-avatar').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(articleData.author) + '&background=22222d&color=fff';
+
+                const imgElement = document.getElementById('article-image');
+                imgElement.src = articleData.image;
+                imgElement.style.display = "block"; // Bild sichtbar machen
+
+                document.getElementById('article-content').innerHTML = articleData.content;
+                document.getElementById('article-meta-container').style.display = "flex";
+            } else {
+                // Fehlerbehandlung, falls Artikel nicht gefunden wird
+                document.getElementById('article-title').textContent = "Artikel nicht gefunden";
+                document.getElementById('article-content').innerHTML = "<p>Der von dir gesuchte Artikel existiert leider nicht oder wurde entfernt.</p>";
+                document.getElementById('article-category').style.display = "none";
+                document.getElementById('article-kilabel').style.display = "none";
+            }
+        });
+        // --- LESEZEICHEN (Speichern) ---
+        function toggleSaveArticle() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id') || 'zueri-west';
+            const saveBtnIcon = document.querySelector('#save-btn i');
+
+            // Aktuelle Lesezeichen aus dem Browser-Speicher holen (oder leeres Array)
+            let savedArticles = JSON.parse(localStorage.getItem('dw_saved_articles')) || [];
+
+            if (savedArticles.includes(articleId)) {
+                // Artikel ist bereits gespeichert -> Entfernen
+                savedArticles = savedArticles.filter(id => id !== articleId);
+
+                // Icon wieder leer (far) und grau machen
+                saveBtnIcon.classList.replace('fas', 'far');
+                saveBtnIcon.style.color = "var(--text-muted)";
+            } else {
+                // Artikel noch nicht gespeichert -> Hinzufügen
+                savedArticles.push(articleId);
+
+                // Icon ausfüllen (fas) und lila einfärben
+                saveBtnIcon.classList.replace('far', 'fas');
+                saveBtnIcon.style.color = "var(--accent-color)";
+            }
+
+            // Neue Liste wieder im Browser speichern
+            localStorage.setItem('dw_saved_articles', JSON.stringify(savedArticles));
+        }
+
+        // Prüft beim Laden der Seite, ob der Artikel schon gespeichert ist
+        function checkSaveStatus() {
+            const urlParams = new URLSearchParams(window.location.search);
+            const articleId = urlParams.get('id') || 'zueri-west';
+            const savedArticles = JSON.parse(localStorage.getItem('dw_saved_articles')) || [];
+            const saveBtnIcon = document.querySelector('#save-btn i');
+
+            if (savedArticles.includes(articleId)) {
+                saveBtnIcon.classList.replace('far', 'fas');
+                saveBtnIcon.style.color = "var(--accent-color)";
+            }
+        }
+
+        // --- TEILEN (Mobile & Desktop) ---
+        function shareArticle() {
+            const title = document.getElementById('article-title').textContent;
+            const url = window.location.href;
+
+            // Prüfen, ob das Gerät native Teilen-Menüs unterstützt (meistens Mobile/Mac)
+            if (navigator.share) {
+                navigator.share({
+                    title: title,
+                    text: 'Schau dir diesen Artikel auf DIALEKTWERK an:',
+                    url: url
+                }).catch((error) => console.log('Teilen abgebrochen:', error));
+            } else {
+                // Fallback für alte Desktop-Browser: Link in die Zwischenablage kopieren
+                navigator.clipboard.writeText(url).then(() => {
+                    alert('Link in die Zwischenablage kopiert!');
+                }).catch((err) => {
+                    console.error('Fehler beim Kopieren: ', err);
+                });
+            }
+        }
+
+        // Füge checkSaveStatus() zu deinem bestehenden DOMContentLoaded Event hinzu
+        // Such dir diese Stelle in deinem Code: document.addEventListener("DOMContentLoaded", () => {
+        // und füge direkt unter der Zeile "const articleId = ..." diesen Aufruf ein:
+        // checkSaveStatus();
+
+        // --- OPTIONEN DROP-DOWN ---
+
+        // Öffnet und schliesst das Menü beim Klick auf die 3 Punkte
+        function toggleOptionsMenu() {
+            document.getElementById('options-dropdown').classList.toggle('show');
+        }
+
+        // Schliesst das Menü automatisch, wenn man irgendwo anders auf den Bildschirm tippt!
+        document.addEventListener('click', function (event) {
+            const container = document.querySelector('.options-menu-container');
+            const dropdown = document.getElementById('options-dropdown');
+
+            // Wenn das Menü existiert, offen ist und der Klick AUSSERHALB des Containers war:
+            if (container && !container.contains(event.target) && dropdown.classList.contains('show')) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // --- AKTIONEN IM MENÜ ---
+
+        // Funktion: Artikel melden
+        function reportArticle() {
+            // Dropdown wieder schliessen
+            document.getElementById('options-dropdown').classList.remove('show');
+
+            // Hier kannst du später ein echtes Modal öffnen. 
+            // Für den Prototyp reicht ein nativer Alert:
+            alert("Vielen Dank. Der Artikel wurde gemeldet und wird von der DW Redaktion überprüft.");
+        }
+
+        // Funktion: Link kopieren (als Extra)
+        function copyLink() {
+            // Dropdown wieder schliessen
+            document.getElementById('options-dropdown').classList.remove('show');
+
+            // Link in die Zwischenablage kopieren
+            navigator.clipboard.writeText(window.location.href).then(() => {
+                alert('Link wurde in die Zwischenablage kopiert!');
+            });
+        }
+    </script>
+
+</body>
+
+</html>

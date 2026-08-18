@@ -269,6 +269,7 @@
                 <div class="meta-text">
                     <span id="article-author" class="author-name">Autor</span>
                     <span id="article-date" class="publish-info">Datum</span>
+                    <span id="article-kilabel" class="publish-info">KI-Label</span>
                 </div>
             </div>
 
@@ -289,10 +290,11 @@
                 category: "Release",
                 title: "Textanalyse kafi u saruch",
                 author: "Von der DW Redaktion",
-                date: "12. August 2026 • 3 Min. Lesezeit",
+                date: "12. August 2026 • 7 Min. Lesezeit",
                 image: "../images/kafiusaruch.jpg",
+                kilabel: "Enthält KI generierte Inhalte",
                 content: `
-                    <p class="drop-cap">Der vorliegende Text ist ein modernes Liebeslied, das durch eine starke eskapistische Grundhaltung (Weltflucht) geprägt ist. Formal fällt sofort das Code-Switching auf: Der fließende Wechsel zwischen Berndeutsch und Französisch. Diese Mehrsprachigkeit ist nicht nur ein stilistisches Merkmal, sondern trägt aktiv zur Bedeutungsebene bei, indem sie die physische und emotionale Reise der Protagonisten nachzeichnet.</p>
+                    <p class="drop-cap">Der vorliegende Text ist ein modernes Liebeslied von Ty P, das durch eine starke eskapistische Grundhaltung (Weltflucht) geprägt ist. Formal fällt sofort das Code-Switching auf: Der fließende Wechsel zwischen Berndeutsch und Französisch. Diese Mehrsprachigkeit ist nicht nur ein stilistisches Merkmal, sondern trägt aktiv zur Bedeutungsebene bei, indem sie die physische und emotionale Reise der Protagonisten nachzeichnet.</p>
                     <br>
                     <h2>Detaillierte Analyse der Strophen und Stilmittel</h2>
                     <h3>Der Aufbruch</h3>
@@ -314,8 +316,8 @@ Die Zeile "kafi u saruch ja" nutzt Alltagssprache / Slang ("Saruch" als umgangss
 Hier finden sich starke Hyperbeln (Übertreibungen): "plus que tout" (mehr als alles) und "pour la vie" (fürs Leben). Das verdeutlicht, dass aus dem spontanen Roadtrip eine tiefe, ernsthafte Liebeserklärung geworden ist.
 Darauf folgt eine Verschmelzung der Sprachen, die sogenannte Hybridisierung:
 "ibi gärn mit dir im fium gheiä gärn mit dir in trance"
-"toi et moi ds isch pluse qu'une romance"
-Die Metaphern "im fium" (wie in einem Film sein, die Realität ausblenden) und "in trance" (Kontrollverlust, absolute Hingabe) verdeutlichen den psychologischen Zustand der Verliebten. Die Zeile "pluse qu'une romance" (mehr als eine Romanze) negiert die Oberflächlichkeit und fordert Beständigkeit.
+"toi et moi ds isch plus qu'une romance"
+Die Metaphern "im fium" (wie in einem Film sein, die Realität ausblenden) und "in trance" (Kontrollverlust, absolute Hingabe) verdeutlichen den psychologischen Zustand der Verliebten. Die Zeile "plus qu'une romance" (mehr als eine Romanze) negiert die Oberflächlichkeit und fordert Beständigkeit.
 </p>
 <h3>Grenzenlosigkeit und Tempo</h3>
 <p>Der Einstieg der zweiten SängerIn bringt eine zusätzliche physische Dynamik:
@@ -350,6 +352,7 @@ Obwohl Rennen eigentlich erschöpft, gibt die Liebe ihnen paradoxerweise unendli
                 document.getElementById('article-title').textContent = articleData.title;
                 document.getElementById('article-author').textContent = articleData.author;
                 document.getElementById('article-date').textContent = articleData.date;
+                document.getElementById('article-kilabel').textContent = articleData.kilabel;
 
                 // Profilbild dynamisch generieren (basierend auf dem Autorennamen)
                 document.getElementById('article-avatar').src = 'https://ui-avatars.com/api/?name=' + encodeURIComponent(articleData.author) + '&background=22222d&color=fff';
@@ -365,6 +368,7 @@ Obwohl Rennen eigentlich erschöpft, gibt die Liebe ihnen paradoxerweise unendli
                 document.getElementById('article-title').textContent = "Artikel nicht gefunden";
                 document.getElementById('article-content').innerHTML = "<p>Der von dir gesuchte Artikel existiert leider nicht oder wurde entfernt.</p>";
                 document.getElementById('article-category').style.display = "none";
+                document.getElementById('article-kilabel').style.display = "none";
             }
         });
     </script>

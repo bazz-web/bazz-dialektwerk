@@ -1,0 +1,84 @@
+body {
+  background-color: black;
+  color: white;
+  font-family: sans-serif;
+  font-size: 1.1em;
+}
+
+h1 {
+  font-size: 2em;
+}
+
+a {
+  text-decoration: none;
+}
+
+a:link,
+a:visited,
+a:active {
+  color: white;
+}
+
+a:hover {
+  background-color: #08040e;
+  color: #8040e0;
+}
+
+.artist-container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.artist {
+  display: flex;
+  flex-direction: column;
+  flex-wrap: wrap;
+
+  margin: 4px;
+  border-radius: 16px;
+  padding: 16px;
+
+  text-align: center;
+}
+
+.profile-photo {
+  width: 128px;
+  height: 128px;
+  border-radius: 16px;
+}
+
+.container {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.block {
+  margin: 4px;
+  border-radius: 12px;
+  background-color: #222;
+  padding: 8px;
+  min-width: 128px;
+}
+
+.block#spotify,
+.block#youtube {
+  padding: 0;
+  height: 352px;
+}
+
+.clippy {
+  border-radius: 16px;
+  width: 112px;
+  height: 112px;
+  object-fit: cover;
+  overflow: hidden;
+}
+
+.spotty {
+  position: relative;
+  top: -20px;
+  left: -20px;
+  pointer-events: none;
+}

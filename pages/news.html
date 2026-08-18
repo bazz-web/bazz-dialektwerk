@@ -4,28 +4,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DW Magazin</title>
+    <title>News - DIALEKTWERK</title>
     <link rel="stylesheet" href="../common/kigostyle.css">
     <link rel="stylesheet" href="news.css">
     <link rel="stylesheet" href="../common/navbar.css">
-    <link rel="icon" type="image/png" href="../favicon/favicon-96x96.png" sizes="96x96" />
-    <link rel="icon" type="image/svg+xml" href="../favicon/favicon.svg" />
-    <link rel="shortcut icon" href="../favicon/favicon.ico" />
-    <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png" />
-    <link rel="manifest" href="../favicon/site.webmanifest" />
 
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../common/navbar.js" defer></script>
-    <script src="news.js" defer></script>
+
 </head>
 
 <body>
     <div id="navbar-placeholder"></div>
+    <!-- Plus-Button für neue News -->
+    <button id="createNewsBtn" class="fab-button">+</button>
     <div class="layout-container">
 
         <main class="content-area">
             <header class="page-header">
-                <h1>DW Magazin</h1>
+                <h1>DW News</h1>
                 <p>Schlagzeilen aus der Schweizer Musikszene.</p>
             </header>
 
@@ -33,15 +30,29 @@
             <div class="bento-masonry">
 
                 <!-- Artikel 1: Gross & Dunkel -->
-
-                <article class="bento-card large bg-dark" onclick="window.location.href='artikel.html'">
-                    <span class="category">Comeback</span>
-                    <h2>Züri West sind zurück: Neues Album bricht alle Rekorde</h2>
-                    <p>Die Berner Legenden liefern den Soundtrack für den Sommer. Wir haben reingehört und
-                        analysieren
-                        den neuen Sound, der alte Fans abholt und neue begeistert.</p>
+                <article class="bento-card large bg-dark" onclick="window.location.href='artikel5.html'">
+                    <background-image class="bento-img-bg-typartikel" src="../images/ty-partikel.jpeg" alt="Ty P">
+                        <span category="Comeback">Comeback</span>
+                        <h2>Ty P musigdichter</h2>
+                        <p>Im bärner nordä geborä u ufgwachsä het säch Ty P scho vo afang a vom Rap distanziert. Er würd
+                            säch niemaus us rapper bezeichnä, wägdäm het er ä eigetä begriff für sis musig da si
+                            erfundä. Er isch dr musigdichter. Utopisch het sini reis us musiker agfangä, doch es si viu
+                            hindernis i wäg cho. Vo depressionä bis psychosä het er vieles durchläbt u wimä hüt o merkt
+                            überstandä. Er het sis läbä ändläch widr im griff u isch fully a sim aubum drannä. Bliibet
+                            gspannt uf
+                            me u begleitet Ty P uf sirä reis iz utopischä land.
+                        </p>
+                        <img src="../images/ty-partikel.jpeg" alt="Ty P">
+                        <p>Dr erscht artiku im DW Magazin. Baud chunnt aubum, baud chunnt es konzert vo 4stung. Es aubum
+                            mit
+                            viunä features. Us erschtes ufem aubum isch Porcukor, sie isch mini fründin. U da chunnt o
+                            scho
+                            dr sonny, mit sim melancholischä rap. Liebi für liebi so startet dkolaboration vom
+                            Oberdiesbacher Un210known. N!vel der Kollege von neben an. Breitsch 1314. Toujour leitet es
+                            neues kapitu i mit sonny de boy. Es folgt Shouré, wieder mit N!vel. Die Beiden von neben an.
+                            Sencillo usem dorf, mitem atzäsuff im hingerhof. Er seit schwiizrap tönt mies wag. Der
+                            Ateragizman beendet das "musigdichter mixtape" passend.</p>
                 </article>
-
 
                 <!-- Artikel 2: Hochformat & Zeitungspapier-Look -->
                 <article class="bento-card tall bg-paper" onclick="window.location.href='artikel2.html'">
@@ -49,14 +60,15 @@
                     <h2>Mundart Release DJ</h2>
                     <p>Willst du wissen was in der Mundart Szene jede Woche so gedropt wird? Dann abonniere jetzt unsere
                         Playlist auf Spotify und gib ihr einen Like. Die Playlist wird jeden Freitag von unserem MR DJ
-                        mit den Releases der letzten Woche geupdated. Verpasse So auch du keinen einzigen Mundart
+                        mit den Releases der letzten Woche geupdated. Verpasse so auch du keinen einzigen Mundart
                         Release
                         mehr.</p>
+
                 </article>
 
                 <!-- Artikel 3: Standard & Akzentfarbe -->
                 <article class="bento-card bg-accent" onclick="window.location.href='artikel3.html'">
-                    <span class="category">Release</span>
+                    <span class="category">Analyse</span>
                     <h2>Textanalyse kafi u saruch</h2>
                     <p>Der Text beginnt unmittelbar mit einem imperativischen Aufruf, der die Handlung in Gang
                         setzt:"chum mer fahrä wäg / mit dim autä BMW / irgendwo us bärn"Hier wird der Kontrast zwischen
@@ -72,11 +84,12 @@
                 </article>
 
                 <!-- Artikel 4: Breit & Hell -->
-                <article class="bento-card wide bg-light" onclick="window.location.href='artikel.html?id=4'">
-                    <span class="category">Festival</span>
-                    <h2>Gurtenfestival 2026: Das Line-up für den Hausberg steht</h2>
-                    <p>Viel lokale Prominenz und internationale Headliner. Ein Blick auf das Programm des diesjährigen
-                        Güsche-Festivals.</p>
+                <article class="bento-card wide bg-light" onclick="window.location.href='artikel4.html'">
+                    <span class="category">Interview</span>
+                    <h2>Chico Chicago Interview</h2>
+                    <p>Der Rapper aus dem 13er Quartier ist 'ne Schmacht für deine Augen. Auch nur heute hat er an der
+                        Lorrainä Chiubi gezeigt, wer der Prophet Berns ist. Hier findest du ein qualitatives
+                        Beispiel-Interview mit Chico Chicago. Exklusiv hier.</p>
                 </article>
 
                 <!-- Artikel 5: Standard & Dunkel -->
@@ -129,9 +142,7 @@
         </main>
     </div>
 
-    <!-- Plus-Button für neue News -->
-    <button id="createNewsBtn" class="fab-button">+</button>
-
+    <script src="news.js"></script>
 </body>
 
 </html>

@@ -1,67 +1,3 @@
-:root {
-    --bg-deep: #030305;
-    --glass-bg: rgba(255, 255, 255, 0.04);
-    --glass-border: rgba(255, 255, 255, 0.08);
-    --accent-1: #852192;
-    /* Neon Pink */
-    --accent-2: #7928CA;
-    /* Deep Purple */
-    --accent-3: #FF5E00;
-    /* Neon Orange */
-    --text-main: #FFFFFF;
-    --text-muted: rgba(255, 255, 255, 0.5);
-    --font-main: 'Outfit', sans-serif;
-    --bar-inactive: rgba(255, 255, 255, 0.1);
-}
-
-
-/* Der abgedunkelte Hintergrund über dem ganzen Bildschirm */
-.modal-overlay {
-    display: none;
-    /* Standardmäßig unsichtbar */
-    position: fixed;
-    top: 0;
-    left: 0;
-    width: 100vw;
-    height: 100vh;
-    background-color: rgba(0, 0, 0, 0.6);
-    /* Halbtransparentes Schwarz */
-    z-index: 1000;
-    /* Stellt sicher, dass es ÜBER der App liegt */
-
-    /* Flexbox, um den inneren Container mittig zu zentrieren */
-    align-items: center;
-    justify-content: center;
-}
-
-/* Wenn das Modal aktiv ist, wird es als Flex-Container angezeigt */
-.modal-overlay.active {
-    display: flex;
-}
-
-/* Die dunkle Filter-Box selbst (angepasst an dein Design) */
-.filter-card {
-    width: 90%;
-    max-width: 600px;
-    border-top-right-radius: 0px;
-    background: rgba(0, 0, 0, 0.7);
-    display: flex;
-    flex-direction: column;
-    gap: 15px;
-}
-
-/* Der Schließen-Button oben rechts */
-.close-btn {
-    position: absolute;
-    top: 3px;
-    right: 7px;
-    background: none;
-    border: none;
-    color: white;
-    font-size: 20px;
-    cursor: pointer;
-}
-
 .dropdown-row {
     display: grid;
     grid-template-columns: repeat(3, 1fr);
@@ -77,10 +13,10 @@
 .custom-select-trigger {
     width: 100%;
     padding: 14px 18px;
-    background: rgba(255, 255, 255, 0.03);
-    border-radius: 20px;
-    color: #ffffff;
+    background: var(--glass-bg);
+    color: var(--text-muted);
     border: 1px solid var(--glass-border);
+    border-radius: 16px;
     font-size: 1rem;
     font-weight: 500;
     cursor: pointer;
@@ -105,17 +41,12 @@
     transform: rotate(180deg);
 }
 
-
 .custom-select-wrapper.open .custom-select-trigger {
     border-color: var(--text-main);
     color: var(--text-main);
 }
 
 .custom-select-options {
-    max-height: 260px;
-    /* Maximale Höhe der Box (Wert frei anpassbar) */
-    overflow-y: auto;
-    /* Aktiviert das vertikale Scrollen, sobald der Inhalt zu lang ist */
     position: absolute;
     top: calc(100% + 10px);
     left: 0;
@@ -129,36 +60,8 @@
     transform: translateY(-10px);
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
     z-index: 100;
+    overflow: hidden;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
-}
-
-/* 1. Breite der Scrollbar festlegen */
-.custom-select-options::-webkit-scrollbar {
-    width: 6px;
-}
-
-/* 2. Hintergrund/Schiene (Track) transparent machen */
-.custom-select-options::-webkit-scrollbar-track {
-    background: transparent;
-}
-
-/* 3. Der eigentliche Scrollbalken (Thumb) */
-.custom-select-options::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.2);
-    /* Halbtransparente helle Farbe */
-    border-radius: 10px;
-    /* Schön abgerundet */
-}
-
-/* 4. Scrollbalken bei Hover leicht aufleuchten lassen */
-.custom-select-options::-webkit-scrollbar-thumb:hover {
-    background: rgba(255, 255, 255, 0.4);
-}
-
-/* 5. Firefox-Unterstützung & Standard-Standardisierung */
-.custom-select-options {
-    scrollbar-width: thin;
-    scrollbar-color: rgba(255, 255, 255, 0.2) transparent;
 }
 
 .custom-select-wrapper.open .custom-select-options {
@@ -187,7 +90,7 @@
     display: flex;
     flex-direction: column;
     background: var(--glass-bg);
-    padding: 18px;
+    padding: 25px;
     border-radius: 20px;
     border: 1px solid var(--glass-border);
     backdrop-filter: blur(10px);
@@ -197,7 +100,7 @@
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 2px;
-    color: #ffffff;
+    color: var(--accent-1);
     margin-bottom: 20px;
     font-weight: 700;
 }
@@ -292,7 +195,7 @@ input[type=range]::-webkit-slider-thumb:hover {
 
 .input-label {
     font-size: 0.75rem;
-    color: #ffffff;
+    color: var(--text-muted);
     font-weight: 500;
     text-transform: uppercase;
     letter-spacing: 1px;

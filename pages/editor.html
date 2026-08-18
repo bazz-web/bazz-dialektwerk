@@ -358,6 +358,28 @@
             justify-content: center;
         }
 
+        /* 1. Modal immer in den absoluten Vordergrund (über die fliegenden Buttons) */
+        .modal {
+            z-index: 10000 !important;
+        }
+
+        /* 2. Modal scrollbar machen, falls der Bildschirm zu klein ist */
+        .modal-content {
+            max-height: 85vh;
+            /* Darf maximal 85% der Bildschirmhöhe einnehmen */
+            overflow-y: auto;
+            /* Aktiviert das Scrollen im Fenster */
+        }
+
+        /* 3. Auf dem Handy den riesigen Innenabstand (Padding) verkleinern */
+        @media (max-width: 900px) {
+            .modal-content {
+                padding: 1.5rem !important;
+                width: 95% !important;
+                /* Nutzt die Breite besser aus */
+            }
+        }
+
         .modal-content {
             background-color: var(--color-paper);
             border: 1px solid var(--border-color);
@@ -489,8 +511,268 @@
             color: var(--text-heading);
         }
 
+        .fancy-actions-menu-wrapper {
+            display: none;
+        }
+
+        /* ==========================================
+   MOBILE ANPASSUNGEN FÜR DEN EDITOR (< 900px)
+   ========================================== */
+        @media (max-width: 900px) {
+            /* ==========================================
+           NEUE FIXES FÜR SCHMALE BILDSCHIRME
+        ========================================== */
+
+            /* 1. Seitenränder verkleinern, damit der Text mehr Platz hat */
+            .editor-layout {
+                padding: 1rem 1rem !important;
+            }
+
+            /* 2. Eingabefelder flexibel machen, damit sie nicht aus dem Bildschirm ragen */
+            .category-select,
+            .tagContainer.category-select {
+                width: 100% !important;
+                /* Überschreibt die festen 300px */
+                max-width: 100%;
+            }
+
+            /* Das feste Inline-Styling für den Autor (180px) überschreiben */
+            #authorInput {
+                width: 100% !important;
+            }
+
+            /* 3. Container bei Platzmangel untereinander anordnen */
+            .meta-inputs {
+                flex-direction: column;
+                gap: 10px;
+            }
+
+            .meta-row {
+                flex-wrap: wrap;
+                /* Erlaubt den Umbruch auf die nächste Zeile */
+                gap: 10px;
+            }
+
+            /* 4. Toolbar flexibler machen, falls noch mehr Tools dazukommen */
+            .toolbar {
+                flex-wrap: wrap;
+                height: auto;
+            }
+
+            .tools-left {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+
+            /* 5. Die riesige Überschrift noch einen Tick responsiver machen */
+            .title-input {
+                font-size: 1.8rem !important;
+            }
+
+            .hide-on-mobile {
+                display: none !important;
+            }
+
+            /* 1. Den alten Guidelines-Button in der oberen Leiste ERZWUNGEN verstecken */
+            /* Füge hier ggf. die genaue ID des oberen Buttons hinzu, falls er noch sichtbar ist */
+            .toolbar .ql-formats:last-child,
+            .toolbar button:contains("Guidelines"),
+            #altGuidelineBtnId
+
+            /* Ersetze dies mit der echten ID des oberen Buttons */
+                {
+                display: none !important;
+            }
+
+            /* 2. Styling für den neuen runden Guidelines-Button unten links */
+            .fancy-fab-guidelines {
+                position: fixed !important;
+                bottom: 25px !important;
+                left: 25px !important;
+                z-index: 9999 !important;
+
+                /* NEU: Aktiviert die Klickbarkeit für diesen Button! */
+                pointer-events: auto !important;
+
+                /* Dunkles, elegantes Design als Kontrast zur Rakete */
+                background: rgba(30, 30, 30, 0.95) !important;
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                backdrop-filter: blur(10px);
+
+                /* Perfekt rund wie die Rakete */
+                border-radius: 25% !important;
+                width: 60px !important;
+                height: 60px !important;
+
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                font-size: 24px !important;
+                /* Größe des Icons */
+                color: #fff !important;
+
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5) !important;
+                cursor: pointer !important;
+                transition: transform 0.3s ease, background 0.3s ease !important;
+            }
+
+            /* Hover-Effekt für den Button */
+            .fancy-fab-guidelines:hover {
+                transform: scale(1.1) !important;
+                background: rgba(50, 50, 50, 1) !important;
+            }
+
+            /* 1. DIE ÜBERSCHRIFT KORRIGIEREN */
+            /* Verhindert, dass die Überschrift abgeschnitten ist */
+            h1.headline-input,
+            h1.headline {
+                font-size: 2.2rem !important;
+                /* Etwas kleiner für Mobile, damit es passt */
+                line-height: 1.2 !important;
+                margin-top: 20px !important;
+                word-wrap: break-word !important;
+                margin-bottom: 20px !important;
+            }
+
+            /* 2. DIE OBERE TOOLBAR REPARIEREN (Cleanup) */
+            /* Die Aktionen oben ausblenden, damit sie unten neu erscheinen */
+            .toolbar #guidelinesBtn,
+            .toolbar #publishBtn,
+            .toolbar .guidelines-btn,
+            .toolbar .publish-btn {
+                display: none !important;
+            }
+
+            /* Die obere Toolbar sauber und kompakt halten */
+            .toolbar,
+            .editor-nav,
+            .floating-bar {
+                width: 90% !important;
+                max-width: fit-content !important;
+                margin-top: 70px !important;
+                justify-content: center !important;
+                margin-left: auto !important;
+                margin-right: auto !important;
+                padding: 8px 14px !important;
+            }
+
+
+            /* 3. DAS FANCY FLOATING-AKTIONSMENÜ (Unten rechts) */
+
+            /* Container für das Menü */
+            .fancy-actions-menu-wrapper {
+                position: fixed !important;
+                bottom: 25px !important;
+                right: 25px !important;
+                z-index: 9999 !important;
+                display: flex !important;
+                flex-direction: column-reverse !important;
+                align-items: flex-end !important;
+                gap: 15px !important;
+                pointer-events: none;
+                /* Verhindert, dass der Container Klicks abfängt, wenn er zu ist */
+            }
+
+            /* Der Haupt-Trigger-Button (Der fancy Raketen-Button) */
+            .fancy-fab-trigger {
+                pointer-events: auto;
+                /* Aktiviert Klicks für den Button selbst */
+                background: rgba(30, 30, 30, 0.95) !important;
+                /* Lila/Glanz-Effekt */
+                border: 1px solid rgba(255, 255, 255, 0.2) !important;
+                border-radius: 25% !important;
+                width: 60px !important;
+                height: 60px !important;
+                color: #fff !important;
+                display: flex !important;
+                align-items: center !important;
+                justify-content: center !important;
+                box-shadow: 0 5px 20px rgba(0, 0, 0, 0.6) !important;
+                cursor: pointer !important;
+                transition: transform 0.4s ease, background 0.4s ease, box-shadow 0.4s ease !important;
+                font-size: 24px !important;
+            }
+
+            /* Hover/Aktiv-Zustände */
+            .fancy-fab-trigger:hover {
+                background: linear-gradient(135deg, rgba(140, 40, 200, 1), rgba(70, 20, 100, 1)) !important;
+                box-shadow: 0 8px 25px rgba(0, 0, 0, 0.7) !important;
+            }
+
+            /* Rotation, wenn das Menü offen ist */
+            .fancy-fab-trigger.active {
+                transform: rotate(45deg) !important;
+            }
+
+            /* Der versteckte Aktionen-Stapel (vertikale Buttons) */
+            .fancy-actions-stack {
+                display: none !important;
+                /* Versteckt standardmäßig */
+                flex-direction: column !important;
+                gap: 10px !important;
+                align-items: flex-end !important;
+            }
+
+            /* Anzeigen, wenn das Menü offen ist */
+            .fancy-actions-menu-wrapper.open .fancy-actions-stack {
+                display: flex !important;
+                pointer-events: auto;
+                /* Aktiviert Klicks, wenn offen */
+                animation: fancyPopIn 0.3s ease forwards !important;
+            }
+
+            /* Einzelne Aktions-Buttons (Schicke Pillen) */
+            .fancy-action-item {
+                background: linear-gradient(135deg, rgba(25, 25, 25, 0.95), rgba(10, 10, 10, 0.95)) !important;
+                /* Dunkles Material */
+                border: 1px solid rgba(255, 255, 255, 0.15) !important;
+                border-radius: 50px !important;
+                padding: 12px 24px !important;
+                color: #fff !important;
+                display: flex !important;
+                align-items: center !important;
+                gap: 10px !important;
+                font-size: 0.95rem !important;
+                box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4) !important;
+                white-space: nowrap !important;
+                cursor: pointer !important;
+                transition: background 0.3s ease, transform 0.2s ease !important;
+            }
+
+            .fancy-action-item:hover {
+                background: linear-gradient(135deg, rgba(40, 40, 40, 1), rgba(20, 20, 20, 1)) !important;
+                transform: scale(1.03) !important;
+            }
+
+            /* Spezifische Farben für die Aktionen */
+            .fancy-action-publish {
+                background: linear-gradient(135deg, rgba(120, 30, 180, 0.9), rgba(60, 15, 90, 0.9)) !important;
+                /* Lila/Tiefblau für Veröffentlichen */
+                border-color: rgba(180, 60, 255, 0.2) !important;
+            }
+
+            .fancy-action-guidelines {
+                background: rgba(30, 30, 30, 0.95) !important;
+                /* Standard-Dunkel für Guidelines */
+                border-color: rgba(255, 255, 255, 0.1) !important;
+            }
+
+            /* Pop-In-Animation für das Öffnen */
+            @keyframes fancyPopIn {
+                from {
+                    opacity: 0;
+                    transform: scale(0.8) translateY(20px);
+                }
+
+                to {
+                    opacity: 1;
+                    transform: scale(1) translateY(0);
+                }
+            }
+        }
+
         /* 1. Macht das innere Tag-Eingabefeld komplett unsichtbar im Rahmen, 
-      sodass der Container selbst wie das Eingabefeld wirkt */
+      sodass deor Container selbst wie das Eingabefeld wirkt */
         .tagInput {
             background: transparent !important;
             border: none !important;
@@ -815,10 +1097,11 @@
                     </div>
 
                     <div class="tools-right">
-                        <button class="guideline-btn" id="guidelineBtn" title="Rahmenbedingungen anzeigen">
+                        <button class="guideline-btn hide-on-mobile" id="guidelineBtn"
+                            title="Rahmenbedingungen anzeigen">
                             <i class="fa-solid fa-book-open"></i> Guidelines
                         </button>
-                        <button class="publish-btn" id="publishBtn">
+                        <button class="publish-btn hide-on-mobile" id="publishBtn">
                             <i class="fa-solid fa-paper-plane"></i> Veröffentlichen
                         </button>
                     </div>
@@ -827,9 +1110,9 @@
 
             <!-- Meta Daten: Kategorie (Jetzt als Textfeld mit Vorschlägen) -->
             <div class="meta-inputs">
-                <input type="text" class="tagContainer category-select" id="articleCategory" list="categoryOptions"
+                <input type="text" class="category-select" id="articleCategory" list="categoryOptions"
                     placeholder="Kategorie wählen o. tippen..." autocomplete="off">
-                <datalist id="categoryOptions" class="tagInput">
+                <datalist id="categoryOptions">
                     <option value="News"></option>
                     <option value="Release"></option>
                     <option value="Interview"></option>
@@ -854,7 +1137,6 @@
             <!-- Titel -->
             <textarea class="title-input" id="articleTitle" placeholder="Packende Schlagzeile..." rows="1"
                 oninput="this.style.height = ''; this.style.height = this.scrollHeight + 'px'"></textarea>
-
             <!-- Autoren-Auswahl und Lesezeit -->
             <div class="meta-row">
                 <input type="text" id="authorInput" name="article_author" class="category-select"
@@ -943,6 +1225,88 @@
     <div class="toast" id="successToast">
         Artikel erfolgreich veröffentlicht!
     </div>
+
+    <!-- FANCY FLOATING ACTION MENU (Mobile) -->
+    <div class="fancy-actions-menu-wrapper" id="fancyActionsMenu">
+        <!-- Haupt-Trigger-Button -->
+        <button class="fancy-fab-trigger" id="fabTrigger">
+            <!-- Ein Icon deiner Wahl (z.B. Rakete für Aktionen) -->
+            🚀
+        </button>
+        <!-- Neuer runder Guidelines-Button (Unten Links) -->
+        <button class="fancy-fab-guidelines" id="mobileGuidelinesBtn">
+            📖
+        </button>
+        <!-- Die aufklappbaren Aktionen -->
+        <div class="fancy-actions-stack">
+            <!-- Button: Veröffentlichen (Mit Lila-Glanz) -->
+            <button class="fancy-action-item fancy-action-publish" id="publishAction">
+                <!-- Icon: Check oder Rakete -->
+                <span>✓</span> Veröffentlichen
+            </button>
+            <!-- Button: Guidelines (Dunkel) -->
+            <button class="fancy-action-item fancy-action-guidelines" id="guidelinesAction">
+                <!-- Icon: Buch -->
+                <span>[Aktion]</span> Guidelines
+            </button>
+        </div>
+    </div>
+
+    <script>
+        // MOBILE-MENÜ-HANDLING (FANCY SOLUTION)
+        const fabTrigger = document.getElementById('fabTrigger');
+        const fancyActionsMenu = document.getElementById('fancyActionsMenu');
+        const publishAction = document.getElementById('publishAction');
+        const guidelinesAction = document.getElementById('guidelinesAction');
+
+        // Öffnen/Schließen des Menüs beim Tippen auf den FAB
+        fabTrigger.addEventListener('click', function (e) {
+            e.stopPropagation(); // Verhindert, dass das Tippen auf den Editor das Menü schließt
+            fancyActionsMenu.classList.toggle('open');
+            fabTrigger.classList.toggle('active');
+        });
+
+        // Schließen des Menüs, wenn man außerhalb tippt
+        document.addEventListener('click', function (e) {
+            if (fancyActionsMenu.classList.contains('open')) {
+                fancyActionsMenu.classList.remove('open');
+                fabTrigger.classList.remove('active');
+            }
+        });
+
+        // Verlinkung auf deine echten Funktionen
+        publishAction.addEventListener('click', function () {
+            // Wir simulieren hier einen Klick auf den unsichtbaren Desktop-Button, 
+            // damit deine ganze Validierung (Titel, Kategorie, Textlänge) greift!
+            document.getElementById('publishBtn').click();
+
+            // Schließe das Menü nach der Aktion
+            fancyActionsMenu.classList.remove('open');
+            fabTrigger.classList.remove('active');
+        });
+
+        guidelinesAction.addEventListener('click', function () {
+            // Zeigt das echte Guidelines-Modal an
+            document.getElementById('guidelineModal').style.display = 'flex';
+
+            // Schließe das Menü nach der Aktion
+            fancyActionsMenu.classList.remove('open');
+            fabTrigger.classList.remove('active');
+        });
+
+        // Garantiert das Öffnen der Guidelines beim Klick auf das Buch-Icon
+        const mobileBookBtn = document.getElementById('mobileGuidelinesBtn');
+        if (mobileBookBtn) {
+            mobileBookBtn.addEventListener('click', function (e) {
+                e.stopPropagation(); // Verhindert, dass andere Klick-Events dazwischengrätschen
+                document.getElementById('guidelineModal').style.display = 'flex';
+
+                // Falls das Raketen-Menü offen ist, wird es zur Sicherheit geschlossen
+                fancyActionsMenu.classList.remove('open');
+                fabTrigger.classList.remove('active');
+            });
+        }
+    </script>
 
     <script>
         const contentInput = document.getElementById('articleContent');
@@ -1175,16 +1539,59 @@
 
         confirmPublishBtn.addEventListener('click', () => {
             publishModal.style.display = 'none';
-            publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Lädt...';
+            publishBtn.innerHTML = '<i class="fa-solid fa-spinner fa-spin"></i> Sendet...';
             publishBtn.style.opacity = "0.8";
             publishBtn.style.pointerEvents = "none";
 
-            setTimeout(() => {
-                const toast = document.getElementById('successToast');
-                toast.innerHTML = '<i class="fa-solid fa-check"></i> Artikel zur Überprüfung eingereicht!';
-                toast.classList.add('show');
-                setTimeout(() => window.location.href = "news.html", 2500);
-            }, 1500);
+            // 1. Alle Daten aus dem Editor sammeln
+            const articleData = {
+                titel: document.getElementById('articleTitle').value.trim(),
+                kategorie: document.getElementById('articleCategory').value,
+                autor: document.getElementById('authorInput').value.trim() || "Unbekannt",
+                lead: document.getElementById('leadInput').value.trim(),
+                tags: tags.join(', '), // Verwendet dein bestehendes Tag-Array
+                ki_inhalte: document.getElementById('ai-content-toggle').checked ? "Ja" : "Nein",
+                text_html: document.getElementById('articleContent').innerHTML.trim()
+            };
+
+            // 2. Daten per FormSubmit senden (ersetze die E-Mail-Adresse!)
+            // WICHTIG: Trag hier die E-Mail-Adresse ein, an die die Artikel gehen sollen!
+            const empfaengerEmail = "info@dialektwerk.ch";
+
+            fetch(`https://formsubmit.co/ajax/${empfaengerEmail}`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    _subject: "Neuer Artikel eingereicht: " + articleData.titel, // E-Mail Betreff
+                    Kategorie: articleData.kategorie,
+                    Autor: articleData.autor,
+                    Tags: articleData.tags,
+                    KI_Generiert: articleData.ki_inhalte,
+                    Lead_Text: articleData.lead,
+                    Artikel_Inhalt: articleData.text_html
+                })
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Erfolg! Nachricht anzeigen und weiterleiten
+                    const toast = document.getElementById('successToast');
+                    toast.innerHTML = '<i class="fa-solid fa-check"></i> Artikel wurde an die Redaktion gesendet!';
+                    toast.classList.add('show');
+                    setTimeout(() => window.location.href = "news.html", 3000);
+                })
+                .catch(error => {
+                    // Falls das Internet weg ist oder ein Fehler passiert
+                    console.log(error);
+                    alert("Fehler beim Senden. Bitte überprüfe deine Internetverbindung und versuche es noch einmal.");
+
+                    // Button wieder aktiv machen
+                    publishBtn.innerHTML = '<i class="fa-solid fa-paper-plane"></i> Veröffentlichen';
+                    publishBtn.style.opacity = "1";
+                    publishBtn.style.pointerEvents = "auto";
+                });
         });
 
         // --- PLACEHOLDER LOGIK CONTENTEDITABLE ---
@@ -1237,6 +1644,28 @@
             tags.splice(index, 1);
             renderTags();
         };
+    </script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function () {
+            const mobileBookBtn = document.getElementById('mobileGuidelinesBtn');
+            const guidelineModal = document.getElementById('guidelineModal');
+            const fancyMenu = document.getElementById('fancyActionsMenu');
+            const fabTrig = document.getElementById('fabTrigger');
+
+            if (mobileBookBtn && guidelineModal) {
+                mobileBookBtn.addEventListener('click', function (e) {
+                    e.preventDefault();  // Verhindert ungewolltes Scrollen nach oben
+                    e.stopPropagation(); // Blockiert Störfeuer von anderen Klick-Events auf der Seite
+
+                    // Modal öffnen
+                    guidelineModal.style.display = 'flex';
+
+                    // Raketen-Menü sicherheitshalber schließen, falls es offen war
+                    if (fancyMenu) fancyMenu.classList.remove('open');
+                    if (fabTrig) fabTrig.classList.remove('active');
+                });
+            }
+        });
     </script>
 </body>
 

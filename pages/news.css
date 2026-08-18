@@ -33,6 +33,14 @@ body {
     padding: 0;
 }
 
+bento-img-bg-typartikel {
+    background-image: url(../images/ty-partikel.jpeg);
+    background-size: cover;
+    background-position: center;
+    color: var(--text-heading);
+    padding: 1rem;
+}
+
 .layout-container {
     display: flex;
     min-height: 100vh;

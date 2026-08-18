@@ -4,22 +4,21 @@
 <head>
   <link rel="stylesheet" href="../common/kigostyle.css">
   <link rel="stylesheet" href="../common/filter.css">
-  <link rel="stylesheet" href="../common/navbar.css">
   <link rel="stylesheet" href="swimhome.css">
-  <link rel="icon" type="image/png" href="../favicon/favicon-96x96.png" sizes="96x96" />
-  <link rel="icon" type="image/svg+xml" href="../favicon/favicon.svg" />
-  <link rel="shortcut icon" href="../favicon/favicon.ico" />
-  <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png" />
-  <link rel="manifest" href="../favicon/site.webmanifest" />
+  <script src="https://www.youtube.com/iframe_api"></script>
   <script src="../common/filter.js" defer></script>
+  <title>Swim Home</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+
+  <link rel="stylesheet" href="../common/navbar.css">
   <script src="https://unpkg.com/lucide@latest"></script>
   <script src="../common/navbar.js" defer></script>
-  <title>DW Swim Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
 </head>
 
 <body>
-
 
   <div id="navbar-placeholder"></div>
   <img src="../images/gino.jpg" alt="Artist Image" id="background-img">
@@ -53,14 +52,16 @@
 
       <div class="card-background">
         <div class="bento-card card-buttons">
-          <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button class="nav-btn" onclick="prevArtist()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
               <polygon points="19 20 9 12 19 4 19 20"></polygon>
               <line x1="5" y1="19" x2="5" y2="5"></line>
             </svg>
           </button>
-          <button class="nav-btn"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"
-              fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <button class="nav-btn" onclick="nextArtist()"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24"
+              viewBox="0 0 24 24" fill="none" stroke="#ffffff" stroke-width="2" stroke-linecap="round"
+              stroke-linejoin="round">
               <polygon points="5 4 15 12 5 20 5 4"></polygon>
               <line x1="19" y1="5" x2="19" y2="19"></line>
             </svg>
@@ -95,16 +96,13 @@
           </button>
         </div>
         <div class="bento-card card-profile">
-          <img src="../images/gino.jpg" alt="Artist Image" id="profile-img">
+          <img src="" alt="Artist Image" id="profile-img">
           <div class="profile-info">
-            <h1>gino</h1>
+            <h1 id="profile-name"></h1>
           </div>
         </div>
 
-        <div class="bento-card card-youtube">
-          <iframe src="https://www.youtube.com/embed/1RxQHtQdG1I?si=RUqgPebGbfPQQ1Ow" title="YouTube video player"
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
-            allowfullscreen></iframe>
+        <div id="youtube-player" class="bento-card card-youtube">
         </div>
       </div>
 
@@ -117,7 +115,7 @@
   <!-- Das Pop-up (Modal) -->
   <div id="filter-modal" class="modal-overlay">
     <!-- Die eigentliche Filter-Box -->
-    <div class="bento-card filter-card">
+    <div class="modal-content">
 
       <!-- Ein Schließen-Button (X) -->
       <button id="close-filter-btn" class="close-btn">&times;</button>
@@ -180,13 +178,125 @@
         </div>
       </div>
 
+      <button type="button" onclick="searchArtists()">Suchen</button>
     </div>
   </div>
+  <script>
+    let player;
+
+    // 3. This specific function name is required by YouTube's API library
+    function onYouTubeIframeAPIReady() {
+      player = new YT.Player('youtube-player', {
+        height: '360',
+        width: '640',
+        videoId: 'SR5sxe1IQUo', // Replace with your YouTube Video ID
+        playerVars: {
+          'autoplay': 1,       // Auto-starts the video
+          'mute': 0            // Required for autoplay on modern browsers
+        },
+        events: {
+          'onReady': onPlayerReady,
+          'onStateChange': onPlayerStateChange
+        }
+      });
+    }
+
+    // Play video automatically as soon as it's ready
+    function onPlayerReady(event) {
+      event.target.playVideo();
+    }
+
+    // 4. State Listener: Detect when playback reaches the end
+    function onPlayerStateChange(event) {
+      // YT.PlayerState.ENDED evaluates to 0
+      if (event.data === YT.PlayerState.ENDED) {
+        nextArtist();
+      }
+    }
+  </script>
+
+  <script>
+    let artists = [];
+    let currentArtist = -1;
+
+    function searchArtists() {
+      fetch('search_artists.php') // TODO: add search criterias (dialekt, genre, zuhörer min/max, ...)
+        .then(response => response.text())
+        .then(script => {
+          eval(script);
+          //console.log(artists.length);
+
+          // show the first artist
+          refreshArtist();
+
+          // close the popup (falls vorhanden)
+          if (typeof modal !== 'undefined' && modal.classList) {
+            modal.classList.remove('active');
+          }
+        });
+    }
+
+    function nextArtist() {
+      currentArtist++;
+      if (currentArtist >= artists.length)
+        currentArtist = 0;
+
+      refreshArtist();
+    }
+
+    function prevArtist() {
+      currentArtist--;
+      if (currentArtist < 0)
+        currentArtist = artists.length - 1;
+
+      refreshArtist();
+    }
+
+
+    function refreshArtist() {
+      if (!artists || artists.length === 0 || currentArtist < 0) return;
+
+      const artist = artists[currentArtist];
+
+      // Texte und Bilder aktualisieren
+      document.getElementById('profile-name').innerHTML = artist.name;
+
+      const profileImg = document.getElementById('profile-img');
+      profileImg.setAttribute('src', artist.imageURL);
+      document.getElementById('background-img').setAttribute('src', artist.imageURL);
+
+      // --- YOUTUBE VIDEO UPDATE FIX ---
+      const videoId = artist.youtubeVideoId;
+
+      // 1. Desktop: Den offiziellen YouTube API Player nutzen
+      if (player && typeof player.loadVideoById === 'function') {
+        player.loadVideoById(videoId);
+      }
+
+      // 2. Mobile: Nur die iframes updaten, die NICHT von der API gesteuert werden!
+      // Wenn man die src vom API-Player hart ändert, geht er nämlich kaputt.
+      const allIframes = document.querySelectorAll('.card-youtube iframe, .mobile-drawer-wrapper iframe');
+      const embedUrl = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+
+      allIframes.forEach(iframe => {
+        // Wir fassen den Hauptplayer nicht an, nur die mobilen Klone
+        if (iframe.id !== 'youtube-player') {
+          iframe.src = embedUrl;
+        }
+      });
+
+    }
+
+    searchArtists();
+  </script>
+
   <script>
     // JavaScript für das Handy zum Öffnen/Schließen
     function toggleMobilePanel() {
       const drawer = document.getElementById('mobileDrawer');
       const arrow = document.getElementById('drawerArrow'); // Zielt nur auf den Pfeil
+
+      if (!drawer || !arrow) return;
 
       drawer.classList.toggle('open');
 
@@ -198,37 +308,38 @@
       }
     }
 
-    // Wähle den Button aus (hier angenommen, er hat die ID "like-button")
+    // Like Button
     const likeButton = document.getElementById('like-button');
+    if (likeButton) {
+      likeButton.addEventListener('click', function () {
+        this.classList.toggle('liked');
+      });
+    }
 
-    // Füge einen Klick-Zuhörer (Event Listener) hinzu
-    likeButton.addEventListener('click', function () {
-      // 'toggle' fügt die Klasse 'liked' hinzu, wenn sie fehlt, 
-      // und entfernt sie, wenn sie bereits da ist.
-      this.classList.toggle('liked');
-    });
-
-    // Elemente aus dem HTML auswählen
+    // Filter Modal Steuerung
     const openBtn = document.getElementById('open-filter-btn');
     const closeBtn = document.getElementById('close-filter-btn');
     const modal = document.getElementById('filter-modal');
 
-    // Öffnen: Klick auf das Filter-Symbol
-    openBtn.addEventListener('click', () => {
-      modal.classList.add('active');
-    });
+    if (openBtn && modal) {
+      openBtn.addEventListener('click', () => {
+        modal.classList.add('active');
+      });
+    }
 
-    // Schließen: Klick auf das "X"
-    closeBtn.addEventListener('click', () => {
-      modal.classList.remove('active');
-    });
-
-    // Optionaler Bonus: Schließen, wenn man außerhalb der Box auf den dunklen Hintergrund klickt
-    modal.addEventListener('click', (event) => {
-      if (event.target === modal) {
+    if (closeBtn && modal) {
+      closeBtn.addEventListener('click', () => {
         modal.classList.remove('active');
-      }
-    });
+      });
+    }
+
+    if (modal) {
+      modal.addEventListener('click', (event) => {
+        if (event.target === modal) {
+          modal.classList.remove('active');
+        }
+      });
+    }
   </script>
 
 </body>

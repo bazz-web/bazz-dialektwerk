@@ -1,0 +1,934 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ty P - Dodge & Shop Mini-Game</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;600;700;800&family=Orbitron:wght@700;900&display=swap"
+        rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+
+    <style>
+        body {
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            background-color: #0d0f12;
+            color: #f3f4f6;
+            margin: 0;
+            padding: 20px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        .font-orbitron {
+            font-family: 'Orbitron', sans-serif;
+        }
+
+        /* Bento Glassmorphism Card Style matching Ty P Hub */
+        .bento-card {
+            background: linear-gradient(145deg, rgba(30, 35, 45, 0.85), rgba(18, 21, 28, 0.95));
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+            box-shadow: 0 20px 40px rgba(0, 0, 0, 0.5), inset 0 1px 0 rgba(255, 255, 255, 0.1);
+        }
+
+        /* Glow effects */
+        .glow-orange {
+            box-shadow: 0 0 20px rgba(249, 115, 22, 0.35);
+        }
+
+        .glow-cyan {
+            box-shadow: 0 0 20px rgba(6, 182, 212, 0.35);
+        }
+
+        .glow-emerald {
+            box-shadow: 0 0 20px rgba(16, 185, 129, 0.35);
+        }
+
+        /* Smooth canvas pixel rendering & Touch optimization */
+        canvas {
+            image-rendering: pixelated;
+            touch-action: none;
+        }
+
+        .touch-btn {
+            touch-action: manipulation;
+            -webkit-user-select: none;
+            user-select: none;
+        }
+
+        ::-webkit-scrollbar {
+            width: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 4px;
+        }
+    </style>
+</head>
+
+<body class="p-4 sm:p-8">
+
+    <div id="bento-card-container"
+        class="bento-card w-full max-w-sm sm:max-w-md rounded-3xl p-5 relative overflow-hidden flex flex-col justify-between min-h-[560px] transition-all duration-300">
+
+        <!-- Ambient background lighting inside card -->
+        <div class="absolute -top-24 -right-24 w-48 h-48 bg-orange-500/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+        <div class="absolute -bottom-24 -left-24 w-48 h-48 bg-cyan-500/10 rounded-full blur-3xl pointer-events-none">
+        </div>
+
+        <!-- Header Bar with Stats & Currency -->
+        <div class="flex items-center justify-between z-10 mb-3">
+            <div class="flex items-center gap-2">
+                <span class="inline-block w-2.5 h-2.5 rounded-full bg-orange-500 animate-pulse"></span>
+                <span class="text-xs font-bold uppercase tracking-wider text-gray-400">Ty P // Arcade</span>
+            </div>
+
+            <div class="flex items-center gap-2">
+                <!-- Kafi Coins Display -->
+                <div
+                    class="text-xs font-semibold px-2.5 py-1 rounded-full bg-amber-500/10 border border-amber-500/30 text-amber-300 flex items-center gap-1.5">
+                    <span>☕</span>
+                    <span id="kafi-bank-val" class="font-bold font-mono text-amber-400">0</span>
+                </div>
+                <!-- High Score Tag -->
+                <div id="high-score-tag"
+                    class="text-xs font-semibold px-2.5 py-1 rounded-full bg-white/5 border border-white/10 text-gray-300">
+                    ⚡ <span id="high-score-val" class="text-orange-400 font-bold">0</span>
+                </div>
+            </div>
+        </div>
+
+        <!-- Dynamic Content Screen Area -->
+        <div class="relative flex-1 flex flex-col justify-center items-center my-1 z-10 min-h-[400px]">
+
+            <div id="screen-start" class="w-full flex flex-col items-center text-center p-2 my-auto">
+                <div
+                    class="w-16 h-16 mb-3 rounded-2xl bg-gradient-to-br from-orange-500/20 to-amber-500/10 border border-orange-500/30 flex items-center justify-center text-3xl shadow-lg glow-orange">
+                    🏎️
+                </div>
+                <h3
+                    class="font-orbitron text-xl sm:text-2xl font-black text-transparent bg-clip-text bg-gradient-to-r from-orange-400 via-amber-300 to-yellow-200 tracking-wide uppercase mb-1">
+                    Ty P Dodge
+                </h3>
+                <p class="text-xs text-gray-400 max-w-[270px] mb-4 leading-relaxed">
+                    Spiele 5 Levels frei, sammle <span class="text-amber-400 font-semibold">☕ Kafi</span> & schalte im
+                    Shop Fahrzeuge wie den <span class="text-cyan-400 font-semibold">ICE Zug</span> frei!
+                </p>
+
+                <div class="w-full space-y-2.5">
+                    <button id="btn-start-play"
+                        class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-orange-500 to-amber-500 hover:from-orange-400 hover:to-amber-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all transform active:scale-95 shadow-lg glow-orange flex items-center justify-center gap-2">
+                        <span>Level Wählen</span>
+                        <svg class="w-4 h-4 fill-current" viewBox="0 0 24 24">
+                            <path d="M8 5v14l11-7z" />
+                        </svg>
+                    </button>
+
+                    <button id="btn-open-shop"
+                        class="w-full py-3 px-6 rounded-2xl bg-white/10 hover:bg-white/15 border border-amber-500/30 text-amber-300 font-extrabold text-xs uppercase tracking-wider transition-all transform active:scale-95 flex items-center justify-center gap-2">
+                        <span>🛒 Ty P Fahrzeug-Shop</span>
+                    </button>
+                </div>
+            </div>
+
+            <div id="screen-levels" class="hidden w-full flex-col items-center text-center p-1">
+                <h4 class="font-orbitron text-sm font-bold text-gray-300 uppercase tracking-wider mb-3">Wähle ein Level
+                </h4>
+
+                <div id="level-grid" class="grid grid-cols-2 gap-2.5 w-full mb-3">
+                    <!-- Level Buttons generated dynamically in JS -->
+                </div>
+
+                <button id="btn-back-menu"
+                    class="text-xs text-gray-400 hover:text-white underline transition-colors pt-1">
+                    ◀ Zurück zum Hauptmenü
+                </button>
+            </div>
+
+            <div id="screen-shop" class="hidden w-full flex-col items-center text-center p-1">
+                <div class="flex items-center justify-between w-full mb-3 px-1">
+                    <h4
+                        class="font-orbitron text-sm font-bold text-amber-300 uppercase tracking-wider flex items-center gap-1.5">
+                        <span>🛒</span> Garage & Shop
+                    </h4>
+                    <div class="text-xs text-gray-400 font-mono">
+                        Kafi: <span id="shop-kafi-count" class="text-amber-400 font-bold">0</span> ☕
+                    </div>
+                </div>
+
+                <div id="shop-items-list" class="w-full flex flex-col gap-2 max-h-[300px] overflow-y-auto pr-1 mb-3">
+                    <!-- Shop Items inserted dynamically via JS -->
+                </div>
+
+                <button id="btn-back-from-shop"
+                    class="w-full py-2.5 rounded-xl bg-white/10 hover:bg-white/15 text-white font-bold text-xs uppercase transition-all">
+                    Fertig / Zurück
+                </button>
+            </div>
+
+            <div id="screen-game" class="hidden w-full flex-col items-center">
+                <!-- Canvas Header Info -->
+                <div class="w-full flex justify-between items-center px-1 mb-2 text-xs font-orbitron">
+                    <div class="text-gray-300">
+                        <span id="game-level-label" class="text-orange-400 font-bold">LVL 1</span>:
+                        <span id="game-score" class="text-white font-bold">0</span><span id="game-target-wrap"> / <span
+                                id="game-target">30</span></span>
+                    </div>
+                    <div class="text-amber-300 font-bold flex items-center gap-1">
+                        ☕ <span id="game-kafi-gained">0</span>
+                    </div>
+                </div>
+
+                <!-- Game Canvas -->
+                <div
+                    class="relative w-full rounded-2xl overflow-hidden border border-white/10 shadow-inner bg-black/40">
+                    <canvas id="game-canvas" class="w-full h-[320px] block"></canvas>
+
+                    <div class="absolute inset-x-0 bottom-2 flex justify-between px-3 pointer-events-none opacity-40">
+                        <span class="text-[10px] text-white bg-black/60 px-2 py-0.5 rounded">◀ Pfeil / Swipe</span>
+                        <span class="text-[10px] text-white bg-black/60 px-2 py-0.5 rounded">Swipe / Pfeil ▶</span>
+                    </div>
+                </div>
+
+                <!-- Responsive Touch Control Buttons -->
+                <div class="grid grid-cols-2 gap-3 w-full mt-3">
+                    <button id="btn-left"
+                        class="touch-btn py-3 rounded-xl bg-white/10 active:bg-orange-500 border border-white/15 text-white font-bold text-xl transition-colors active:scale-95 flex items-center justify-center select-none shadow-md">
+                        ◀
+                    </button>
+                    <button id="btn-right"
+                        class="touch-btn py-3 rounded-xl bg-white/10 active:bg-orange-500 border border-white/15 text-white font-bold text-xl transition-colors active:scale-95 flex items-center justify-center select-none shadow-md">
+                        ▶
+                    </button>
+                </div>
+            </div>
+
+            <div id="screen-levelwin" class="hidden w-full flex flex-col items-center text-center p-2 my-auto">
+                <div class="text-4xl mb-2 animate-bounce">🏁</div>
+                <h4 class="font-orbitron text-lg font-extrabold text-emerald-400 uppercase tracking-wide mb-1">Level
+                    Geschafft!</h4>
+                <p class="text-xs text-gray-300 mb-1">Du hast <span id="win-score"
+                        class="text-orange-400 font-bold">0</span> Punkte erreicht.</p>
+                <p class="text-xs text-amber-300 font-semibold mb-4">+<span id="win-kafi" class="font-bold">0</span>
+                    Kaffeetassen gesammelt!</p>
+
+                <div class="w-full space-y-2">
+                    <button id="btn-next-level"
+                        class="w-full py-3 px-6 rounded-2xl bg-gradient-to-r from-emerald-500 to-teal-400 text-black font-extrabold text-xs uppercase tracking-wider transition-all transform active:scale-95 shadow-lg glow-emerald">
+                        Nächstes Level ➔
+                    </button>
+                    <button id="btn-win-menu"
+                        class="w-full py-2.5 rounded-2xl bg-white/10 text-white font-bold text-xs uppercase">
+                        Level-Auswahl
+                    </button>
+                </div>
+            </div>
+
+            <!-- Game Over -->
+            <div id="screen-gameover" class="hidden w-full flex flex-col items-center text-center p-2 my-auto">
+                <div class="text-4xl mb-2">💥</div>
+                <h4 class="font-orbitron text-lg font-bold text-red-400 uppercase tracking-wide mb-1">Crashed!</h4>
+                <p class="text-xs text-gray-400 mb-3">Erreicht: <span id="final-score"
+                        class="text-white font-bold">0</span> Punkte.</p>
+                <div id="progress-bar-container"
+                    class="w-full bg-white/5 rounded-full h-2 mb-4 overflow-hidden border border-white/10">
+                    <div id="progress-bar"
+                        class="bg-gradient-to-r from-orange-500 to-amber-400 h-full w-0 transition-all duration-500">
+                    </div>
+                </div>
+                <div class="w-full space-y-2">
+                    <button id="btn-restart"
+                        class="w-full py-3 px-6 rounded-2xl bg-white/10 hover:bg-white/20 border border-white/15 text-white font-bold text-xs uppercase tracking-wider transition-all transform active:scale-95">
+                        Nochmal versuchen 🔄
+                    </button>
+                    <button id="btn-over-menu"
+                        class="w-full py-2.5 rounded-2xl bg-white/5 text-gray-300 font-semibold text-xs uppercase">
+                        Level-Auswahl
+                    </button>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Footer Bar -->
+        <div class="flex items-center justify-between z-10 pt-2 border-t border-white/5 text-[10px] text-gray-500">
+            <span>Ty P Musigdichter Hub</span>
+            <span id="equipped-skin-name" class="text-orange-400 font-semibold">🏎️ DeLorean</span>
+        </div>
+
+        <!-- Notification Toast -->
+        <div id="toast"
+            class="absolute top-4 left-1/2 -translate-x-1/2 bg-amber-400 text-black text-xs font-bold px-3 py-1.5 rounded-full shadow-lg opacity-0 transition-all pointer-events-none z-50">
+            Kafi gekauft!
+        </div>
+
+    </div>
+
+    <script>
+        // Game Levels Definition
+        const LEVELS_CONFIG = [
+            { id: 1, name: "Lvl 1: Bern-Nord", target: 30, speed: 3.5, spawnRate: 0.030 },
+            { id: 2, name: "Lvl 2: Autobahn", target: 60, speed: 4.2, spawnRate: 0.035 },
+            { id: 3, name: "Lvl 3: Italia Trip", target: 100, speed: 4.8, spawnRate: 0.040 },
+            { id: 4, name: "Lvl 4: Louvre Sprint", target: 150, speed: 5.5, spawnRate: 0.045 },
+            { id: 5, name: "Lvl 5: Utopisch Land", target: 220, speed: 6.2, spawnRate: 0.050 },
+            { id: 6, name: "Lvl 6: ENDLESS MODE", target: Infinity, speed: 5.0, spawnRate: 0.042, isEndless: true }
+        ];
+
+        // Shop Items Definition
+        const VEHICLE_SKINS = [
+            { id: 'delorean', name: 'DeLorean DMC', price: 0, icon: '🏎️', desc: 'Der Klassiker aus dem Musikvideo' },
+            { id: 'bmw', name: 'Autä BMW', price: 25, icon: '🚘', desc: '«Mit dim autä BMW...»' },
+            { id: 'ice', name: 'ICE Express Zug', price: 50, icon: '🚆', desc: 'Highspeed Ty P Express' },
+            { id: 'postauto', name: 'Bärner PostAuto', price: 80, icon: '🚌', desc: 'Gäub u legendär us Bärn' },
+            { id: 'saruch', name: 'Saruch Glider', price: 120, icon: '🚀', desc: 'Utopisches Music-Vehicle' }
+        ];
+
+        // Persistent State
+        let kafiBank = parseInt(localStorage.getItem('typ_kafi_bank') || '0');
+        let highScore = parseInt(localStorage.getItem('typ_endless_highscore') || '0');
+        let unlockedLevels = parseInt(localStorage.getItem('typ_unlocked_levels') || '1');
+        let ownedSkins = JSON.parse(localStorage.getItem('typ_owned_skins') || '["delorean"]');
+        let equippedSkin = localStorage.getItem('typ_equipped_skin') || 'delorean';
+
+        // Runtime Game State
+        let currentLevel = 1;
+        let score = 0;
+        let sessionKafiCollected = 0;
+        let gameActive = false;
+        let animationFrameId = null;
+        let frameTicks = 0;
+
+        // DOM Elements
+        const screenStart = document.getElementById('screen-start');
+        const screenLevels = document.getElementById('screen-levels');
+        const screenShop = document.getElementById('screen-shop');
+        const screenGame = document.getElementById('screen-game');
+        const screenLevelWin = document.getElementById('screen-levelwin');
+        const screenGameOver = document.getElementById('screen-gameover');
+
+        const kafiBankValEl = document.getElementById('kafi-bank-val');
+        const highScoreValEl = document.getElementById('high-score-val');
+        const equippedSkinNameEl = document.getElementById('equipped-skin-name');
+        const shopKafiCountEl = document.getElementById('shop-kafi-count');
+        const levelGridEl = document.getElementById('level-grid');
+        const shopItemsListEl = document.getElementById('shop-items-list');
+        const toastEl = document.getElementById('toast');
+
+        // Canvas Setup
+        const canvas = document.getElementById('game-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function updateTopBarUI() {
+            kafiBankValEl.textContent = kafiBank;
+            highScoreValEl.textContent = highScore;
+            const currentSkinObj = VEHICLE_SKINS.find(s => s.id === equippedSkin) || VEHICLE_SKINS[0];
+            equippedSkinNameEl.textContent = `${currentSkinObj.icon} ${currentSkinObj.name}`;
+            if (shopKafiCountEl) shopKafiCountEl.textContent = kafiBank;
+        }
+
+        updateTopBarUI();
+
+        function resizeCanvas() {
+            const parentWidth = canvas.parentElement ? canvas.parentElement.clientWidth : 0;
+            canvas.width = parentWidth > 0 ? parentWidth : 340;
+            canvas.height = 320;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        function drawRoundRect(x, y, width, height, radius, color) {
+            ctx.fillStyle = color;
+            if (typeof ctx.roundRect === 'function') {
+                ctx.beginPath();
+                ctx.roundRect(x, y, width, height, radius);
+                ctx.fill();
+            } else {
+                ctx.fillRect(x, y, width, height);
+            }
+        }
+
+        class SoundEngine {
+            constructor() { this.ctx = null; }
+            init() {
+                if (!this.ctx) {
+                    this.ctx = new (window.AudioContext || window.webkitAudioContext)();
+                }
+            }
+            playCollect() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'triangle';
+                osc.frequency.setValueAtTime(523.25, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(1046.50, this.ctx.currentTime + 0.15);
+                gain.gain.setValueAtTime(0.2, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.15);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.15);
+            }
+            playCrash() {
+                if (!this.ctx) return;
+                const osc = this.ctx.createOscillator();
+                const gain = this.ctx.createGain();
+                osc.type = 'sawtooth';
+                osc.frequency.setValueAtTime(160, this.ctx.currentTime);
+                osc.frequency.exponentialRampToValueAtTime(30, this.ctx.currentTime + 0.3);
+                gain.gain.setValueAtTime(0.3, this.ctx.currentTime);
+                gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + 0.3);
+                osc.connect(gain); gain.connect(this.ctx.destination);
+                osc.start(); osc.stop(this.ctx.currentTime + 0.3);
+            }
+            playWin() {
+                if (!this.ctx) return;
+                const notes = [523.25, 659.25, 783.99, 1046.50];
+                notes.forEach((freq, i) => {
+                    const osc = this.ctx.createOscillator();
+                    const gain = this.ctx.createGain();
+                    osc.type = 'sine';
+                    osc.frequency.setValueAtTime(freq, this.ctx.currentTime + i * 0.08);
+                    gain.gain.setValueAtTime(0.18, this.ctx.currentTime + i * 0.08);
+                    gain.gain.exponentialRampToValueAtTime(0.01, this.ctx.currentTime + i * 0.08 + 0.2);
+                    osc.connect(gain); gain.connect(this.ctx.destination);
+                    osc.start(this.ctx.currentTime + i * 0.08);
+                    osc.stop(this.ctx.currentTime + i * 0.08 + 0.2);
+                });
+            }
+        }
+        const audioFX = new SoundEngine();
+
+        // Player Vehicle Object with high responsiveness
+        const player = {
+            x: 0,
+            y: 0,
+            width: 38,
+            height: 54,
+            lane: 1,
+            targetX: 0,
+            speed: 0.55 // Increased interpolation speed for immediate response
+        };
+
+        let obstacles = [];
+        let collectibles = [];
+        let roadOffset = 0;
+
+        const ENEMY_CAR_STYLES = [
+            { main: '#ef4444', roof: '#b91c1c', light: '#fef08a' },
+            { main: '#facc15', roof: '#ca8a04', light: '#ffffff' },
+            { main: '#06b6d4', roof: '#0891b2', light: '#fef08a' },
+            { main: '#a855f7', roof: '#7e22ce', light: '#fef08a' }
+        ];
+
+        function getLaneX(laneIndex) {
+            const laneWidth = canvas.width / 3;
+            return (laneIndex * laneWidth) + (laneWidth / 2) - (player.width / 2);
+        }
+
+        function renderLevelSelectUI() {
+            levelGridEl.innerHTML = '';
+            LEVELS_CONFIG.forEach(lvl => {
+                const isUnlocked = lvl.id <= unlockedLevels;
+                const btn = document.createElement('button');
+                btn.className = `p-3 rounded-2xl border text-left transition-all flex flex-col justify-between h-20 ${isUnlocked
+                        ? 'bg-white/5 border-white/15 hover:border-orange-400 active:scale-95 cursor-pointer'
+                        : 'bg-black/40 border-white/5 opacity-50 cursor-not-allowed'
+                    }`;
+
+                btn.innerHTML = `
+                    <div class="flex items-center justify-between w-full">
+                        <span class="font-orbitron font-extrabold text-xs ${isUnlocked ? 'text-white' : 'text-gray-500'}">${lvl.isEndless ? '♾️ ENDLESS' : 'LVL ' + lvl.id}</span>
+                        <span>${isUnlocked ? (lvl.isEndless ? '🔥' : '🔓') : '🔒'}</span>
+                    </div>
+                    <div class="text-[10px] text-gray-400 font-medium">${lvl.isEndless ? 'Highscore Jagd' : 'Ziel: ' + lvl.target + ' PTS'}</div>
+                `;
+
+                if (isUnlocked) {
+                    btn.addEventListener('click', () => startSpecificLevel(lvl.id));
+                }
+
+                levelGridEl.appendChild(btn);
+            });
+        }
+
+        function renderShopUI() {
+            shopItemsListEl.innerHTML = '';
+            shopKafiCountEl.textContent = kafiBank;
+
+            VEHICLE_SKINS.forEach(skin => {
+                const isOwned = ownedSkins.includes(skin.id);
+                const isEquipped = equippedSkin === skin.id;
+
+                const card = document.createElement('div');
+                card.className = `p-3 rounded-2xl border flex items-center justify-between text-left transition-all ${isEquipped
+                        ? 'bg-orange-500/15 border-orange-500/50'
+                        : isOwned
+                            ? 'bg-white/5 border-white/10'
+                            : 'bg-black/30 border-white/5'
+                    }`;
+
+                card.innerHTML = `
+                    <div class="flex items-center gap-3">
+                        <div class="text-2xl">${skin.icon}</div>
+                        <div>
+                            <div class="text-xs font-bold text-white">${skin.name}</div>
+                            <div class="text-[10px] text-gray-400">${skin.desc}</div>
+                        </div>
+                    </div>
+                    <div>
+                        ${isEquipped
+                        ? `<span class="text-[10px] bg-orange-500 text-black font-extrabold px-2.5 py-1 rounded-full">Aktiv</span>`
+                        : isOwned
+                            ? `<button onclick="equipVehicleSkin('${skin.id}')" class="text-[10px] bg-white/10 hover:bg-white/20 text-white font-bold px-3 py-1 rounded-full transition-colors">Wählen</button>`
+                            : `<button onclick="buyVehicleSkin('${skin.id}', ${skin.price})" class="text-[10px] bg-amber-500 hover:bg-amber-400 text-black font-extrabold px-3 py-1 rounded-full shadow transition-all flex items-center gap-1">
+                                        <span>${skin.price}</span> ☕
+                                       </button>`
+                    }
+                    </div>
+                `;
+
+                shopItemsListEl.appendChild(card);
+            });
+        }
+
+        window.equipVehicleSkin = function (skinId) {
+            equippedSkin = skinId;
+            localStorage.setItem('typ_equipped_skin', equippedSkin);
+            updateTopBarUI();
+            renderShopUI();
+            showToast("Fahrzeug ausgewählt!");
+        };
+
+        window.buyVehicleSkin = function (skinId, price) {
+            if (kafiBank >= price) {
+                kafiBank -= price;
+                localStorage.setItem('typ_kafi_bank', kafiBank);
+                ownedSkins.push(skinId);
+                localStorage.setItem('typ_owned_skins', JSON.stringify(ownedSkins));
+                equippedSkin = skinId;
+                localStorage.setItem('typ_equipped_skin', equippedSkin);
+
+                updateTopBarUI();
+                renderShopUI();
+                showToast("Fahrzeug gekauft!");
+            } else {
+                showToast("Zu wenig Kafi ☕!");
+            }
+        };
+
+        function showToast(msg) {
+            toastEl.textContent = msg;
+            toastEl.classList.remove('opacity-0');
+            setTimeout(() => toastEl.classList.add('opacity-0'), 2000);
+        }
+
+        function startSpecificLevel(lvlId) {
+            currentLevel = lvlId;
+            const lvlCfg = LEVELS_CONFIG.find(l => l.id === currentLevel) || LEVELS_CONFIG[0];
+
+            document.getElementById('game-level-label').textContent = lvlCfg.isEndless ? 'ENDLESS' : `LVL ${lvlCfg.id}`;
+            document.getElementById('game-target').textContent = lvlCfg.target;
+            document.getElementById('game-target-wrap').style.display = lvlCfg.isEndless ? 'none' : 'inline';
+
+            screenStart.classList.add('hidden');
+            screenLevels.classList.add('hidden');
+            screenShop.classList.add('hidden');
+            screenLevelWin.classList.add('hidden');
+            screenGameOver.classList.add('hidden');
+
+            screenGame.classList.remove('hidden');
+            screenGame.classList.add('flex');
+
+            resizeCanvas();
+            initGame();
+            gameLoop();
+        }
+
+        function initGame() {
+            score = 0;
+            sessionKafiCollected = 0;
+            frameTicks = 0;
+            document.getElementById('game-score').textContent = score;
+            document.getElementById('game-kafi-gained').textContent = sessionKafiCollected;
+
+            player.lane = 1;
+            player.x = getLaneX(1);
+            player.targetX = player.x;
+            player.y = canvas.height - player.height - 20;
+
+            obstacles = [];
+            collectibles = [];
+            gameActive = true;
+        }
+
+        function spawnEntities() {
+            const lvlCfg = LEVELS_CONFIG.find(l => l.id === currentLevel) || LEVELS_CONFIG[0];
+
+            if (Math.random() < lvlCfg.spawnRate) {
+                const lane = Math.floor(Math.random() * 3);
+
+                const isOccupiedNearTop =
+                    obstacles.some(obs => obs.lane === lane && obs.y < 90) ||
+                    collectibles.some(item => item.lane === lane && item.y < 90);
+
+                if (isOccupiedNearTop) return;
+
+                const isCollectible = Math.random() < 0.40;
+
+                if (isCollectible) {
+                    collectibles.push({
+                        lane: lane,
+                        x: getLaneX(lane) + player.width / 2 - 12,
+                        y: -35,
+                        width: 24,
+                        height: 24
+                    });
+                } else {
+                    const styleIndex = Math.floor(Math.random() * ENEMY_CAR_STYLES.length);
+                    obstacles.push({
+                        lane: lane,
+                        x: getLaneX(lane) + player.width / 2 - 17,
+                        y: -55,
+                        width: 34,
+                        height: 50,
+                        style: ENEMY_CAR_STYLES[styleIndex]
+                    });
+                }
+            }
+        }
+
+        function updateGame() {
+            if (!gameActive) return;
+            frameTicks++;
+
+            const lvlCfg = LEVELS_CONFIG.find(l => l.id === currentLevel) || LEVELS_CONFIG[0];
+
+            // Fast responsive movement lerp
+            player.targetX = getLaneX(player.lane);
+            player.x += (player.targetX - player.x) * player.speed;
+
+            // Road animation
+            roadOffset = (roadOffset + lvlCfg.speed) % 30;
+
+            spawnEntities();
+
+            // Move Obstacle Cars
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                const obs = obstacles[i];
+                obs.y += lvlCfg.speed;
+
+                // Forgiving Collision Check
+                if (
+                    obs.y + obs.height - 12 > player.y &&
+                    obs.y + 12 < player.y + player.height &&
+                    Math.abs((obs.x + obs.width / 2) - (player.x + player.width / 2)) < 16
+                ) {
+                    gameOver();
+                    return;
+                }
+
+                if (obs.y > canvas.height + 60) obstacles.splice(i, 1);
+            }
+
+            // Move Collectibles
+            for (let i = collectibles.length - 1; i >= 0; i--) {
+                const item = collectibles[i];
+                item.y += lvlCfg.speed;
+
+                if (
+                    item.y + item.height > player.y &&
+                    item.y < player.y + player.height &&
+                    Math.abs((item.x + item.width / 2) - (player.x + player.width / 2)) < 24
+                ) {
+                    score += 10;
+                    sessionKafiCollected += 1;
+                    kafiBank += 1;
+                    localStorage.setItem('typ_kafi_bank', kafiBank);
+
+                    audioFX.playCollect();
+
+                    document.getElementById('game-score').textContent = score;
+                    document.getElementById('game-kafi-gained').textContent = sessionKafiCollected;
+                    kafiBankValEl.textContent = kafiBank;
+
+                    if (!lvlCfg.isEndless && score >= lvlCfg.target) {
+                        levelComplete();
+                        return;
+                    }
+
+                    collectibles.splice(i, 1);
+                    continue;
+                }
+
+                if (item.y > canvas.height + 40) collectibles.splice(i, 1);
+            }
+        }
+
+        function drawPlayerVehicle(ctx) {
+            const { x, y, width, height } = player;
+
+            if (equippedSkin === 'bmw') {
+                drawRoundRect(x, y, width, height, 8, '#1e3a8a');
+                ctx.fillStyle = '#93c5fd';
+                ctx.fillRect(x + 4, y + 14, width - 8, 12);
+                ctx.fillStyle = '#ffffff';
+                ctx.fillRect(x + 6, y + 2, 10, 4);
+                ctx.fillRect(x + width - 16, y + 2, 10, 4);
+                ctx.fillStyle = '#000000';
+                ctx.fillRect(x + width / 2 - 5, y + 1, 10, 3);
+            } else if (equippedSkin === 'ice') {
+                drawRoundRect(x + 4, y - 4, width - 8, height + 8, 10, '#f8fafc');
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(x + 5, y + height / 2, width - 10, 4);
+                ctx.fillStyle = '#0f172a';
+                ctx.beginPath();
+                ctx.moveTo(x + 8, y + 12);
+                ctx.lineTo(x + width / 2, y - 2);
+                ctx.lineTo(x + width - 8, y + 12);
+                ctx.closePath();
+                ctx.fill();
+            } else if (equippedSkin === 'postauto') {
+                drawRoundRect(x + 2, y, width - 4, height, 6, '#eab308');
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(x + 5, y + 10, width - 10, 10);
+                ctx.fillStyle = '#dc2626';
+                ctx.fillRect(x + 4, y + height - 8, width - 8, 4);
+            } else if (equippedSkin === 'saruch') {
+                ctx.fillStyle = '#a855f7';
+                ctx.beginPath();
+                ctx.moveTo(x + width / 2, y);
+                ctx.lineTo(x + width, y + height);
+                ctx.lineTo(x + width / 2, y + height - 10);
+                ctx.lineTo(x, y + height);
+                ctx.closePath();
+                ctx.fill();
+                ctx.fillStyle = '#38bdf8';
+                ctx.fillRect(x + width / 2 - 3, y + 15, 6, 12);
+            } else {
+                drawRoundRect(x, y, width, height, 6, '#9ca3af');
+                ctx.fillStyle = '#1e293b';
+                ctx.fillRect(x + 4, y + 12, width - 8, 14);
+                ctx.fillStyle = '#f97316';
+                ctx.fillRect(x + 6, y + height - 8, width - 12, 4);
+                ctx.fillStyle = '#fef08a';
+                ctx.fillRect(x + 4, y + 2, 8, 4);
+                ctx.fillRect(x + width - 12, y + 2, 8, 4);
+            }
+        }
+
+        function drawCoffeeCup(ctx, x, y) {
+            ctx.fillStyle = 'rgba(245, 158, 11, 0.25)';
+            ctx.beginPath();
+            ctx.arc(x + 12, y + 14, 18, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 3;
+            ctx.beginPath();
+            ctx.arc(x + 20, y + 13, 5, -Math.PI / 2, Math.PI / 2);
+            ctx.stroke();
+
+            drawRoundRect(x + 2, y + 6, 17, 15, 3, '#ffffff');
+
+            ctx.fillStyle = '#78350f';
+            ctx.fillRect(x + 4, y + 8, 13, 3);
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.8)';
+            ctx.lineWidth = 1.5;
+            const steamOffset = (frameTicks % 20) / 10;
+            ctx.beginPath();
+            ctx.moveTo(x + 6, y + 5);
+            ctx.lineTo(x + 5 + Math.sin(steamOffset) * 2, y - 2);
+            ctx.stroke();
+        }
+
+        function drawEnemyCar(ctx, obs) {
+            const { x, y, width, height, style } = obs;
+            drawRoundRect(x, y, width, height, 6, style.main);
+            ctx.fillStyle = '#0f172a';
+            ctx.fillRect(x + 4, y + 12, width - 8, 12);
+            drawRoundRect(x + 6, y + 24, width - 12, 16, 3, style.roof);
+            ctx.fillStyle = style.light;
+            ctx.fillRect(x + 3, y + height - 5, 8, 4);
+            ctx.fillRect(x + width - 11, y + height - 5, 8, 4);
+        }
+
+        function drawGame() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // Road
+            ctx.fillStyle = '#141821';
+            ctx.fillRect(0, 0, canvas.width, canvas.height);
+
+            // Dividers
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.15)';
+            ctx.setLineDash([15, 15]);
+            ctx.lineDashOffset = -roadOffset;
+            ctx.lineWidth = 2;
+
+            const laneW = canvas.width / 3;
+            ctx.beginPath();
+            ctx.moveTo(laneW, 0); ctx.lineTo(laneW, canvas.height);
+            ctx.moveTo(laneW * 2, 0); ctx.lineTo(laneW * 2, canvas.height);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Entities
+            obstacles.forEach(obs => drawEnemyCar(ctx, obs));
+            collectibles.forEach(item => drawCoffeeCup(ctx, item.x, item.y));
+            drawPlayerVehicle(ctx);
+        }
+
+        function gameLoop() {
+            updateGame();
+            drawGame();
+            if (gameActive) {
+                animationFrameId = requestAnimationFrame(gameLoop);
+            }
+        }
+
+        function levelComplete() {
+            gameActive = false;
+            audioFX.playWin();
+            cancelAnimationFrame(animationFrameId);
+
+            if (currentLevel < 5 && unlockedLevels <= currentLevel) {
+                unlockedLevels = currentLevel + 1;
+                localStorage.setItem('typ_unlocked_levels', unlockedLevels);
+            } else if (currentLevel === 5 && unlockedLevels < 6) {
+                unlockedLevels = 6;
+                localStorage.setItem('typ_unlocked_levels', unlockedLevels);
+            }
+
+            document.getElementById('win-score').textContent = score;
+            document.getElementById('win-kafi').textContent = sessionKafiCollected;
+
+            confetti({ particleCount: 70, spread: 60, origin: { y: 0.6 } });
+
+            screenGame.classList.add('hidden');
+            screenLevelWin.classList.remove('hidden');
+        }
+
+        function gameOver() {
+            gameActive = false;
+            audioFX.playCrash();
+            cancelAnimationFrame(animationFrameId);
+
+            const lvlCfg = LEVELS_CONFIG.find(l => l.id === currentLevel) || LEVELS_CONFIG[0];
+
+            if (lvlCfg.isEndless && score > highScore) {
+                highScore = score;
+                localStorage.setItem('typ_endless_highscore', highScore);
+                highScoreValEl.textContent = highScore;
+            }
+
+            document.getElementById('final-score').textContent = score;
+            const targetScore = lvlCfg.isEndless ? 150 : lvlCfg.target;
+            const progress = Math.min(100, Math.round((score / targetScore) * 100));
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+
+            screenGame.classList.add('hidden');
+            screenGameOver.classList.remove('hidden');
+        }
+
+        function moveLeft() { if (player.lane > 0) player.lane--; }
+        function moveRight() { if (player.lane < 2) player.lane++; }
+
+        // Keyboard Controls
+        window.addEventListener('keydown', (e) => {
+            if (!gameActive) return;
+            if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') moveLeft();
+            if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') moveRight();
+        });
+
+        // Instant Touch Reaction to remove touch latency on Mobile
+        const btnLeft = document.getElementById('btn-left');
+        const btnRight = document.getElementById('btn-right');
+
+        function bindInstantTouch(element, actionFn) {
+            let lastExec = 0;
+            const handler = (e) => {
+                if (e.cancelable) e.preventDefault();
+                const now = Date.now();
+                if (now - lastExec > 40) {
+                    actionFn();
+                    lastExec = now;
+                }
+            };
+            element.addEventListener('touchstart', handler, { passive: false });
+            element.addEventListener('mousedown', handler);
+        }
+
+        bindInstantTouch(btnLeft, moveLeft);
+        bindInstantTouch(btnRight, moveRight);
+
+        // Swipe Gesture Support on Canvas
+        let touchStartX = 0;
+        canvas.addEventListener('touchstart', (e) => {
+            touchStartX = e.touches[0].clientX;
+        }, { passive: true });
+
+        canvas.addEventListener('touchend', (e) => {
+            const touchEndX = e.changedTouches[0].clientX;
+            const diff = touchEndX - touchStartX;
+            if (Math.abs(diff) > 20) {
+                if (diff < 0) moveLeft();
+                else moveRight();
+            }
+        }, { passive: true });
+
+        // UI Navigation Listeners
+        document.getElementById('btn-start-play').addEventListener('click', () => {
+            audioFX.init();
+            renderLevelSelectUI();
+            screenStart.classList.add('hidden');
+            screenLevels.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-open-shop').addEventListener('click', () => {
+            audioFX.init();
+            renderShopUI();
+            screenStart.classList.add('hidden');
+            screenShop.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-back-menu').addEventListener('click', () => {
+            screenLevels.classList.add('hidden');
+            screenStart.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-back-from-shop').addEventListener('click', () => {
+            screenShop.classList.add('hidden');
+            screenStart.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-next-level').addEventListener('click', () => {
+            const nextLvl = Math.min(6, currentLevel + 1);
+            startSpecificLevel(nextLvl);
+        });
+
+        document.getElementById('btn-win-menu').addEventListener('click', () => {
+            screenLevelWin.classList.add('hidden');
+            renderLevelSelectUI();
+            screenLevels.classList.remove('hidden');
+        });
+
+        document.getElementById('btn-restart').addEventListener('click', () => {
+            startSpecificLevel(currentLevel);
+        });
+
+        document.getElementById('btn-over-menu').addEventListener('click', () => {
+            screenGameOver.classList.add('hidden');
+            renderLevelSelectUI();
+            screenLevels.classList.remove('hidden');
+        });
+    </script>
+</body>
+
+</html>

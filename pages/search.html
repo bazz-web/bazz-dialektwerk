@@ -5,62 +5,74 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>DW Search</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+
     <link
         href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
     <link rel="stylesheet" href="../common/kigostyle.css">
     <link rel="stylesheet" href="../common/filter.css">
     <link rel="stylesheet" href="../common/navbar.css">
     <link rel="stylesheet" href="fds.css">
+
     <link rel="icon" type="image/png" href="../favicon/favicon-96x96.png" sizes="96x96" />
     <link rel="icon" type="image/svg+xml" href="../favicon/favicon.svg" />
     <link rel="shortcut icon" href="../favicon/favicon.ico" />
     <link rel="apple-touch-icon" sizes="180x180" href="../favicon/apple-touch-icon.png" />
     <link rel="manifest" href="../favicon/site.webmanifest" />
+
     <script src="../common/filter.js" defer></script>
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="../common/navbar.js" defer></script>
-    <script>
-        tailwind.config = {
-            darkMode: 'class',
-            theme: {
-                extend: {
-                    fontFamily: {
-                        sans: ['Plus Jakarta Sans', 'sans-serif'],
-                        serif: ['Playfair Display', 'serif'],
-                    },
-                    colors: {
-                        dw: {
-                            bg: '#0a0a0c', // Deep dark background from references
-                            card: '#16161a', // Slightly lighter for cards
-                            cardHover: '#1c1c21',
-                            accent: '#8b5cf6', // The purple accent from the magazine cards
-                            accentLight: '#a78bfa',
-                            red: '#ef4444', // Red from the video player image
-                            text: '#f3f4f6',
-                            muted: '#9ca3af',
-                            glass: 'rgba(22, 22, 26, 0.6)',
-                        }
-                    },
-                    backgroundImage: {
-                        'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
-                        'purple-glow': 'radial-gradient(circle at 50% 0%, rgba(139, 92, 246, 0.15), transparent 50%)',
-                        'red-glow': 'radial-gradient(circle at top right, rgba(239, 68, 68, 0.1), transparent 40%)',
-                    }
-                }
-            }
-        }
-    </script>
+
     <style>
-        /* Custom scrollbar matching dark theme */
+        /* --- 1. CSS VARIABLEN (Deine Theme-Farben) --- */
+        :root {
+            --dw-bg: #0a0a0c;
+            --dw-card: #16161a;
+            --dw-card-hover: #1c1c21;
+            --dw-accent: #8b5cf6;
+            --dw-accent-light: #a78bfa;
+            --dw-red: #ef4444;
+            --dw-text: #f3f4f6;
+            --dw-muted: #9ca3af;
+
+            --font-sans: 'Plus Jakarta Sans', sans-serif;
+            --font-serif: 'Playfair Display', serif;
+        }
+
+        /* --- 2. GRUNDLEGENDE STYLES (Reset & Body) --- */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            background-color: var(--dw-bg);
+            color: var(--dw-text);
+            font-family: var(--font-sans);
+            -webkit-font-smoothing: antialiased;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            overflow-x: hidden;
+        }
+
+        ::selection {
+            background-color: var(--dw-accent);
+            color: white;
+        }
+
+        /* Scrollbar */
         ::-webkit-scrollbar {
             width: 8px;
         }
 
         ::-webkit-scrollbar-track {
-            background: #0a0a0c;
+            background: var(--dw-bg);
         }
 
         ::-webkit-scrollbar-thumb {
@@ -72,41 +84,138 @@
             background: #3f3f46;
         }
 
-        /* Glassmorphism utility */
-        .glass-panel {
-            background: rgba(16, 16, 20, 0.6);
-            backdrop-filter: blur(20px);
-            -webkit-backdrop-filter: blur(20px);
-            border: 1px solid rgba(255, 255, 255, 0.08);
-            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        /* --- 3. LAYOUT & HINTERGRUND --- */
+        .ambient-background {
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            z-index: 0;
+            overflow: hidden;
         }
 
-        /* Smooth input focus transition */
-        input:focus {
-            box-shadow: none;
+        .glow-circle {
+            position: absolute;
+            border-radius: 50%;
+            mix-blend-mode: screen;
+            filter: blur(120px);
+            animation: pulse-glow infinite ease-in-out;
         }
 
-        /* Focus ring for accessibility without ruining design */
-        .focus-ring-custom:focus-within {
-            box-shadow: 0 0 0 2px rgba(139, 92, 246, 0.5);
+        .glow-purple {
+            top: 10%;
+            left: 10%;
+            width: 60vw;
+            height: 60vw;
+            background-color: rgba(139, 92, 246, 0.1);
+            opacity: 0.4;
+            animation-duration: 8s;
         }
 
-        /* Custom Scrollbar for inner elements if needed */
-        .custom-scroll::-webkit-scrollbar {
-            width: 4px;
+        .glow-red {
+            bottom: 10%;
+            right: 10%;
+            width: 50vw;
+            height: 50vw;
+            background-color: rgba(239, 68, 68, 0.1);
+            opacity: 0.2;
+            animation-duration: 12s;
         }
 
-        .custom-scroll::-webkit-scrollbar-track {
-            background: transparent;
+        @keyframes pulse-glow {
+
+            0%,
+            100% {
+                opacity: 0.4;
+                transform: scale(1);
+            }
+
+            50% {
+                opacity: 0.6;
+                transform: scale(1.05);
+            }
         }
 
-        .custom-scroll::-webkit-scrollbar-thumb {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 4px;
+        main.content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 0 1rem;
+            z-index: 10;
+            width: 100%;
+            min-height: 100vh;
+            position: relative;
         }
 
-        /* Text gradient animation */
+        @media (min-width: 640px) {
+            main.content-area {
+                padding: 0 1.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            main.content-area {
+                padding: 0 2rem;
+            }
+        }
+
+        /* --- 4. SUCHBEREICH --- */
+        .search-wrapper {
+            width: 100%;
+            max-width: 56rem;
+            /* 896px */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            gap: 2rem;
+            position: relative;
+            z-index: 20;
+            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .centered-mode {
+            transform: translateY(25vh);
+        }
+
+        .top-mode {
+            transform: translateY(8vh);
+        }
+
+        /* Header / Titel */
+        .search-header {
+            text-align: center;
+            width: 100%;
+            transition: all 0.5s ease;
+        }
+
+        .search-header h1 {
+            font-family: var(--font-serif);
+            font-size: 3rem;
+            font-weight: 700;
+            color: white;
+            letter-spacing: -0.025em;
+            line-height: 1.2;
+            margin-bottom: 1rem;
+            filter: drop-shadow(0 25px 25px rgba(0, 0, 0, 0.15));
+        }
+
+        @media (min-width: 768px) {
+            .search-header h1 {
+                font-size: 4.5rem;
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .search-header h1 {
+                font-size: 6rem;
+            }
+        }
+
         .text-gradient-animate {
+            background: linear-gradient(to right, var(--dw-accent), #ec4899, var(--dw-red));
+            -webkit-background-clip: text;
+            color: transparent;
             background-size: 200% auto;
             animation: textShine 4s linear infinite;
         }
@@ -117,22 +226,75 @@
             }
         }
 
-        /* Card hover effects */
-        .fancy-card {
-            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        .search-header p {
+            color: var(--dw-muted);
+            font-size: 1.125rem;
+            font-weight: 300;
+            letter-spacing: 0.025em;
         }
 
-        .fancy-card:hover {
-            transform: translateY(-5px) scale(1.02);
-            box-shadow: 0 20px 40px -10px rgba(0, 0, 0, 0.5);
+        @media (min-width: 768px) {
+            .search-header p {
+                font-size: 1.25rem;
+            }
         }
 
-        /* Filter Button active state */
-        .filter-btn.active {
-            background: rgba(139, 92, 246, 0.2);
-            border-color: rgba(139, 92, 246, 0.5);
-            color: white;
-            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        .fade-out-up {
+            opacity: 0;
+            transform: translateY(-20px);
+            pointer-events: none;
+        }
+
+        /* --- 5. SEARCH INPUT FELD --- */
+        .search-container {
+            position: relative;
+            width: 100%;
+            max-width: 48rem;
+            margin: 0 auto;
+            z-index: 30;
+        }
+
+        .search-focus-glow {
+            position: absolute;
+            inset: -2rem;
+            background: linear-gradient(to right, var(--dw-accent), #c026d3, var(--dw-red));
+            border-radius: 3rem;
+            filter: blur(24px);
+            opacity: 0.2;
+            transition: opacity 0.5s ease;
+        }
+
+        .search-container:focus-within .search-focus-glow {
+            opacity: 0.7;
+        }
+
+        .search-border-wrap {
+            position: relative;
+            padding: 1px;
+            border-radius: 2.5rem;
+            overflow: hidden;
+            box-shadow: 0 20px 50px rgba(0, 0, 0, 0.5);
+            background-color: rgba(255, 255, 255, 0.05);
+        }
+
+        .search-spin-bg {
+            position: absolute;
+            inset: -50%;
+            opacity: 0.3;
+            transition: opacity 0.7s;
+            animation: spin-slow 6s linear infinite;
+        }
+
+        .search-spin-1 {
+            background: conic-gradient(from 0deg, transparent 0 340deg, rgba(139, 92, 246, 1) 360deg);
+        }
+
+        .search-spin-2 {
+            background: conic-gradient(from 180deg, transparent 0 340deg, rgba(239, 68, 68, 1) 360deg);
+        }
+
+        .search-container:focus-within .search-spin-bg {
+            opacity: 1;
         }
 
         @keyframes spin-slow {
@@ -145,100 +307,525 @@
             }
         }
 
-        .animate-spin-slow {
-            animation: spin-slow 6s linear infinite;
+        .search-input-box {
+            position: relative;
+            background-color: rgba(0, 0, 0, 0.9);
+            backdrop-filter: blur(24px);
+            border-radius: 2.5rem;
+            display: flex;
+            align-items: center;
+            padding: 0 1.5rem;
+            height: 5rem;
+            transition: background-color 0.5s;
         }
 
-        .search-focus-glow {
-            transition: opacity 0.5s ease;
-            opacity: 0.2;
+        @media (min-width: 768px) {
+            .search-input-box {
+                padding: 0 2rem;
+                height: 6rem;
+            }
         }
 
-        .search-container:focus-within .search-focus-glow {
-            opacity: 0.7;
+        .search-container:hover .search-input-box {
+            background-color: var(--dw-bg);
         }
 
-        .search-layout-transition {
-            transition: transform 0.8s cubic-bezier(0.16, 1, 0.3, 1);
+        .search-icon {
+            font-size: 1.5rem;
+            color: rgba(156, 163, 175, 0.4);
+            transition: color 0.5s;
         }
 
-        .centered-mode {
-            transform: translateY(25vh);
+        @media (min-width: 768px) {
+            .search-icon {
+                font-size: 1.875rem;
+            }
         }
 
-        .top-mode {
-            transform: translateY(8vh);
+        .search-container:focus-within .search-icon {
+            color: var(--dw-accent);
         }
 
-        .fade-out-up {
-            opacity: 0;
-            transform: translateY(-20px);
+        .search-input-field {
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            border: none;
+            color: white;
+            font-size: 1.875rem;
+            padding: 0.5rem 1.5rem 1rem;
+            outline: none;
+            font-family: var(--font-serif);
+            font-weight: 500;
+        }
+
+        @media (min-width: 768px) {
+            .search-input-field {
+                font-size: 2.25rem;
+            }
+        }
+
+        .search-input-field::placeholder {
+            color: rgba(156, 163, 175, 0.2);
+        }
+
+        .search-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        /* Buttons im Suchfeld */
+        .btn-clear {
+            width: 3rem;
+            height: 3rem;
+            border-radius: 50%;
+            background-color: rgba(255, 255, 255, 0.05);
+            border: none;
+            color: var(--dw-muted);
+            cursor: pointer;
+            transition: all 0.3s;
+            display: none;
+            /* JS toggles this */
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-clear:hover {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+        }
+
+        .btn-clear i {
+            font-size: 1.25rem;
+        }
+
+        .btn-filter {
+            height: 3.5rem;
+            width: 3.5rem;
+            border-radius: 50%;
+            background-color: white;
+            color: black;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s;
+            box-shadow: 0 0 20px rgba(255, 255, 255, 0.1);
+        }
+
+        .btn-filter:hover {
+            transform: scale(1.05);
+            background-color: #e5e7eb;
+        }
+
+        .btn-filter i {
+            font-size: 1.25rem;
+            transition: transform 0.3s;
             pointer-events: none;
+        }
+
+        .btn-filter:hover i {
+            transform: scale(1.1);
+        }
+
+        /* --- 6. FILTER TAGS --- */
+        .quick-filters {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 0.75rem;
+            width: 100%;
+            position: relative;
+            z-index: 10;
+        }
+
+        .filter-btn {
+            padding: 0.625rem 1.5rem;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            color: var(--dw-muted);
+            font-size: 0.875rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .filter-btn:hover {
+            color: white;
+            background-color: rgba(255, 255, 255, 0.1);
+        }
+
+        .filter-btn.active {
+            background-color: rgba(139, 92, 246, 0.2);
+            border-color: rgba(139, 92, 246, 0.5);
+            color: white;
+            box-shadow: 0 0 15px rgba(139, 92, 246, 0.2);
+        }
+
+        /* --- 7. SUCH-ERGEBNISSE --- */
+        .results-section {
+            width: 100%;
+            max-width: 56rem;
+            margin: 2rem auto 6rem;
+            transition: all 0.7s;
+            opacity: 0;
+            transform: translateY(2rem);
+        }
+
+        /* JS Helper Klassen für Sichtbarkeit */
+        .is-hidden {
+            display: none !important;
+        }
+
+        .is-flex {
+            display: flex !important;
+        }
+
+        .is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .result-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+            padding-bottom: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .result-header h2 {
+            font-family: var(--font-serif);
+            font-size: 1.25rem;
+            color: white;
+        }
+
+        @media (min-width: 768px) {
+            .result-header h2 {
+                font-size: 1.5rem;
+            }
+        }
+
+        .search-term-highlight {
+            font-style: italic;
+            background: linear-gradient(to right, var(--dw-accent), #f472b6);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .result-count-badge {
+            font-size: 0.875rem;
+            font-family: monospace;
+            color: var(--dw-muted);
+            background-color: rgba(255, 255, 255, 0.05);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+        }
+
+        .results-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 1.25rem;
+        }
+
+        /* Leerer Status (Keine Ergebnisse) */
+        .no-results-state {
+            text-align: center;
+            padding: 6rem 0;
+        }
+
+        .ghost-icon-wrap {
+            position: relative;
+            width: 8rem;
+            height: 8rem;
+            margin: 0 auto 2rem;
+        }
+
+        .ghost-ping-1,
+        .ghost-ping-2 {
+            position: absolute;
+            border-radius: 50%;
+            animation: ping infinite cubic-bezier(0, 0, 0.2, 1);
+        }
+
+        .ghost-ping-1 {
+            inset: 0;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            animation-duration: 3s;
+        }
+
+        .ghost-ping-2 {
+            inset: 0.5rem;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            animation-duration: 2s;
+        }
+
+        .ghost-inner {
+            position: absolute;
+            inset: 0;
+            background-color: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(16px);
+            border-radius: 50%;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .ghost-inner i {
+            font-size: 2.25rem;
+            color: var(--dw-muted);
+        }
+
+        .no-results-state h3 {
+            font-family: var(--font-serif);
+            font-size: 1.875rem;
+            font-weight: 700;
+            margin-bottom: 1rem;
+        }
+
+        .no-results-state p {
+            color: var(--dw-muted);
+            max-width: 28rem;
+            margin: 0 auto;
+            font-size: 1.125rem;
+        }
+
+        @keyframes ping {
+
+            75%,
+            100% {
+                transform: scale(1.5);
+                opacity: 0;
+            }
+        }
+
+        /* --- 8. DYNAMISCHE ERGEBNIS-KARTEN (Ersetzt die Tailwind-Klassen im JS) --- */
+        .result-card {
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            gap: 1.5rem;
+            padding: 1rem;
+            border-radius: 2rem;
+            background-color: rgba(0, 0, 0, 0.3);
+            backdrop-filter: blur(24px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.5s;
+            overflow: hidden;
+            text-decoration: none;
+        }
+
+        @media (min-width: 640px) {
+            .result-card {
+                flex-direction: row;
+            }
+        }
+
+        .result-card:hover {
+            background-color: rgba(255, 255, 255, 0.05);
+            border-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .card-glow-bg {
+            position: absolute;
+            right: -5rem;
+            top: -5rem;
+            width: 16rem;
+            height: 16rem;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0;
+            transition: opacity 0.7s;
+            pointer-events: none;
+        }
+
+        .card-glow-red {
+            background-color: rgba(239, 68, 68, 0.2);
+        }
+
+        .card-glow-accent {
+            background-color: rgba(139, 92, 246, 0.2);
+        }
+
+        .result-card:hover .card-glow-bg {
+            opacity: 1;
+        }
+
+        .card-img-wrap {
+            width: 100%;
+            aspect-ratio: 16/9;
+            border-radius: 1.5rem;
+            background-color: #111;
+            overflow: hidden;
+            position: relative;
+            flex-shrink: 0;
+        }
+
+        @media (min-width: 640px) {
+            .card-img-wrap {
+                width: 12rem;
+                aspect-ratio: 1/1;
+            }
+        }
+
+        .card-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            opacity: 0.7;
+            transition: all 0.7s;
+        }
+
+        .result-card:hover .card-img {
+            opacity: 1;
+            transform: scale(1.1);
+        }
+
+        .card-badge {
+            position: absolute;
+            top: 0.75rem;
+            left: 0.75rem;
+            background-color: rgba(0, 0, 0, 0.6);
+            backdrop-filter: blur(12px);
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.625rem;
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .text-dw-red {
+            color: var(--dw-red);
+        }
+
+        .text-dw-accent {
+            color: var(--dw-accent);
+        }
+
+        .card-content {
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 0.5rem 0;
+            z-index: 10;
+            padding-right: 1rem;
+            width: 100%;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: white;
+            margin-bottom: 0.5rem;
+            transition: color 0.3s;
+        }
+
+        @media (min-width: 768px) {
+            .card-title {
+                font-size: 1.875rem;
+            }
+        }
+
+        .card-title-sans {
+            font-family: var(--font-sans);
+            letter-spacing: -0.025em;
+        }
+
+        .card-title-serif {
+            font-family: var(--font-serif);
+        }
+
+        .result-card:hover .card-title.hover-red {
+            color: var(--dw-red);
+        }
+
+        .result-card:hover .card-title.hover-accent {
+            color: var(--dw-accent);
+        }
+
+        .card-desc {
+            color: var(--dw-muted);
+            font-size: 1rem;
+            margin-bottom: 1rem;
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        .card-tags {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            margin-top: auto;
+            flex-wrap: wrap;
+        }
+
+        .card-tag {
+            padding: 0.375rem 1rem;
+            border-radius: 9999px;
+            background-color: rgba(255, 255, 255, 0.05);
+            font-size: 0.75rem;
+            color: white;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: background-color 0.3s;
+        }
+
+        .card-tag:hover {
+            background-color: rgba(255, 255, 255, 0.1);
         }
     </style>
 </head>
 
-<body
-    class="bg-[#0a0a0c] text-dw-text font-sans antialiased min-h-screen flex flex-col relative overflow-x-hidden selection:bg-dw-accent selection:text-white">
+<body>
     <div id="navbar-placeholder"></div>
+
     <!-- Ambient Background Glows -->
-    <div class="fixed inset-0 pointer-events-none z-0 overflow-hidden">
-        <div class="absolute top-[10%] left-[10%] w-[60vw] h-[60vw] rounded-full bg-dw-accent/10 blur-[120px] mix-blend-screen opacity-40 animate-pulse"
-            style="animation-duration: 8s;"></div>
-        <div class="absolute bottom-[10%] right-[10%] w-[50vw] h-[50vw] rounded-full bg-dw-red/10 blur-[120px] mix-blend-screen opacity-20 animate-pulse"
-            style="animation-duration: 12s;"></div>
+    <div class="ambient-background">
+        <div class="glow-circle glow-purple"></div>
+        <div class="glow-circle glow-red"></div>
     </div>
 
     <!-- Main Search Area -->
-    <main class="flex-grow flex flex-col items-center px-4 sm:px-6 lg:px-8 z-10 w-full min-h-screen relative">
+    <main class="content-area">
 
-        <!-- Animated Search Wrapper: Using Flex gap-8 to strictly prevent overlapping -->
-        <div id="search-wrapper"
-            class="w-full max-w-4xl flex flex-col items-center justify-center gap-8 search-layout-transition centered-mode relative z-20">
+        <!-- Animated Search Wrapper -->
+        <div id="search-wrapper" class="search-wrapper centered-mode">
 
             <!-- Intro Header -->
-            <div class="text-center transition-all duration-500 w-full" id="search-header">
-                <h1
-                    class="text-5xl md:text-7xl lg:text-8xl font-serif font-bold text-white tracking-tight leading-tight mb-4 drop-shadow-2xl">
-                    DW <span
-                        class="text-transparent bg-clip-text bg-gradient-to-r from-dw-accent via-pink-500 to-dw-red text-gradient-animate">SEARCH</span>
-                </h1>
-                <p class="text-dw-muted text-lg md:text-xl font-light tracking-wide">Suche nach Artists,
-                    Magazin-Artikeln oder Releases.</p>
+            <div class="search-header" id="search-header">
+                <h1>DW <span class="text-gradient-animate">SEARCH</span></h1>
+                <p>Suche nach Artists, Magazin-Artikeln oder Releases.</p>
             </div>
 
             <!-- Search Container -->
-            <div class="search-container relative w-full max-w-3xl group mx-auto z-30">
-                <div
-                    class="search-focus-glow absolute -inset-8 bg-gradient-to-r from-dw-accent via-fuchsia-600 to-dw-red rounded-[3rem] blur-3xl">
-                </div>
+            <div class="search-container">
+                <div class="search-focus-glow"></div>
 
-                <div
-                    class="relative p-[1px] rounded-[2.5rem] overflow-hidden shadow-[0_20px_50px_rgba(0,0,0,0.5)] bg-white/5">
-                    <div
-                        class="absolute inset-[-50%] bg-[conic-gradient(from_0deg,transparent_0_340deg,rgba(139,92,246,1)_360deg)] animate-spin-slow opacity-30 group-focus-within:opacity-100 transition-opacity duration-700">
-                    </div>
-                    <div
-                        class="absolute inset-[-50%] bg-[conic-gradient(from_180deg,transparent_0_340deg,rgba(239,68,68,1)_360deg)] animate-spin-slow opacity-30 group-focus-within:opacity-100 transition-opacity duration-700">
-                    </div>
+                <div class="search-border-wrap">
+                    <div class="search-spin-bg search-spin-1"></div>
+                    <div class="search-spin-bg search-spin-2"></div>
 
-                    <div
-                        class="relative bg-black/90 backdrop-blur-3xl rounded-[2.5rem] flex items-center px-6 md:px-8 py-3 h-20 md:h-24 transition-all duration-500 group-hover:bg-[#0a0a0c]">
-                        <i
-                            class="fa-solid fa-magnifying-glass text-2xl md:text-3xl text-dw-muted/40 group-focus-within:text-dw-accent transition-colors duration-500"></i>
+                    <div class="search-input-box">
+                        <i class="fa-solid fa-magnifying-glass search-icon"></i>
+                        <input type="text" id="search-input" class="search-input-field" placeholder="Suchen..."
+                            autocomplete="off" autofocus>
 
-                        <input type="text" id="search-input"
-                            class="w-full h-full bg-transparent border-none text-white text-3xl md:text-4xl placeholder-dw-muted/20 focus:ring-0 px-6 pt-2 pb-4 outline-none font-medium font-serif leading-relaxed"
-                            placeholder="Suchen..." autocomplete="off" autofocus>
-                        <div class="flex items-center gap-3">
-                            <button id="clear-search"
-                                class="hidden w-12 h-12 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-dw-muted hover:text-white transition-all duration-300">
-                                <i class="fa-solid fa-xmark text-xl"></i>
+                        <div class="search-actions">
+                            <button id="clear-search" class="btn-clear">
+                                <i class="fa-solid fa-xmark"></i>
                             </button>
-                            <button id="open-filter-btn"
-                                class="h-14 w-14 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 hover:bg-gray-200 transition-all shadow-[0_0_20px_rgba(255,255,255,0.1)] group/btn">
-                                <i
-                                    class="fa-solid fa-sliders text-xl group-hover/btn:scale-110 transition-transform duration-300 pointer-events-none"></i>
+                            <button id="open-filter-btn" class="btn-filter">
+                                <i class="fa-solid fa-sliders"></i>
                             </button>
                         </div>
                     </div>
@@ -246,63 +833,43 @@
             </div>
 
             <!-- Floating Tags -->
-            <div class="flex flex-wrap justify-center gap-3 transition-all duration-500 w-full relative z-10"
-                id="quick-filters">
-                <button
-                    class="filter-btn active px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-sm font-medium text-white hover:bg-white/10 transition-all duration-300">Alles</button>
-                <button
-                    class="filter-btn px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-sm font-medium text-dw-muted hover:text-white hover:bg-white/10 transition-all duration-300">Künstler</button>
-                <button
-                    class="filter-btn px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-sm font-medium text-dw-muted hover:text-white hover:bg-white/10 transition-all duration-300">Reviews</button>
-                <button
-                    class="filter-btn px-6 py-2.5 rounded-full bg-white/5 backdrop-blur-md border border-white/10 text-sm font-medium text-dw-muted hover:text-white hover:bg-white/10 transition-all duration-300">Events</button>
+            <div class="quick-filters" id="quick-filters">
+                <button class="filter-btn active">Alles</button>
+                <button class="filter-btn">Künstler</button>
+                <button class="filter-btn">Reviews</button>
+                <button class="filter-btn">Events</button>
             </div>
         </div>
 
         <!-- Search Results Container -->
-        <div id="search-results"
-            class="hidden w-full max-w-4xl mx-auto mt-8 mb-24 opacity-0 transition-all duration-700 transform translate-y-8">
+        <div id="search-results" class="results-section is-hidden">
 
-            <div class="flex items-center justify-between border-b border-white/5 pb-4 mb-8"
-                id="result-header-container">
-                <h2 class="text-xl md:text-2xl font-serif text-white">
-                    Ergebnisse für <span id="search-term-display"
-                        class="italic text-transparent bg-clip-text bg-gradient-to-r from-dw-accent to-pink-400"></span>
-                </h2>
-                <span
-                    class="text-sm font-mono text-dw-muted bg-white/5 border border-white/10 px-4 py-1.5 rounded-full"><span
-                        id="result-count">0</span> Treffer</span>
+            <div class="result-header" id="result-header-container">
+                <h2>Ergebnisse für <span id="search-term-display" class="search-term-highlight"></span></h2>
+                <span class="result-count-badge"><span id="result-count">0</span> Treffer</span>
             </div>
 
             <!-- LEERER CONTAINER FÜR DIE DYNAMISCHEN ERGEBNISSE -->
-            <div id="results-container" class="flex flex-col gap-5">
+            <div id="results-container" class="results-grid">
                 <!-- JavaScript wird hier die Karten einfügen -->
             </div>
 
             <!-- Empty State -->
-            <div id="no-results" class="hidden text-center py-24">
-                <div class="relative w-32 h-32 mx-auto mb-8">
-                    <div
-                        class="absolute inset-0 border border-white/10 rounded-full animate-[ping_3s_cubic-bezier(0,0,0.2,1)_infinite]">
-                    </div>
-                    <div
-                        class="absolute inset-2 border border-white/20 rounded-full animate-[ping_2s_cubic-bezier(0,0,0.2,1)_infinite]">
-                    </div>
-                    <div
-                        class="absolute inset-0 bg-white/5 backdrop-blur-xl rounded-full border border-white/10 flex items-center justify-center">
-                        <i class="fa-solid fa-ghost text-4xl text-dw-muted"></i>
+            <div id="no-results" class="no-results-state is-hidden">
+                <div class="ghost-icon-wrap">
+                    <div class="ghost-ping-1"></div>
+                    <div class="ghost-ping-2"></div>
+                    <div class="ghost-inner">
+                        <i class="fa-solid fa-ghost"></i>
                     </div>
                 </div>
-                <h3 class="font-serif text-3xl font-bold text-white mb-4">Stille. Nichts gefunden.</h3>
-                <p class="text-dw-muted max-w-md mx-auto text-lg">Keine Ergebnisse für <span
-                        class="text-white italic">"<span id="no-result-term"></span>"</span>. Probier es mit einem
-                    anderen Begriff.</p>
+                <h3>Stille. Nichts gefunden.</h3>
+                <p>Keine Ergebnisse für <span style="color: white; font-style: italic;">"<span
+                            id="no-result-term"></span>"</span>. Probier es mit einem anderen Begriff.</p>
             </div>
         </div>
 
         <div id="filter-modal-container"></div>
-    </main>
-
     </main>
 
     <script>
@@ -1016,21 +1583,19 @@
                 { id: 689, type: 'Reviews', title: 'Review: Chef S.O.S - Das neue Review', desc: 'Wir haben uns das gute Stück von Chef S.O.S angehört und sagen dir, ob sich das Reinhören lohnt.', img: 'https://placehold.co/400x400/16161a/ffffff?text=Review', tags: ["Magazin", "Review", "Kritik"] },
                 { id: 690, type: 'Events', title: 'Cypher @ Rössli', desc: 'Ausverkauftes Haus und krasse Energie. Sei dabei, wenn der Club im Rössli bebt.', img: 'https://placehold.co/400x400/1a1a24/eab308?text=Event', tags: ["Live", "Konzert", "Event", "Rössli"] },
                 { id: 691, type: 'Release', title: 'MC Cinnay - Experimentelles Album', desc: 'Frischer Release von MC Cinnay. Schlägt hohe Wellen in den Schweizer Charts und Playlists.', img: 'https://placehold.co/400x400/1a1a24/8b5cf6?text=Release', tags: ["Release", "New", "Hip-Hop", "Album"] },
-                { id: 692, type: 'Reviews', title: 'Review: Chef S.O.S - Das neue Musikvideo', desc: 'Weitermachen... [Nahtlos fortgeführt bis ID 1600 im gleichen Stil mit Schweizer Hip-Hop Daten] ...', img: 'https://placehold.co/400x400/16161a/ffffff?text=Review', tags: ["Magazin", "Review", "Kritik"] },
-                { id: 1600, type: 'Reviews', title: 'Review: Big Mimiks - Das ultimative Finale', desc: 'Wir haben uns das finale Meisterwerk von Big Mimiks angehört und sagen dir, ob sich das Reinhören lohnt.', img: 'https://placehold.co/400x400/16161a/ffffff?text=Review', tags: ["Magazin", "Review", "Kritik"] }
+                { id: 692, type: 'Reviews', title: 'Review: Chef S.O.S - Das neue Musikvideo', desc: 'Weitermachen... [Nahtlos fortgeführt bis ID 1600 im gleichen Stil mit Schweizer Hip-Hop Daten] ...', img: 'https://placehold.co/400x400/16161a/ffffff?text=Review', tags: ["Magazin", "Review", "Kritik"] }
+
             ];
 
-            // Restliche 114 Einträge generieren
             const generatedData = [];
             const ortschaften = ['Bern', 'Zürich', 'Basel', 'Luzern', 'Biel', 'Thun'];
             const genres = ['Rap', 'Hip-Hop', 'Trap', 'Mundart-Pop'];
             const typen = ['Künstler', 'Release', 'Reviews', 'Events'];
 
-            for (let i = 7; i <= 120; i++) {
+            for (let i = 10; i <= 100; i++) {
                 let typ = typen[Math.floor(Math.random() * typen.length)];
                 let ort = ortschaften[Math.floor(Math.random() * ortschaften.length)];
                 let genre = genres[Math.floor(Math.random() * genres.length)];
-
                 generatedData.push({
                     id: i,
                     type: typ,
@@ -1059,38 +1624,40 @@
 
             // --- 3. RENDER-LOGIK ---
             function renderResults(results) {
-                // Container radikal leeren!
                 resultsContainer.innerHTML = '';
 
                 if (results.length === 0) {
-                    noResults.classList.remove('hidden');
-                    resultHeaderContainer.classList.add('hidden');
+                    noResults.classList.remove('is-hidden');
+                    resultHeaderContainer.classList.add('is-hidden');
                 } else {
-                    noResults.classList.add('hidden');
-                    resultHeaderContainer.classList.remove('hidden');
+                    noResults.classList.add('is-hidden');
+                    resultHeaderContainer.classList.remove('is-hidden');
                     resultCount.textContent = results.length;
 
                     results.forEach(item => {
                         const isArtist = item.type === 'Künstler';
-                        const color = isArtist ? 'dw-red' : 'dw-accent';
-                        const shadow = isArtist ? 'bg-dw-red/20' : 'bg-dw-accent/20';
+                        const colorClass = isArtist ? 'text-dw-red' : 'text-dw-accent';
+                        const hoverColorClass = isArtist ? 'hover-red' : 'hover-accent';
+                        const shadowClass = isArtist ? 'card-glow-red' : 'card-glow-accent';
+                        const titleFontClass = isArtist ? 'card-title-sans' : 'card-title-serif';
 
+                        // Hier wurde das pure CSS Markup (ohne Tailwind) eingefügt
                         const html = `
-                    <a href="#" class="group relative flex flex-col sm:flex-row gap-6 p-4 rounded-[2rem] bg-black/30 backdrop-blur-xl border border-white/5 hover:bg-white/5 hover:border-white/20 transition-all duration-500 overflow-hidden">
-                        <div class="absolute -right-20 -top-20 w-64 h-64 ${shadow} blur-[80px] opacity-0 group-hover:opacity-100 transition-opacity duration-700 pointer-events-none"></div>
-                        <div class="w-full sm:w-48 aspect-[16/9] sm:aspect-square rounded-[1.5rem] bg-[#111] overflow-hidden relative flex-shrink-0">
-                            <img src="${item.img}" alt="${item.title}" class="w-full h-full object-cover opacity-70 group-hover:opacity-100 group-hover:scale-110 transition-all duration-700">
-                            <div class="absolute top-3 left-3 bg-black/60 backdrop-blur-md px-3 py-1 rounded-full text-[10px] font-bold text-${color} uppercase tracking-widest border border-white/10">
+                    <a href="#" class="result-card">
+                        <div class="card-glow-bg ${shadowClass}"></div>
+                        <div class="card-img-wrap">
+                            <img src="${item.img}" alt="${item.title}" class="card-img">
+                            <div class="card-badge ${colorClass}">
                                 ${item.type}
                             </div>
                         </div>
-                        <div class="flex flex-col justify-center py-2 z-10 pr-4 w-full">
-                            <h3 class="${isArtist ? 'font-sans tracking-tight' : 'font-serif'} text-2xl md:text-3xl font-bold text-white mb-2 group-hover:text-${color} transition-colors">
+                        <div class="card-content">
+                            <h3 class="card-title ${titleFontClass} ${hoverColorClass}">
                                 ${item.title}
                             </h3>
-                            <p class="text-dw-muted text-base line-clamp-2 mb-4">${item.desc}</p>
-                            <div class="flex items-center gap-3 mt-auto flex-wrap">
-                                ${item.tags.map(tag => `<span class="px-4 py-1.5 rounded-full bg-white/5 text-xs text-white border border-white/10 hover:bg-white/10 transition-colors">${tag}</span>`).join('')}
+                            <p class="card-desc">${item.desc}</p>
+                            <div class="card-tags">
+                                ${item.tags.map(tag => `<span class="card-tag">${tag}</span>`).join('')}
                             </div>
                         </div>
                     </a>
@@ -1108,10 +1675,10 @@
                     searchTermDisplay.textContent = term;
                     noResultTermDisplay.textContent = term;
 
-                    searchResults.classList.remove('hidden');
+                    searchResults.classList.remove('is-hidden');
+                    // Timeout für die CSS Transition
                     setTimeout(() => {
-                        searchResults.classList.remove('opacity-0', 'translate-y-8');
-                        searchResults.classList.add('opacity-100', 'translate-y-0');
+                        searchResults.classList.add('is-visible');
                     }, 50);
                     renderResults(results);
                 }
@@ -1120,14 +1687,12 @@
             searchInput.addEventListener('input', (e) => {
                 const term = e.target.value.trim();
                 if (term.length > 0) {
-                    clearBtn.classList.remove('hidden');
-                    clearBtn.classList.add('flex');
+                    clearBtn.classList.add('is-flex');
                     searchWrapper.classList.remove('centered-mode');
                     searchWrapper.classList.add('top-mode');
                     searchHeader.classList.add('fade-out-up');
                 } else {
-                    clearBtn.classList.add('hidden');
-                    clearBtn.classList.remove('flex');
+                    clearBtn.classList.remove('is-flex');
                     hideResults();
                 }
                 clearTimeout(timeout);
@@ -1139,16 +1704,14 @@
             clearBtn.addEventListener('click', () => {
                 searchInput.value = '';
                 searchInput.focus();
-                clearBtn.classList.add('hidden');
-                clearBtn.classList.remove('flex');
+                clearBtn.classList.remove('is-flex');
                 hideResults();
             });
 
             function hideResults() {
-                searchResults.classList.add('opacity-0', 'translate-y-8');
-                searchResults.classList.remove('opacity-100', 'translate-y-0');
+                searchResults.classList.remove('is-visible');
                 setTimeout(() => {
-                    searchResults.classList.add('hidden');
+                    searchResults.classList.add('is-hidden');
                     searchWrapper.classList.remove('top-mode');
                     searchWrapper.classList.add('centered-mode');
                     searchHeader.classList.remove('fade-out-up');
@@ -1158,11 +1721,9 @@
             filterBtns.forEach(btn => {
                 btn.addEventListener('click', (e) => {
                     filterBtns.forEach(b => {
-                        b.classList.remove('active', 'text-white', 'bg-white/10');
-                        b.classList.add('text-dw-muted', 'bg-white/5');
+                        b.classList.remove('active');
                     });
-                    btn.classList.add('active', 'text-white', 'bg-white/10');
-                    btn.classList.remove('text-dw-muted');
+                    btn.classList.add('active');
                     currentFilter = btn.textContent.trim();
                     if (searchInput.value.trim().length > 0) triggerSearch();
                 });
@@ -1176,8 +1737,6 @@
             }
         });
     </script>
-    <!-- Container für dein externes filter.js -->
-    <div id="filter-modal-container"></div>
 </body>
 
 </html>
