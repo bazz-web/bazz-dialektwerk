@@ -2,7 +2,7 @@ const { chromium } = require('playwright');
 const fs = require('fs');
 
 // 1. Apple Music Künstler-Link hier eintragen
-const APPLE_MUSIC_URL = "https://music.apple.com/ch/artist/morow/1304726590";
+const APPLE_MUSIC_URL = "https://music.apple.com/ch/artist/ty-p/848470353";
 
 async function starteAppleMusicAgent(artistUrl) {
     console.log("🤖 Apple Music KI-Agent gestartet. Starte Browser...");

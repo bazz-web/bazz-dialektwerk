@@ -1,49 +1,50 @@
 {
-  "kuenstlerUrl": "https://music.apple.com/ch/artist/morow/1304726590",
+  "kuenstlerUrl": "https://music.apple.com/ch/artist/ty-p/848470353",
   "meistVorkommendesGenre": "Hip-Hop/Rap",
   "genreGewichtungPunkte": {
-    "Hip-Hop/Rap": 65
+    "Hip-Hop/Rap": 18,
+    "R&B/Soul": 3
   },
   "letzte10Releases": [
     {
       "nr": 1,
       "titel": "Unbekannter Titel",
-      "typ": "Album",
+      "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
-      "gewichtung": "10x (Album)",
-      "url": "https://music.apple.com/ch/album/odyssee/1777025326"
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/kafi-u-saruch-single/6799323954"
     },
     {
       "nr": 2,
       "titel": "Unbekannter Titel",
-      "typ": "Album",
+      "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
-      "gewichtung": "10x (Album)",
-      "url": "https://music.apple.com/ch/album/clouds-gsehn-us-wie-ghosts/1618739850"
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/wiederhollig-mp3-single/6778956855"
     },
     {
       "nr": 3,
       "titel": "Unbekannter Titel",
-      "typ": "Album",
+      "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
-      "gewichtung": "10x (Album)",
-      "url": "https://music.apple.com/ch/album/blessed/1561989451"
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/dr%C3%BC-f%C3%BCr-dr%C3%BC-single/1831442554"
     },
     {
       "nr": 4,
       "titel": "Unbekannter Titel",
-      "typ": "Album",
+      "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
-      "gewichtung": "10x (Album)",
-      "url": "https://music.apple.com/ch/album/gfange-in-gedanke/1534126209"
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/ice-single/1807005516"
     },
     {
       "nr": 5,
       "titel": "Unbekannter Titel",
-      "typ": "Album",
-      "genre": "Hip-Hop/Rap",
-      "gewichtung": "10x (Album)",
-      "url": "https://music.apple.com/ch/album/dream-flow/1465594839"
+      "typ": "Single/EP",
+      "genre": "R&B/Soul",
+      "gewichtung": "3x (Single/EP)",
+      "url": "https://music.apple.com/ch/album/niemer-single/1775526724"
     },
     {
       "nr": 6,
@@ -51,7 +52,7 @@
       "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
       "gewichtung": "3x (Single/EP)",
-      "url": "https://music.apple.com/ch/album/gwitter-single/1895851135"
+      "url": "https://music.apple.com/ch/album/utopisch-single/1760947275"
     },
     {
       "nr": 7,
@@ -59,31 +60,7 @@
       "typ": "Single/EP",
       "genre": "Hip-Hop/Rap",
       "gewichtung": "3x (Single/EP)",
-      "url": "https://music.apple.com/ch/album/pinocchio-ep/1887507998"
-    },
-    {
-      "nr": 8,
-      "titel": "Unbekannter Titel",
-      "typ": "Single/EP",
-      "genre": "Hip-Hop/Rap",
-      "gewichtung": "3x (Single/EP)",
-      "url": "https://music.apple.com/ch/album/kette-baggies-single/1854399826"
-    },
-    {
-      "nr": 9,
-      "titel": "Unbekannter Titel",
-      "typ": "Single/EP",
-      "genre": "Hip-Hop/Rap",
-      "gewichtung": "3x (Single/EP)",
-      "url": "https://music.apple.com/ch/album/kenn-nur-dech-single/1842059423"
-    },
-    {
-      "nr": 10,
-      "titel": "Unbekannter Titel",
-      "typ": "Single/EP",
-      "genre": "Hip-Hop/Rap",
-      "gewichtung": "3x (Single/EP)",
-      "url": "https://music.apple.com/ch/album/was-w%C3%A4r-wenn-single/1804140430"
+      "url": "https://music.apple.com/ch/album/yaya-tour%C3%A9-single/1750171117"
     }
   ]
 }
