@@ -1,3 +1,29 @@
-2026/08/19-16:08:06.088 6160 Reusing MANIFEST C:\Users\BasileErard\OneDrive - durchstart\Dokumente\dialektwerk\programmieren\bazz-dialektwerk\agent\.spotify-user-data\Default\Local Storage\leveldb/MANIFEST-000001
-2026/08/19-16:08:06.098 6160 Recovering log #3
-2026/08/19-16:08:06.102 6160 Reusing old log C:\Users\BasileErard\OneDrive - durchstart\Dokumente\dialektwerk\programmieren\bazz-dialektwerk\agent\.spotify-user-data\Default\Local Storage\leveldb/000003.log 
+2026/08/20-11:56:05.234 2894 Reusing MANIFEST C:\Users\BasileErard\OneDrive - durchstart\Dokumente\dialektwerk\programmieren\bazz-dialektwerk\agent\.spotify-user-data\Default\Local Storage\leveldb/MANIFEST-000001
+2026/08/20-11:56:05.244 2894 Recovering log #105
+2026/08/20-11:56:05.246 2894 Level-0 table #108: started
+2026/08/20-11:56:05.262 2894 Level-0 table #108: 261710 bytes OK
+2026/08/20-11:56:05.263 2894 Recovering log #107
+2026/08/20-11:56:05.264 2894 Level-0 table #109: started
+2026/08/20-11:56:05.272 2894 Level-0 table #109: 119217 bytes OK
+2026/08/20-11:56:05.280 2894 Delete type=0 #105
+2026/08/20-11:56:05.280 2894 Delete type=0 #107
+2026/08/20-11:58:05.713 4c74 Level-0 table #112: started
+2026/08/20-11:58:05.736 4c74 Level-0 table #112: 130777 bytes OK
+2026/08/20-11:58:05.739 4c74 Delete type=0 #110
+2026/08/20-11:58:05.740 4c74 Compacting 4@0 + 1@1 files
+2026/08/20-11:58:05.767 4c74 Generated table #113@0: 9378 keys, 235142 bytes
+2026/08/20-11:58:05.767 4c74 Compacted 4@0 + 1@1 files => 235142 bytes
+2026/08/20-11:58:05.768 4c74 compacted to: files[ 0 1 1 0 0 0 0 ]
+2026/08/20-11:58:05.769 4c74 Delete type=2 #104
+2026/08/20-11:58:05.770 4c74 Delete type=2 #106
+2026/08/20-11:58:05.770 4c74 Delete type=2 #108
+2026/08/20-11:58:05.770 4c74 Delete type=2 #109
+2026/08/20-11:58:05.770 4c74 Delete type=2 #112
+2026/08/20-11:59:05.717 4c74 Level-0 table #115: started
+2026/08/20-11:59:05.736 4c74 Level-0 table #115: 73436 bytes OK
+2026/08/20-11:59:05.740 4c74 Delete type=0 #111
+2026/08/20-12:00:05.719 4c74 Level-0 table #117: started
+2026/08/20-12:00:05.729 4c74 Level-0 table #117: 219519 bytes OK
+2026/08/20-12:00:05.732 4c74 Delete type=0 #114
+2026/08/20-12:00:24.682 2894 Level-0 table #119: started
+2026/08/20-12:00:24.702 2894 Level-0 table #119: 263017 bytes OK
