@@ -50,8 +50,8 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
-    min-height: 80px;
-    min-width: 80px;
+    min-height: 60px;
+    min-width: 60px;
     transition: all 0.3s ease;
     color: #fff;
 }
@@ -296,12 +296,12 @@ iframe {
     }
 
     .bento-item {
-        min-height: 60px;
-        min-width: 60px;
+        min-height: 40px;
+        min-width: 40px;
     }
 
     .bento-item svg {
-        width: 30px;
-        height: 30px;
+        width: 20px;
+        height: 20px;
     }
 }

@@ -1,0 +1,959 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DWision | Das Video-Magazin von Dialektwerk</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Google Fonts: Serif for Headings (matching screenshot), Inter for UI -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:wght@700;800&display=swap"
+        rel="stylesheet">
+
+    <!-- Phosphor Icons (for modern, clean icons) -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="../common/navbar.js" defer></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&display=swap" rel="stylesheet">
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        serif: ['"Playfair Display"', 'serif'], // Serif for titles like in screenshot
+                    },
+                    colors: {
+                        dw: {
+                            bg: '#0a0a0a',        // Very dark background from screenshot
+                            card: '#1a1a1a',      // Dark gray card background
+                            cardHover: '#222222',
+                            text: '#f3f4f6',      // Off-white text
+                            textMuted: '#9ca3af', // Gray text
+                            border: '#2a2a2a',    // Subtle borders
+
+                            // Accent colors based on screenshot tags
+                            accentBlue: '#3b82f6',
+                            accentYellow: '#eab308',
+                            accentPurple: '#8b5cf6',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0a0a0a;
+            color: #f3f4f6;
+            -webkit-font-smoothing: antialiased;
+        }
+
+        /* Custom Scrollbar matching dark theme */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: #0a0a0a;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #2a2a2a;
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: #404040;
+        }
+
+        /* Line clamp for video titles in sidebar/grid */
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        /* FAB Animation */
+        .fab-hover:hover {
+            transform: scale(1.05);
+            box-shadow: 0 10px 25px -5px rgba(255, 255, 255, 0.2);
+        }
+
+        /* Zwingt den Container und seinen Inhalt an den linken Rand */
+        #dwision-custom-header {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            /* Das ist der entscheidende Befehl gegen mittige Flex-Container */
+            justify-content: flex-start !important;
+            width: 100% !important;
+            text-align: left !important;
+        }
+
+        #dwision-custom-header h1,
+        #dwision-custom-header p {
+            text-align: left !important;
+            margin-left: 0 !important;
+            align-self: flex-start !important;
+        }
+    </style>
+</head>
+
+<body class="min-h-screen flex flex-col bg-dw-bg selection:bg-dw-accentBlue selection:text-white">
+    <div id="navbar-placeholder"></div>
+
+    <!-- Header -->
+    <header class="pt-12 pb-6 w-full">
+        <div class="max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 w-full">
+            <div id="dwision-custom-header">
+                <h1 class="text-4xl sm:text-5xl font-serif font-bold tracking-tight text-white leading-none mb-3">
+                    DWision
+                </h1>
+                <p class="text-base sm:text-lg text-[#94a3b8] m-0">
+                    Videos aus der Mundart Szene
+                </p>
+            </div>
+        </div>
+    </header>
+
+    <main class="flex-grow w-full max-w-[1600px] mx-auto px-4 sm:px-6 lg:px-8 py-2">
+
+        <!-- Category/Filter Pills (YouTube Style Homepage Top Bar) -->
+        <div class="flex gap-3 overflow-x-auto pb-4 mb-4 scrollbar-hide border-b border-dw-border/50">
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-white text-black rounded-lg text-sm font-medium">Alle</button>
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-dw-card hover:bg-dw-cardHover border border-dw-border text-white rounded-lg text-sm font-medium transition-colors">Interviews</button>
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-dw-card hover:bg-dw-cardHover border border-dw-border text-white rounded-lg text-sm font-medium transition-colors">Releases</button>
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-dw-card hover:bg-dw-cardHover border border-dw-border text-white rounded-lg text-sm font-medium transition-colors">Konzerte</button>
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-dw-card hover:bg-dw-cardHover border border-dw-border text-white rounded-lg text-sm font-medium transition-colors">History</button>
+            <button
+                class="whitespace-nowrap px-4 py-1.5 bg-dw-card hover:bg-dw-cardHover border border-dw-border text-white rounded-lg text-sm font-medium transition-colors">Analysen</button>
+        </div>
+
+        <!-- Video Grid -->
+        <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6" id="homepage-video-grid">
+            <!-- Grid videos injected by JS -->
+        </div>
+
+    </main>
+
+    <!-- Floating Action Button (FAB) for Upload -->
+    <button onclick="openUploadModal()"
+        class="fixed bottom-8 right-8 w-14 h-14 bg-white text-black rounded-full flex items-center justify-center shadow-lg fab-hover transition-all z-40"
+        aria-label="Video hochladen">
+        <i class="ph ph-plus text-2xl font-bold"></i>
+    </button>
+
+    <!-- Upload Modal -->
+    <div id="uploadModal" class="fixed inset-0 z-50 hidden" aria-labelledby="modal-title" role="dialog"
+        aria-modal="true">
+        <!-- Background backdrop -->
+        <div class="fixed inset-0 bg-black/80 backdrop-blur-sm transition-opacity" onclick="closeUploadModal()"></div>
+
+        <!-- Modal Panel -->
+        <div class="fixed inset-0 z-10 w-screen overflow-y-auto">
+            <div class="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
+                <div
+                    class="relative transform overflow-hidden rounded-2xl bg-dw-bg text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-2xl border border-dw-border">
+
+                    <!-- Header -->
+                    <div class="bg-dw-card px-6 py-4 border-b border-dw-border flex justify-between items-center">
+                        <h3 class="text-xl font-serif font-bold text-white" id="modal-title">Video einreichen</h3>
+                        <button onclick="closeUploadModal()"
+                            class="text-gray-400 hover:text-white transition-colors rounded-full p-1 hover:bg-gray-800">
+                            <i class="ph ph-x text-xl"></i>
+                        </button>
+                    </div>
+
+                    <!-- Body / Form -->
+                    <div class="px-6 py-6" id="uploadFormContainer">
+
+                        <!-- Guidelines Banner -->
+                        <div class="bg-dw-card border border-dw-border rounded-xl p-4 mb-6">
+                            <h4 class="text-white font-medium text-sm flex items-center gap-2 mb-2">
+                                <i class="ph ph-warning-circle text-dw-accentYellow text-lg"></i>
+                                Upload-Richtlinien
+                            </h4>
+                            <ul class="text-dw-textMuted text-sm space-y-1.5 list-disc list-inside">
+                                <li><strong>Inhalt:</strong> Keine reine Promo ohne unterhaltsamen Mehrwert.</li>
+                                <li><strong>Länge:</strong> Mindestdauer der Videos beträgt 2 Minuten.</li>
+                                <li><strong>Fokus:</strong> Es muss zwingend etwas mit der Mundart-Szene zu tun haben.
+                                </li>
+                                <li><strong>Format:</strong> Keine klassischen Musikvideos (Cyphers/Live-Sessions sind
+                                    erlaubt).</li>
+                            </ul>
+                        </div>
+
+                        <!-- Redaktionelle Prüfung Hinweis -->
+                        <div class="flex gap-3 mb-6">
+                            <i class="ph ph-info text-dw-textMuted text-xl flex-shrink-0"></i>
+                            <p class="text-dw-textMuted text-xs leading-relaxed">Jedes Video wird von der
+                                Dialektwerk-Redaktion gesichtet (ca. 24-48 Stunden). Bei Freigabe erscheint es auf
+                                DWision.</p>
+                        </div>
+
+                        <form id="uploadForm" onsubmit="handleUploadSubmit(event)">
+
+                            <!-- Upload Areas (Video & Thumbnail) -->
+                            <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
+
+                                <!-- Video Upload -->
+                                <div
+                                    class="flex justify-center rounded-xl border border-dashed border-gray-600 px-4 py-8 bg-dw-card hover:bg-gray-800 transition-colors cursor-pointer group text-center h-full">
+                                    <div>
+                                        <div
+                                            class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-700 transition-colors">
+                                            <i class="ph ph-video-camera text-xl text-gray-300"></i>
+                                        </div>
+                                        <div class="flex text-sm leading-6 text-gray-400 justify-center">
+                                            <label for="file-upload"
+                                                class="relative cursor-pointer rounded-md font-medium text-white hover:underline focus-within:outline-none">
+                                                <span>Video auswählen</span>
+                                                <input id="file-upload" name="file-upload" type="file" class="sr-only"
+                                                    accept="video/mp4,video/x-m4v,video/*" required>
+                                            </label>
+                                        </div>
+                                        <p class="text-[11px] leading-5 text-gray-500 mt-1">MP4, WebM (Min. 2 Min)</p>
+                                        <div id="selectedFileName"
+                                            class="text-xs font-medium text-white mt-3 hidden bg-gray-700 py-1 px-2 rounded-md inline-block max-w-[200px] truncate">
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <!-- Thumbnail Upload -->
+                                <div
+                                    class="flex justify-center rounded-xl border border-dashed border-gray-600 px-4 py-8 bg-dw-card hover:bg-gray-800 transition-colors cursor-pointer group text-center h-full">
+                                    <div>
+                                        <div
+                                            class="w-10 h-10 bg-gray-800 rounded-full flex items-center justify-center mx-auto mb-3 group-hover:bg-gray-700 transition-colors">
+                                            <i class="ph ph-image text-xl text-gray-300"></i>
+                                        </div>
+                                        <div class="flex text-sm leading-6 text-gray-400 justify-center">
+                                            <label for="thumb-upload"
+                                                class="relative cursor-pointer rounded-md font-medium text-white hover:underline focus-within:outline-none">
+                                                <span>Thumbnail wählen</span>
+                                                <input id="thumb-upload" name="thumb-upload" type="file" class="sr-only"
+                                                    accept="image/jpeg,image/png,image/webp" required>
+                                            </label>
+                                        </div>
+                                        <p class="text-[11px] leading-5 text-gray-500 mt-1">JPG, PNG (16:9 empfohlen)
+                                        </p>
+                                        <div id="selectedThumbName"
+                                            class="text-xs font-medium text-white mt-3 hidden bg-gray-700 py-1 px-2 rounded-md inline-block max-w-[200px] truncate">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <!-- Text Inputs -->
+                            <div class="space-y-4">
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="title"
+                                            class="block text-sm font-medium text-gray-300 mb-1">Titel</label>
+                                        <input type="text" name="title" id="title"
+                                            class="block w-full rounded-lg border border-dw-border bg-dw-bg py-2.5 px-3 text-white focus:ring-1 focus:ring-white focus:border-white sm:text-sm placeholder-gray-600 outline-none transition-all"
+                                            placeholder="Ein aussagekräftiger Titel..." required>
+                                    </div>
+                                    <div>
+                                        <label for="author" class="block text-sm font-medium text-gray-300 mb-1">Autor /
+                                            Ersteller</label>
+                                        <input type="text" name="author" id="author"
+                                            class="block w-full rounded-lg border border-dw-border bg-dw-bg py-2.5 px-3 text-white focus:ring-1 focus:ring-white focus:border-white sm:text-sm placeholder-gray-600 outline-none transition-all"
+                                            placeholder="Dein Name / Kanalname" required>
+                                    </div>
+                                </div>
+
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                    <div>
+                                        <label for="category"
+                                            class="block text-sm font-medium text-gray-300 mb-1">Kategorie</label>
+                                        <input type="text" name="category" id="category"
+                                            class="block w-full rounded-lg border border-dw-border bg-dw-bg py-2.5 px-3 text-white focus:ring-1 focus:ring-white focus:border-white sm:text-sm placeholder-gray-600 outline-none transition-all"
+                                            placeholder="z.B. Dokumentation, Review..." required>
+                                    </div>
+                                    <div>
+                                        <label for="tags" class="block text-sm font-medium text-gray-300 mb-1">Tags
+                                            (kommagetrennt)</label>
+                                        <input type="text" name="tags" id="tags"
+                                            class="block w-full rounded-lg border border-dw-border bg-dw-bg py-2.5 px-3 text-white focus:ring-1 focus:ring-white focus:border-white sm:text-sm placeholder-gray-600 outline-none transition-all"
+                                            placeholder="Mundart, Rap, Cypher...">
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label for="description"
+                                        class="block text-sm font-medium text-gray-300 mb-1">Beschreibung</label>
+                                    <textarea id="description" name="description" rows="3"
+                                        class="block w-full rounded-lg border border-dw-border bg-dw-bg py-2.5 px-3 text-white focus:ring-1 focus:ring-white focus:border-white sm:text-sm placeholder-gray-600 outline-none transition-all"
+                                        placeholder="Beschreibe dein Video..." required></textarea>
+                                </div>
+                            </div>
+
+                            <div class="mt-8 flex items-center justify-end gap-x-4 pt-4 border-t border-dw-border">
+                                <button type="button" onclick="closeUploadModal()"
+                                    class="text-sm font-semibold leading-6 text-gray-400 hover:text-white transition-colors">Abbrechen</button>
+                                <button type="submit"
+                                    class="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-black shadow-sm hover:bg-gray-200 focus-visible:outline transition-colors">
+                                    Zur Prüfung einreichen
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+
+                    <!-- Success State -->
+                    <div class="px-6 py-12 text-center hidden" id="uploadSuccessContainer">
+                        <div
+                            class="w-16 h-16 bg-dw-card border border-dw-border rounded-full flex items-center justify-center mx-auto mb-4">
+                            <i class="ph ph-check text-3xl text-white"></i>
+                        </div>
+                        <h3 class="text-xl font-serif font-bold text-white mb-2">Erfolgreich eingereicht</h3>
+                        <p class="text-dw-textMuted mb-6 max-w-sm mx-auto text-sm">Dein Video liegt nun der Redaktion
+                            vor. Wir melden uns bei dir, sobald es freigegeben wurde.</p>
+                        <button onclick="closeUploadModal()"
+                            class="rounded-full bg-white px-6 py-2.5 text-sm font-semibold text-black hover:bg-gray-200 transition-colors">Schließen</button>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Use tags mimicking the screenshot styling
+        const tags = {
+            konzert: { label: "Konzert", color: "text-dw-accentBlue" },
+            release: { label: "Release", color: "text-dw-accentYellow" },
+            interview: { label: "Interview", color: "text-gray-400" },
+            history: { label: "History", color: "text-dw-accentBlue" },
+            analyse: { label: "Analyse", color: "text-dw-accentPurple" },
+            comeback: { label: "Comeback", color: "text-gray-400" },
+            international: { label: "International", color: "text-dw-accentYellow" }
+        };
+
+        const homeVideos = [
+            {
+                title: "Ty P musigdichter – Die visuelle Reise (Doku)",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Dialektwerk Originals",
+                views: "15.8k",
+                time: "vor 2 Tagen",
+                tag: tags.comeback,
+                duration: "45:00",
+                avatar: "DW"
+            },
+            {
+                title: "Mundart Release DJ Session #45",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "1.2k",
+                time: "vor 5 Stunden",
+                tag: tags.release,
+                duration: "5:12",
+                avatar: "DW"
+            },
+            {
+                title: "Textanalyse leopardospächt (Video Essay)",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "Analyse Tool",
+                views: "850",
+                time: "vor 1 Woche",
+                tag: tags.analyse,
+                duration: "12:30",
+                avatar: "AT",
+                href: "../videos/video_leopardospächt.html"
+            },
+            {
+                title: "\"Mundart ist ehrlicher\" – Black Sea Dahu im Gespräch",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Interviews",
+                views: "4.5k",
+                time: "vor 3 Wochen",
+                tag: tags.interview,
+                duration: "28:15",
+                avatar: "DW"
+            },
+            {
+                title: "Bärner Rap History: Die 90er Jahre im Fokus",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "Rap History CH",
+                views: "12.1k",
+                time: "vor 1 Monat",
+                tag: tags.history,
+                duration: "34:45",
+                avatar: "RH"
+            },
+            {
+                title: "Die Evolution des Mundart Hip-Hop",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW History",
+                views: "12k",
+                time: "vor 2 Monaten",
+                tag: tags.history,
+                duration: "45:00",
+                avatar: "DW"
+            },
+            {
+                title: "Neue EP \"drü für drü\" veröffentlicht - Studio Session",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Matura Projekt",
+                views: "500",
+                time: "vor 5 Stunden",
+                tag: tags.release,
+                duration: "15:20",
+                avatar: "MP"
+            },
+            {
+                title: "Gölä - Uf u dervo: Warum das Album alles veränderte",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "Musik Archiv CH",
+                views: "18.8k",
+                time: "vor 1 Woche",
+                tag: tags.analyse,
+                duration: "22:10",
+                avatar: "MA"
+            },
+            {
+                title: "Bounce Cypher 2026 - Die besten Mundart Parts",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "SRF Virus",
+                views: "85k",
+                time: "vor 3 Tagen",
+                tag: tags.konzert,
+                duration: "18:45",
+                avatar: "SR"
+            },
+            {
+                title: "Züri Rap vs. Bärner Rap - Eine Analyse der Styles",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "14.2k",
+                time: "vor 2 Wochen",
+                tag: tags.analyse,
+                duration: "14:10",
+                avatar: "DW"
+            },
+            {
+                title: "Breitbild live am Openair Frauenfeld 2006 (Archiv)",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "Festival TV",
+                views: "34k",
+                time: "vor 1 Monat",
+                tag: tags.konzert,
+                duration: "48:50",
+                avatar: "FT"
+            },
+            {
+                title: "Die Geschichte der Chlyklass - Bärn bleibt Bärn",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW History",
+                views: "45k",
+                time: "vor 5 Monaten",
+                tag: tags.history,
+                duration: "52:10",
+                avatar: "DW"
+            },
+            {
+                title: "Xen & EAZ - Studio Vlog #03 (Züri Slang pure)",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Physical Shock",
+                views: "22k",
+                time: "vor 4 Tagen",
+                tag: tags.release,
+                duration: "11:20",
+                avatar: "PS"
+            },
+            {
+                title: "Was macht eigentlich Gimma? Das grosse Comeback-Interview",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Interviews",
+                views: "18.5k",
+                time: "vor 1 Woche",
+                tag: tags.interview,
+                duration: "35:00",
+                avatar: "DW"
+            },
+            {
+                title: "Steff la Cheffe - Neues Album Teaser & Tracklist",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "Bakara Music",
+                views: "9.2k",
+                time: "vor 12 Stunden",
+                tag: tags.comeback,
+                duration: "02:15",
+                avatar: "BM"
+            },
+            {
+                title: "Die 10 legendärsten Mundart-Rap Lines aller Zeiten",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "26.7k",
+                time: "vor 2 Wochen",
+                tag: tags.analyse,
+                duration: "16:40",
+                avatar: "DW"
+            },
+            {
+                title: "Mundart Drill: Der neue düstere Trend aus Basel",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "11.1k",
+                time: "vor 3 Wochen",
+                tag: tags.analyse,
+                duration: "13:55",
+                avatar: "DW"
+            },
+            {
+                title: "Breitbild in Chur - Eine Rap History Reportage",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW History",
+                views: "21k",
+                time: "vor 6 Monaten",
+                tag: tags.history,
+                duration: "40:20",
+                avatar: "DW"
+            },
+            {
+                title: "Konzert Vlog: Hecht füllt das Hallenstadion (Wahnsinn!)",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "Hecht Official",
+                views: "55k",
+                time: "vor 2 Monaten",
+                tag: tags.konzert,
+                duration: "25:30",
+                avatar: "HO"
+            },
+            {
+                title: "Züri West - Die Pioniere des Mundart-Rock",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "CH Musik Doku",
+                views: "44.8k",
+                time: "vor 5 Tagen",
+                tag: tags.history,
+                duration: "30:15",
+                avatar: "MD"
+            },
+            {
+                title: "Mundart Punk - Lebt die Szene noch? Ein Streifzug",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "Underground CH",
+                views: "3.2k",
+                time: "vor 1 Monat",
+                tag: tags.analyse,
+                duration: "19:00",
+                avatar: "UC"
+            },
+            {
+                title: "Bligg - Schnitzeljagd (Album Analyse 20 Jahre später)",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW History",
+                views: "18.9k",
+                time: "vor 2 Wochen",
+                tag: tags.history,
+                duration: "21:45",
+                avatar: "DW"
+            },
+            {
+                title: "Dabu Fantastic - Akustik Session im Wald",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "Dabu Fanclub",
+                views: "12k",
+                time: "vor 3 Monaten",
+                tag: tags.konzert,
+                duration: "15:20",
+                avatar: "DF"
+            },
+            {
+                title: "Wie viel verdient man als Schweizer Mundart-Musiker wirklich?",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "Music Biz CH",
+                views: "45k",
+                time: "vor 1 Woche",
+                tag: tags.analyse,
+                duration: "17:30",
+                avatar: "MB"
+            },
+            {
+                title: "Pronto Tour Dokumentation: Solothurner Slang auf Tour",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Originals",
+                views: "67k",
+                time: "vor 1 Jahr",
+                tag: tags.history,
+                duration: "55:00",
+                avatar: "DW"
+            },
+            {
+                title: "Ist Schweizerdeutsch zu limitiert für modernen Pop?",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "23k",
+                time: "vor 4 Tagen",
+                tag: tags.interview,
+                duration: "18:40",
+                avatar: "DW"
+            },
+            {
+                title: "Frauen im Mundart-Rap: Eine Bestandsaufnahme 2026",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Feminism & Beats",
+                views: "15.4k",
+                time: "vor 3 Wochen",
+                tag: tags.analyse,
+                duration: "24:15",
+                avatar: "FB"
+            },
+            {
+                title: "Dialekt-Slam 2026: Das epische Finale in Olten",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "Slam CH",
+                views: "31k",
+                time: "vor 2 Monaten",
+                tag: tags.konzert,
+                duration: "42:00",
+                avatar: "SC"
+            },
+            {
+                title: "Mundart und KI: Die ersten komplett generierten CH-Rap Songs",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "Tech & Sound",
+                views: "9.8k",
+                time: "vor 5 Tagen",
+                tag: tags.analyse,
+                duration: "14:20",
+                avatar: "TS"
+            },
+            {
+                title: "Lo & Leduc '079' – Der ultimative Beat Breakdown",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "Producer Secrets",
+                views: "112k",
+                time: "vor 2 Jahren",
+                tag: tags.analyse,
+                duration: "20:45",
+                avatar: "PS"
+            },
+            {
+                title: "Warum Bündnerdeutsch im Rap immer noch am besten rollt",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "17.6k",
+                time: "vor 1 Monat",
+                tag: tags.analyse,
+                duration: "09:30",
+                avatar: "DW"
+            },
+            {
+                title: "Tommy Vercetti Exklusiv-Interview 2026: Rap und Politik",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Interviews",
+                views: "28k",
+                time: "vor 2 Wochen",
+                tag: tags.interview,
+                duration: "45:00",
+                avatar: "DW"
+            },
+            {
+                title: "Luuk & Knackeboul – Freestyle Battle in Biel",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "Rap Battle CH",
+                views: "56k",
+                time: "vor 3 Monaten",
+                tag: tags.konzert,
+                duration: "12:15",
+                avatar: "RB"
+            },
+            {
+                title: "Bligg: Die frühen Jahre – Vom Freestyle zur Legende",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW History",
+                views: "89k",
+                time: "vor 1 Jahr",
+                tag: tags.history,
+                duration: "38:50",
+                avatar: "DW"
+            },
+            {
+                title: "Mimiks Live in Luzern - Heimspiel der Superlative",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "LU Rap",
+                views: "34k",
+                time: "vor 4 Monaten",
+                tag: tags.konzert,
+                duration: "01:15:00",
+                avatar: "LR"
+            },
+            {
+                title: "Gleis Zwei - Eine Hommage an den Zürcher Rap",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Züri Rap History",
+                views: "41k",
+                time: "vor 2 Tagen",
+                tag: tags.history,
+                duration: "14:10",
+                avatar: "ZR"
+            },
+            {
+                title: "Manillio packt aus: Die Wahrheit über 'Kryptonit'",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Interviews",
+                views: "41k",
+                time: "vor 6 Monaten",
+                tag: tags.interview,
+                duration: "26:30",
+                avatar: "DW"
+            },
+            {
+                title: "Danase Album Release Party - Mitten im Chreis 4",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "Züri Live",
+                views: "12k",
+                time: "vor 3 Wochen",
+                tag: tags.konzert,
+                duration: "08:45",
+                avatar: "ZL"
+            },
+            {
+                title: "Nativ & Pablo (S.O.S) - Studio Session in Bern",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Originals",
+                views: "33k",
+                time: "vor 5 Monaten",
+                tag: tags.history,
+                duration: "30:00",
+                avatar: "DW"
+            },
+            {
+                title: "Schweizer Reggae History: Die Phenomden Ära",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "Reggae CH",
+                views: "18k",
+                time: "vor 8 Monaten",
+                tag: tags.history,
+                duration: "22:15",
+                avatar: "RC"
+            },
+            {
+                title: "Mundart-Rapper am Openair Frauenfeld Backstage",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "OAF TV",
+                views: "150k",
+                time: "vor 1 Monat",
+                tag: tags.konzert,
+                duration: "18:20",
+                avatar: "OA"
+            },
+            {
+                title: "Luuk '2026' Album Preview (Erste Hörprobe)",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "7.5k",
+                time: "vor 10 Stunden",
+                tag: tags.release,
+                duration: "04:30",
+                avatar: "DW"
+            },
+            {
+                title: "EKR - Die Zürcher Rap Legende im unzensierten Talk",
+                thumbnail: "https://images.unsplash.com/photo-1603574670812-d245908f51a7?q=80&w=600&auto=format&fit=crop",
+                uploader: "Legends CH",
+                views: "29k",
+                time: "vor 4 Wochen",
+                tag: tags.comeback,
+                duration: "55:40",
+                avatar: "LC"
+            },
+            {
+                title: "LCone & Comedy Rap - Darf man im Mundart-Rap noch lachen?",
+                thumbnail: "https://images.unsplash.com/photo-1493225457124-a1a2a5f5f92e?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Analyse",
+                views: "16.8k",
+                time: "vor 2 Wochen",
+                tag: tags.analyse,
+                duration: "11:15",
+                avatar: "DW"
+            },
+            {
+                title: "Stereo Luchs 'Linie 8' - Text & Vibe Analyse",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "DW Magazin",
+                views: "24k",
+                time: "vor 7 Monaten",
+                tag: tags.analyse,
+                duration: "09:45",
+                avatar: "DW"
+            },
+            {
+                title: "Cobee live im Studio - Neue Mundart-Trap Single exklusiv",
+                thumbnail: "https://images.unsplash.com/photo-1598488035139-bdbb2231ce04?q=80&w=600&auto=format&fit=crop",
+                uploader: "Studio A",
+                views: "11k",
+                time: "vor 2 Tagen",
+                tag: tags.release,
+                duration: "06:10",
+                avatar: "SA"
+            },
+            {
+                title: "Patent Ochsner - Die Magie der Bümpliz-Trilogie",
+                thumbnail: "https://images.unsplash.com/photo-1571204829887-3b8d69e4094d?q=80&w=600&auto=format&fit=crop",
+                uploader: "Mundart Classics",
+                views: "450k",
+                time: "vor 2 Jahren",
+                tag: tags.history,
+                duration: "1:20:00",
+                avatar: "MC"
+            },
+            {
+                title: "Rap City Zürich Highlights - Züri brennt",
+                thumbnail: "https://images.unsplash.com/photo-1540039155733-d7696d54af58?q=80&w=600&auto=format&fit=crop",
+                uploader: "Rap City",
+                views: "38k",
+                time: "vor 3 Monaten",
+                tag: tags.konzert,
+                duration: "14:50",
+                avatar: "RC"
+            },
+            {
+                title: "Dialektwerk: Unsere Vision für die Mundart-Musikszene 2027",
+                thumbnail: "https://images.unsplash.com/photo-1511671782779-c97d3d27a1d4?q=80&w=600&auto=format&fit=crop",
+                uploader: "Dialektwerk Team",
+                views: "5.5k",
+                time: "vor 4 Stunden",
+                tag: tags.release,
+                duration: "08:00",
+                avatar: "DW"
+            },
+            {
+                title: "Wie das Schweizer Radio Mundart pusht (oder blockiert)",
+                thumbnail: "https://images.unsplash.com/photo-1598653222000-6b7b7a552625?q=80&w=600&auto=format&fit=crop",
+                uploader: "Media Watch CH",
+                views: "19k",
+                time: "vor 1 Woche",
+                tag: tags.analyse,
+                duration: "21:30",
+                avatar: "MW"
+            }
+        ];
+
+        function renderHomepageGrid() {
+            const container = document.getElementById('homepage-video-grid');
+            let html = '';
+            homeVideos.forEach(video => {
+                const cardHTML = `
+                    <a href="${video.href || '#'}" class="flex flex-col group cursor-pointer decoration-transparent">
+                        <!-- Thumbnail Area -->
+                        <div class="relative w-full aspect-video bg-black overflow-hidden border-b border-dw-border rounded-t-xl">
+                            <img src="${video.thumbnail}" class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500">
+                            <div class="absolute bottom-2 right-2 bg-black/80 text-white text-xs font-medium px-1.5 py-0.5 rounded">
+                                ${video.duration}
+                            </div>
+                        </div>
+                        
+                        <!-- Content Area (Magazine Card Style) -->
+                        <div class="p-5 flex flex-col flex-grow bg-dw-card rounded-b-xl border border-t-0 border-dw-border">
+                            <!-- Tag -->
+                            <span class="${video.tag.color} text-[10px] font-bold uppercase tracking-wider mb-2">${video.tag.label}</span>
+                            
+                            <!-- Title (Serif) -->
+                            <h3 class="font-serif text-xl font-bold text-white leading-snug mb-3 line-clamp-2">${video.title}</h3>
+                            
+                            <!-- Uploader / Meta -->
+                            <div class="mt-auto flex items-center gap-3 pt-2">
+                                <div class="w-8 h-8 rounded-full bg-gray-700 border border-gray-600 flex items-center justify-center text-xs font-bold text-white flex-shrink-0">
+                                    ${video.avatar}
+                                </div>
+                                <div class="flex flex-col">
+                                    <span class="text-sm text-gray-300 font-medium leading-tight group-hover:text-white transition-colors">${video.uploader}</span>
+                                    <span class="text-xs text-dw-textMuted mt-0.5">${video.views} Aufrufe • ${video.time}</span>
+                                </div>
+                            </div>
+                        </div>
+                    </a>
+                `;
+
+                // DAS HIER HAT GEFEHLT: Die Karte zur HTML-Ausgabe hinzufügen
+                html += cardHTML;
+            });
+            container.innerHTML = html;
+        }
+
+        const modal = document.getElementById('uploadModal');
+        const formContainer = document.getElementById('uploadFormContainer');
+        const successContainer = document.getElementById('uploadSuccessContainer');
+        const uploadForm = document.getElementById('uploadForm');
+
+        // File Inputs
+        const videoFileInput = document.getElementById('file-upload');
+        const thumbFileInput = document.getElementById('thumb-upload');
+        const videoFileNameDisplay = document.getElementById('selectedFileName');
+        const thumbFileNameDisplay = document.getElementById('selectedThumbName');
+
+        function openUploadModal() {
+            modal.classList.remove('hidden');
+            formContainer.classList.remove('hidden');
+            successContainer.classList.add('hidden');
+            uploadForm.reset();
+            videoFileNameDisplay.classList.add('hidden');
+            thumbFileNameDisplay.classList.add('hidden');
+        }
+
+        function closeUploadModal() {
+            modal.classList.add('hidden');
+        }
+
+        // Handle Video Selection
+        videoFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                videoFileNameDisplay.textContent = e.target.files[0].name;
+                videoFileNameDisplay.classList.remove('hidden');
+            } else {
+                videoFileNameDisplay.classList.add('hidden');
+            }
+        });
+
+        // Handle Thumbnail Selection
+        thumbFileInput.addEventListener('change', (e) => {
+            if (e.target.files.length > 0) {
+                thumbFileNameDisplay.textContent = e.target.files[0].name;
+                thumbFileNameDisplay.classList.remove('hidden');
+            } else {
+                thumbFileNameDisplay.classList.add('hidden');
+            }
+        });
+
+        function handleUploadSubmit(e) {
+            e.preventDefault();
+            formContainer.classList.add('hidden');
+            successContainer.classList.remove('hidden');
+        }
+
+        // Hide custom scrollbar for filter pills
+        document.head.insertAdjacentHTML("beforeend", `<style>.scrollbar-hide::-webkit-scrollbar { display: none; } .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }</style>`)
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            renderHomepageGrid();
+        });
+
+    </script>
+</body>
+
+</html>

@@ -1,3 +1,5 @@
-2026/08/20-11:48:33.516 221c Reusing MANIFEST C:\Users\BasileErard\OneDrive - durchstart\Dokumente\dialektwerk\programmieren\bazz-dialektwerk\agent\.spotify-user-data\Default\Site Characteristics Database/MANIFEST-000001
-2026/08/20-11:48:33.517 221c Recovering log #3
-2026/08/20-11:48:33.517 221c Reusing old log C:\Users\BasileErard\OneDrive - durchstart\Dokumente\dialektwerk\programmieren\bazz-dialektwerk\agent\.spotify-user-data\Default\Site Characteristics Database/000003.log 
+2026/08/22-12:08:47.479 6c4c Log #3: 45 ops saved to Table #4 OK
+2026/08/22-12:08:47.482 6c4c Archiving C:\bäsu\dialektwerk\bazz-web\bazz-dialektwerk\agent\.spotify-user-data\Default\Site Characteristics Database/000003.log: OK
+2026/08/22-12:08:47.482 6c4c Table #4: 45 entries OK
+2026/08/22-12:08:47.484 6c4c Archiving C:\bäsu\dialektwerk\bazz-web\bazz-dialektwerk\agent\.spotify-user-data\Default\Site Characteristics Database/MANIFEST-000001: OK
+2026/08/22-12:08:47.493 6c4c **** Repaired leveldb C:\bäsu\dialektwerk\bazz-web\bazz-dialektwerk\agent\.spotify-user-data\Default\Site Characteristics Database; recovered 1 files; 757 bytes. Some data may have been lost. ****

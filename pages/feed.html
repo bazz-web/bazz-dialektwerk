@@ -1,0 +1,1637 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="theme-color" content="#050508">
+    <meta name="color-scheme" content="dark">
+    <title>Dialektwerk - Feed & Communities</title>
+
+    <!-- Scripts & Fonts -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css"
+        crossorigin="anonymous" referrerpolicy="no-referrer" />
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=Space+Grotesk:wght@500;700&display=swap"
+        rel="stylesheet">
+
+    <!-- Icon Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Externe DW Navigations-Files -->
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="../common/navbar.js" defer></script>
+
+    <!-- Tailwind Configuration -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                        display: ['Space Grotesk', 'sans-serif'],
+                    },
+                    colors: {
+                        dw: {
+                            dark: '#0a0a0f',
+                            darker: '#050508',
+                            panel: 'rgba(20, 20, 30, 0.7)',
+                            panelHover: 'rgba(30, 30, 45, 0.9)',
+                            primary: '#00ffcc',
+                            secondary: '#7000ff',
+                            accent: '#ff0055',
+                            text: '#e2e8f0',
+                            muted: '#94a3b8'
+                        }
+                    },
+                    animation: {
+                        'pulse-slow': 'pulse 3s cubic-bezier(0.4, 0, 0.6, 1) infinite',
+                        'slide-up': 'slideUp 0.3s ease-out forwards',
+                        'slide-down': 'slideDown 0.2s ease-out forwards',
+                        'spin-slow': 'spin 4s linear infinite'
+                    },
+                    keyframes: {
+                        slideUp: {
+                            '0%': { transform: 'translateY(20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        },
+                        slideDown: {
+                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
+                            '100%': { transform: 'translateY(0)', opacity: '1' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        /* BASE STYLES */
+        :root {
+            color-scheme: dark;
+        }
+
+        html,
+        body {
+            margin: 0 !important;
+            padding: 0 !important;
+            width: 100%;
+            height: 100%;
+            background-color: theme('colors.dw.darker');
+            color: theme('colors.dw.text');
+            overflow: hidden;
+        }
+
+        /* SCROLLBARS */
+        ::-webkit-scrollbar {
+            width: 5px;
+            height: 5px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: rgba(0, 0, 0, 0.2);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: theme('colors.dw.secondary');
+            border-radius: 10px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: theme('colors.dw.primary');
+        }
+
+        .glass-panel {
+            background: theme('colors.dw.panel');
+            backdrop-filter: blur(12px);
+            -webkit-backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+        }
+
+        /* SLIDERS (AUDIO) */
+        input[type=range] {
+            -webkit-appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            height: 12px;
+            width: 12px;
+            border-radius: 50%;
+            background: theme('colors.dw.primary');
+            cursor: pointer;
+            margin-top: -4px;
+            box-shadow: 0 0 10px theme('colors.dw.primary');
+        }
+
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: rgba(255, 255, 255, 0.2);
+            border-radius: 2px;
+        }
+
+        /* GRID LAYOUT SYSTEM */
+        .app-wrapper {
+            position: fixed;
+            top: 0;
+            right: 0;
+            bottom: 0;
+            left: 110px;
+            /* Kigo Navbar Platz */
+            display: grid;
+            grid-template-columns: 100px 250px 1fr 300px;
+            z-index: 10;
+        }
+
+        .global-player {
+            position: fixed;
+            bottom: 0;
+            right: 0;
+            left: 110px;
+            height: 80px;
+            z-index: 70;
+        }
+
+        /* RESPONSIVE BREAKPOINTS */
+        @media (max-width: 1200px) {
+            .app-wrapper {
+                grid-template-columns: 80px 250px 1fr;
+            }
+
+            #right-sidebar {
+                display: none;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .app-wrapper {
+                left: 0;
+                top: 80px;
+                grid-template-columns: 70px 220px 1fr;
+            }
+
+            .global-player {
+                left: 0;
+            }
+
+            #navbar-placeholder {
+                width: 100%;
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .app-wrapper {
+                grid-template-columns: 70px 1fr;
+            }
+
+            #channel-sidebar {
+                display: none;
+            }
+
+            .global-player {
+                height: 60px;
+                padding-bottom: env(safe-area-inset-bottom);
+                cursor: pointer;
+            }
+
+            .hide-on-mobile {
+                display: none !important;
+            }
+        }
+
+        /* DYNAMIC STATES */
+        .liked i {
+            color: theme('colors.dw.accent');
+            font-weight: 900;
+        }
+
+        .bookmarked i {
+            color: theme('colors.dw.primary');
+            font-weight: 900;
+        }
+
+        .active-channel {
+            background-color: rgba(255, 255, 255, 0.1);
+            color: white;
+            border-left: 2px solid theme('colors.dw.primary');
+        }
+
+        .break-words-custom {
+            word-wrap: break-word;
+            overflow-wrap: break-word;
+            word-break: break-word;
+        }
+
+        /* VINYL ANIMATION */
+        .record-spin {
+            animation: spin-slow 4s linear infinite;
+        }
+    </style>
+</head>
+
+<body class="antialiased font-sans">
+
+    <!-- Kigo Navbar Container -->
+    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[110px] z-[80]"></div>
+
+    <!-- MOBILE TOP BAR -->
+    <!-- z-[90] und pointer-events-none fixt das Blockade-Problem -->
+    <div
+        class="fixed top-0 left-0 w-full h-[80px] z-[90] lg:hidden flex items-center justify-between px-3 md:px-4 bg-dw-darker/95 backdrop-blur-md border-b border-white/5 pointer-events-none">
+
+        <!-- Platzhalter für das Hamburger-Menü -->
+        <div class="w-[60px] md:w-[80px] shrink-0"></div>
+
+        <!-- Mobile Navigation Actions (pointer-events-auto aktiviert Klicks nur hier) -->
+        <div class="flex items-center space-x-3 relative pointer-events-auto">
+            <button
+                class="px-4 py-2 rounded-full bg-dw-primary/10 hover:bg-dw-primary text-dw-primary hover:text-black transition-all text-sm font-bold border border-dw-primary/30 flex items-center shadow-[0_0_10px_rgba(0,255,204,0.1)]"
+                onclick="document.getElementById('main-content-scroll').scrollTop = 0;">
+                <i class="fas fa-fire mr-2"></i> Feed
+            </button>
+            <button
+                class="px-4 py-2 rounded-full bg-white/5 hover:bg-white/10 text-white transition-all text-sm font-bold border border-white/10 flex items-center"
+                onclick="app.openModal('radar-modal')">
+                <i class="fas fa-compact-disc mr-2"></i> Radar
+            </button>
+        </div>
+
+        <!-- Mobile Utility Actions -->
+        <div class="flex items-center space-x-3 shrink-0 relative pointer-events-auto">
+            <button
+                class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 text-dw-muted hover:text-white transition-colors"
+                onclick="app.toggleMobileSearch()">
+                <i class="fas fa-search text-sm"></i>
+            </button>
+            <button
+                class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 text-dw-muted hover:text-white transition-colors relative"
+                onclick="app.openModal('notifications-modal')">
+                <i class="fas fa-bell text-sm"></i>
+                <span
+                    class="absolute top-0 right-0 w-2.5 h-2.5 bg-dw-accent rounded-full border-2 border-dw-darker"></span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Mobile Suchleiste (Drop-Down) -->
+    <div id="mobile-search-container"
+        class="fixed top-[80px] left-0 w-full bg-dw-dark border-b border-white/10 p-3 z-[85] hidden animate-slide-down">
+        <div class="relative">
+            <input type="text" id="mobile-search-input" placeholder="Nach Tracks oder Artists suchen..."
+                class="w-full bg-black border border-white/10 rounded-lg px-4 py-3 text-sm text-white focus:outline-none focus:border-dw-primary"
+                onkeyup="app.handleSearch(event)">
+            <i class="fas fa-search absolute right-4 top-3.5 text-dw-muted"></i>
+        </div>
+    </div>
+
+    <!-- Hintergrund Effekte -->
+    <div class="fixed inset-0 z-[-1] pointer-events-none">
+        <div
+            class="absolute top-[-10%] left-[-10%] w-[40%] h-[40%] rounded-full bg-dw-secondary/20 blur-[100px] animate-pulse-slow">
+        </div>
+        <div class="absolute bottom-[-10%] right-[-10%] w-[50%] h-[50%] rounded-full bg-dw-primary/10 blur-[120px]">
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MAIN APP WRAPPER -->
+    <!-- ========================================== -->
+    <div class="app-wrapper">
+
+        <!-- 1. Community Sidebar (Ganz links) -->
+        <nav id="server-sidebar"
+            class="glass-panel border-r border-r-white/5 flex flex-col items-center py-2 md:py-4 space-y-4 overflow-y-auto pb-24 relative z-10">
+            <div id="community-list" class="flex flex-col space-y-3 w-full items-center">
+                <!-- Injected via JavaScript -->
+            </div>
+            <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-dashed border-white/20 text-dw-primary flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors mt-auto shrink-0"
+                onclick="app.showToast('Neues Projekt anlegen (Coming Soon)')">
+                <i class="fas fa-plus"></i>
+            </div>
+        </nav>
+
+        <!-- 2. Channel Sidebar (Sub-Navigation) -->
+        <aside id="channel-sidebar"
+            class="glass-panel border-r border-r-white/5 flex flex-col overflow-hidden relative z-10">
+            <div class="h-16 border-b border-b-white/5 flex items-center px-4 shadow-sm relative cursor-pointer hover:bg-white/5 transition-colors"
+                onclick="app.toggleDropdown('community-dropdown')">
+                <h2 id="current-community-name" class="font-display font-bold text-lg truncate pr-6 text-white">Lade...
+                </h2>
+                <i class="fas fa-chevron-down absolute right-4 text-xs text-dw-muted"></i>
+
+                <!-- Community Einstellungen Dropdown -->
+                <div id="community-dropdown"
+                    class="absolute top-14 left-2 right-2 bg-dw-darker border border-white/10 rounded-lg shadow-xl hidden z-50 py-2">
+                    <div class="px-4 py-2 hover:bg-white/10 text-sm text-dw-primary cursor-pointer transition-colors"
+                        onclick="app.shareCommunity()">
+                        <i class="fas fa-user-plus mr-2"></i>Leute einladen
+                    </div>
+                    <div class="px-4 py-2 hover:bg-white/10 text-sm cursor-pointer transition-colors"
+                        onclick="app.showToast('Community Einstellungen geöffnet')">
+                        <i class="fas fa-cog mr-2"></i>Einstellungen
+                    </div>
+                </div>
+            </div>
+
+            <div class="flex-1 overflow-y-auto p-3 space-y-6" id="channel-list-container">
+                <!-- Injected via JavaScript -->
+            </div>
+
+            <!-- User Status Footer -->
+            <div
+                class="h-16 bg-black/40 border-t border-t-white/5 flex items-center px-3 justify-between shrink-0 mb-[80px]">
+                <div
+                    class="flex items-center space-x-2 overflow-hidden hover:bg-white/5 p-1 rounded cursor-pointer transition-colors">
+                    <img src="https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff"
+                        class="w-8 h-8 rounded-full shrink-0">
+                    <div class="flex flex-col truncate">
+                        <span class="text-sm font-bold truncate">Der Schwiizer Experte</span>
+                        <span class="text-xs text-dw-primary truncate">Online</span>
+                    </div>
+                </div>
+                <div class="flex space-x-2 text-dw-muted shrink-0">
+                    <i class="fas fa-microphone hover:text-white cursor-pointer p-1 transition-colors"
+                        onclick="this.classList.toggle('text-dw-accent'); this.classList.toggle('fa-microphone-slash')"></i>
+                    <i class="fas fa-headphones hover:text-white cursor-pointer p-1 transition-colors"
+                        onclick="this.classList.toggle('text-dw-accent')"></i>
+                </div>
+            </div>
+        </aside>
+
+        <!-- 3. Haupt-Inhaltsbereich (Feed & Chat) -->
+        <main class="flex flex-col bg-dw-darker/90 relative overflow-hidden h-full z-10">
+
+            <!-- Desktop Header -->
+            <header
+                class="h-14 md:h-16 glass-panel border-b border-b-white/5 flex items-center px-3 md:px-4 justify-between sticky top-0 z-30 shrink-0">
+
+                <div class="flex items-center text-base md:text-lg font-bold cursor-pointer md:cursor-default py-2"
+                    onclick="if(window.innerWidth <= 768) app.toggleDropdown('mobile-channel-dropdown')">
+                    <i class="fas fa-hashtag text-dw-muted mr-2" id="header-icon"></i>
+                    <span id="header-title" class="truncate max-w-[120px] md:max-w-none">allgemein</span>
+                    <i
+                        class="fas fa-chevron-down ml-2 text-xs md:hidden text-dw-muted bg-white/10 p-1.5 rounded-full"></i>
+                </div>
+
+                <div class="flex items-center space-x-3 md:space-x-4 text-dw-muted relative">
+                    <div class="relative hidden lg:block">
+                        <input type="text" id="desktop-search" placeholder="Durchsuchen..."
+                            class="bg-black border border-white/10 rounded px-3 py-1 text-sm focus:outline-none focus:border-dw-primary w-32 md:w-48 text-white transition-all"
+                            onkeyup="app.handleSearch(event)">
+                        <i class="fas fa-search absolute right-2 top-1.5 text-xs text-gray-500"></i>
+                    </div>
+                    <button class="hidden lg:flex items-center hover:text-white transition-colors text-sm font-semibold"
+                        onclick="app.openModal('radar-modal')">
+                        <i class="fas fa-compact-disc mr-2 text-dw-primary"></i> Radar
+                    </button>
+                    <div class="relative hidden lg:block">
+                        <i class="fas fa-bell hover:text-white cursor-pointer text-lg"
+                            onclick="app.openModal('notifications-modal')"></i>
+                        <span
+                            class="absolute -top-1 -right-1 w-2 h-2 bg-dw-accent rounded-full border border-black"></span>
+                    </div>
+                </div>
+
+                <!-- Mobile Channel Switcher Dropdown -->
+                <div id="mobile-channel-dropdown"
+                    class="absolute top-14 left-0 right-0 bg-dw-dark border-b border-white/10 shadow-2xl hidden z-40 max-h-[60vh] overflow-y-auto">
+                    <!-- Injected via JavaScript -->
+                </div>
+            </header>
+
+            <!-- Scrollbarer Content -->
+            <div id="main-content-scroll" class="flex-1 overflow-y-auto p-2 md:p-4 relative pb-28">
+
+                <!-- Chat View -->
+                <div id="view-chat" class="flex flex-col min-h-full justify-end space-y-4 pb-4 hidden">
+                    <div class="mb-4 md:mb-8 mt-auto px-2">
+                        <div
+                            class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dw-panel flex items-center justify-center mb-4 border border-white/5">
+                            <i class="fas fa-hashtag text-2xl md:text-3xl text-white"></i>
+                        </div>
+                        <h1 class="text-xl md:text-3xl font-display font-bold text-white mb-2" id="chat-welcome-title">
+                            Willkommen im Chat!</h1>
+                        <p class="text-xs md:text-base text-dw-muted">Tauscht euch über Text-Ideen, Releases und Gigs
+                            aus.</p>
+                    </div>
+                    <div id="chat-messages" class="space-y-4 px-1 md:px-2">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+
+                <!-- Feed View -->
+                <div id="view-feed" class="max-w-3xl mx-auto space-y-4 md:space-y-6">
+
+                    <!-- Post Input Box -->
+                    <div
+                        class="glass-panel p-3 md:p-4 rounded-xl flex items-center space-x-2 md:space-x-4 mb-4 md:mb-8">
+                        <img src="https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff"
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full shrink-0">
+                        <input type="text" placeholder="Neui Mundart-Tracks oder Text posten..."
+                            class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-lg px-3 md:px-4 py-2 hover:border-white/30 focus:border-dw-primary focus:outline-none cursor-pointer text-white text-xs md:text-base transition-colors"
+                            readonly onclick="app.openModal('upload-modal')">
+                        <div class="flex space-x-1 text-dw-muted shrink-0">
+                            <button class="p-2 hover:text-dw-secondary transition-colors"
+                                onclick="app.openModal('upload-modal')"><i class="fas fa-music"></i></button>
+                            <button class="p-2 hover:text-dw-primary transition-colors hide-on-mobile"
+                                onclick="app.openModal('upload-modal')"><i class="far fa-image"></i></button>
+                        </div>
+                    </div>
+
+                    <div id="feed-posts" class="space-y-4 md:space-y-6">
+                        <!-- Injected via JavaScript -->
+                    </div>
+
+                    <div id="feed-empty-state" class="hidden text-center py-10 text-dw-muted">
+                        <i class="fas fa-ghost text-4xl mb-4 opacity-50"></i>
+                        <p>Keine Ergebnisse gefunden.</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Sticky Chat Input Area -->
+            <div id="chat-input-area"
+                class="shrink-0 p-2 md:p-4 bg-dw-darker/80 backdrop-blur-md hidden border-t border-white/5 pb-20 md:pb-24">
+                <div
+                    class="bg-dw-panel rounded-lg flex items-center px-2 md:px-4 py-1 md:py-2 border border-white/10 focus-within:border-dw-primary transition-colors">
+                    <input type="text" id="chat-input" placeholder="Nachricht schreiben..."
+                        class="flex-1 min-w-0 bg-transparent border-none focus:outline-none text-white px-2 py-2 text-xs md:text-base"
+                        onkeypress="app.handleChatSubmit(event)">
+                    <button class="p-2 text-dw-primary hover:text-white transition-colors"
+                        onclick="app.submitChatBtn()"><i class="fas fa-paper-plane"></i></button>
+                </div>
+            </div>
+        </main>
+
+        <!-- 4. Info Sidebar (Rechts, Desktop only) -->
+        <aside id="right-sidebar"
+            class="glass-panel border-l border-l-white/5 bg-dw-dark/30 flex flex-col overflow-hidden z-10 pb-20">
+            <div class="h-16 border-b border-b-white/5 flex items-center px-4">
+                <h3 class="font-bold text-sm">Community Info</h3>
+            </div>
+            <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                <div class="bg-black/20 p-4 rounded-lg border border-white/5">
+                    <h4 class="font-display text-dw-primary mb-2">Über Dialektwerk</h4>
+                    <p class="text-sm text-dw-muted leading-relaxed">Die Datenbank und Community für Schwiizerdütschi
+                        Musigkünstler. Finde Kollaborationen, teile Tracks und entdecke neui Artists us de Szene.</p>
+                </div>
+                <div>
+                    <h3 class="text-xs font-semibold text-dw-muted uppercase tracking-wider mb-3 flex items-center">
+                        <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Aktiv (Online)
+                    </h3>
+                    <div id="online-members" class="space-y-2">
+                        <!-- Injected via JavaScript -->
+                    </div>
+                </div>
+            </div>
+        </aside>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- MINI PLAYER (Bottom Bar)                   -->
+    <!-- ========================================== -->
+    <div class="global-player bg-dw-dark border-t border-white/10 flex items-center px-2 md:px-4 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] transition-all"
+        onclick="if(window.innerWidth <= 768) app.toggleFullscreenPlayer()">
+
+        <!-- Mobile Progress Indicator (Slim Bar on top) -->
+        <div class="absolute top-0 left-0 h-[2px] bg-dw-primary/30 w-full md:hidden">
+            <div id="mobile-mini-progress" class="h-full bg-dw-primary transition-all duration-100" style="width: 0%">
+            </div>
+        </div>
+
+        <div class="flex items-center w-[60%] md:w-1/4 min-w-0">
+            <div
+                class="relative w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden mr-2 md:mr-3 bg-black border border-white/10 shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.5)] player-cover-container">
+                <img src="https://placehold.co/100x100/1a1a2e/00ffcc?text=DW"
+                    class="w-full h-full object-cover opacity-90 sync-cover">
+                <!-- Vinyl Loch -->
+                <div
+                    class="absolute inset-0 m-auto w-2 h-2 md:w-3 md:h-3 bg-dw-darker rounded-full border border-white/20">
+                </div>
+            </div>
+            <div class="flex flex-col overflow-hidden min-w-0 pr-2">
+                <span class="font-bold text-white text-xs md:text-sm truncate sync-title">Kein Track</span>
+                <span class="text-[10px] md:text-xs text-dw-muted truncate sync-artist">---</span>
+            </div>
+        </div>
+
+        <div class="flex md:flex-col items-center justify-end md:justify-center flex-1 px-1 md:px-4 min-w-0">
+            <div class="flex items-center space-x-3 md:space-x-6 mb-0 md:mb-2">
+                <button class="text-dw-primary hover:text-white transition-colors hidden md:block btn-loop-sync"
+                    onclick="app.toggleLoop(event)" title="Loop umschalten">
+                    <i class="fas fa-repeat text-sm"></i>
+                </button>
+                <button class="text-dw-muted hover:text-white transition-colors hidden md:block"
+                    onclick="app.playPrevious(event)"><i class="fas fa-step-backward text-base"></i></button>
+                <button
+                    class="w-8 h-8 md:w-10 md:h-10 rounded-full bg-white text-black flex items-center justify-center hover:scale-105 hover:bg-dw-primary transition-all shrink-0 shadow-lg play-pause-btn-sync"
+                    onclick="app.togglePlay(event)">
+                    <i class="fas fa-play ml-0.5 md:ml-1 text-sm md:text-base play-icon-sync"></i>
+                </button>
+                <button class="text-dw-muted hover:text-white transition-colors p-2 md:p-0"
+                    onclick="app.playNext(event)"><i class="fas fa-step-forward text-sm md:text-base"></i></button>
+            </div>
+            <div class="hidden md:flex w-full items-center space-x-3 text-xs text-dw-muted font-mono max-w-xl">
+                <span class="shrink-0 sync-time-current">0:00</span>
+                <input type="range" value="0" max="100" class="flex-1 min-w-[50px] sync-seek-slider"
+                    oninput="app.seekAudio(event)">
+                <span class="shrink-0 sync-time-total">0:00</span>
+            </div>
+        </div>
+
+        <div class="hidden md:flex items-center justify-end w-1/4 min-w-[150px] space-x-3 text-dw-muted">
+            <i class="fas fa-volume-up cursor-pointer hover:text-white transition-colors sync-volume-icon"
+                onclick="app.toggleMute(event)"></i>
+            <input type="range" value="80" max="100" class="w-16 sync-volume-slider" oninput="app.changeVolume(event)">
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- FULLSCREEN MOBILE PLAYER (Mit Video BG)    -->
+    <!-- ========================================== -->
+    <div id="fullscreen-player"
+        class="fixed inset-0 bg-dw-darker z-[120] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden">
+
+        <!-- NEU: Background Video (Autoplay, Loop, Muted für Mobile-Kompatibilität) -->
+        <video id="fullscreen-bg-video" src="../videos/copacabasel.mp4" autoplay loop muted playsinline
+            class="absolute inset-0 w-full h-full object-cover z-0 opacity-50"></video>
+        <!-- Schatten-Overlay, damit der Text lesbar bleibt -->
+        <div class="absolute inset-0 bg-gradient-to-b from-dw-darker/60 via-dw-darker/80 to-dw-darker z-0"></div>
+
+        <!-- Header -->
+        <div class="relative z-10 flex items-center justify-between p-4 pt-10">
+            <button class="text-dw-muted hover:text-white p-2 transition-colors" onclick="app.toggleFullscreenPlayer()">
+                <i class="fas fa-chevron-down text-xl"></i>
+            </button>
+            <span class="text-xs font-bold text-dw-muted uppercase tracking-widest">Jetzt läuft</span>
+            <button class="text-dw-muted hover:text-white p-2 transition-colors" onclick="app.showToast('Audio Menü')">
+                <i class="fas fa-ellipsis-h text-xl"></i>
+            </button>
+        </div>
+
+        <!-- Cover Art (drehende Schallplatte) -->
+        <div class="relative z-10 flex-1 flex items-center justify-center p-8">
+            <div
+                class="w-full max-w-[300px] aspect-square rounded-full overflow-hidden bg-black border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)] player-cover-container relative">
+                <img src="https://placehold.co/500x500/1a1a2e/00ffcc?text=DW"
+                    class="w-full h-full object-cover opacity-90 sync-cover">
+                <div class="absolute inset-0 m-auto w-6 h-6 bg-dw-darker rounded-full border border-white/20"></div>
+            </div>
+        </div>
+
+        <!-- Controls & Infos -->
+        <div class="relative z-10 p-6 pb-12">
+            <div class="flex justify-between items-end mb-6">
+                <div class="flex flex-col min-w-0">
+                    <h2 class="text-2xl font-bold text-white truncate sync-title">Kein Track</h2>
+                    <p class="text-lg text-dw-muted truncate sync-artist">---</p>
+                </div>
+                <button class="text-dw-primary hover:text-white transition-colors"
+                    onclick="app.showToast('Geliked!')"><i class="far fa-heart text-2xl"></i></button>
+            </div>
+
+            <div class="mb-8">
+                <input type="range" value="0" max="100" class="w-full sync-seek-slider h-[4px]"
+                    oninput="app.seekAudio(event)">
+                <div class="flex justify-between text-xs text-dw-muted font-mono mt-2">
+                    <span class="sync-time-current">0:00</span>
+                    <span class="sync-time-total">0:00</span>
+                </div>
+            </div>
+
+            <div class="flex items-center justify-between">
+                <button class="text-dw-primary hover:text-white transition-colors btn-loop-sync"
+                    onclick="app.toggleLoop(event)">
+                    <i class="fas fa-repeat text-xl"></i>
+                </button>
+                <button class="text-white hover:text-dw-primary transition-colors" onclick="app.playPrevious(event)"><i
+                        class="fas fa-step-backward text-3xl"></i></button>
+                <button
+                    class="w-16 h-16 rounded-full bg-dw-primary text-black flex items-center justify-center hover:scale-105 transition-all shadow-[0_0_20px_rgba(0,255,204,0.3)] play-pause-btn-sync"
+                    onclick="app.togglePlay(event)">
+                    <i class="fas fa-play ml-1 text-2xl play-icon-sync"></i>
+                </button>
+                <button class="text-white hover:text-dw-primary transition-colors" onclick="app.playNext(event)"><i
+                        class="fas fa-step-forward text-3xl"></i></button>
+                <button class="text-dw-muted hover:text-white transition-colors"><i
+                        class="fas fa-random text-xl"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Hidden Audio Element -->
+    <audio id="global-audio-element"></audio>
+
+    <!-- ========================================== -->
+    <!-- MODALS                                     -->
+    <!-- ========================================== -->
+
+    <!-- Upload Modal -->
+    <div id="upload-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
+        <div class="glass-panel w-full max-w-2xl rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
+            id="upload-modal-content">
+            <div class="flex justify-between items-center p-3 md:p-4 border-b border-white/10 bg-black/40">
+                <h2 class="text-base md:text-xl font-display font-bold">Neuer Beitrag</h2>
+                <button class="text-dw-muted hover:text-white transition-colors p-2"
+                    onclick="app.closeModal('upload-modal')"><i class="fas fa-times text-lg md:text-xl"></i></button>
+            </div>
+            <div class="p-4 md:p-6 space-y-3 md:space-y-4">
+                <input type="text" id="new-post-title" placeholder="Titel des Tracks oder Beitrags..."
+                    class="w-full bg-black/50 border border-white/10 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm md:text-base">
+                <textarea id="new-post-content"
+                    placeholder="Erzähl der Community von deinem Projekt, teile Lyrics oder stelle Fragen..."
+                    class="w-full bg-black/50 border border-white/10 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:border-dw-primary text-white h-24 md:h-32 resize-none transition-colors text-sm md:text-base"></textarea>
+                <div class="flex justify-end space-x-3 md:space-x-4 pt-2">
+                    <button
+                        class="px-4 md:px-6 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors text-xs md:text-base"
+                        onclick="app.closeModal('upload-modal')">Abbrechen</button>
+                    <button
+                        class="px-4 md:px-6 py-2 rounded-lg bg-dw-primary text-black font-bold hover:bg-white transition-colors text-xs md:text-base"
+                        onclick="app.submitNewPost()">Posten</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Comments Modal -->
+    <div id="comments-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
+        <div class="glass-panel w-full max-w-2xl h-[85vh] md:h-[80vh] flex flex-col rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
+            id="comments-modal-content">
+            <div class="flex justify-between items-center p-3 md:p-4 border-b border-white/10 bg-black/40">
+                <h2 class="text-base md:text-xl font-display font-bold">Diskussion</h2>
+                <button class="text-dw-muted hover:text-white transition-colors p-2"
+                    onclick="app.closeModal('comments-modal')"><i class="fas fa-times text-lg md:text-xl"></i></button>
+            </div>
+            <div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4" id="comments-list">
+                <!-- Kommentare werden hier injiziert -->
+            </div>
+            <div class="p-3 md:p-4 border-t border-white/10 bg-black/40 flex space-x-2">
+                <input type="hidden" id="active-comment-post-id">
+                <input type="text" id="new-comment-input" placeholder="Feedback schreiben..."
+                    class="flex-1 min-w-0 bg-dw-darker border border-white/10 rounded-lg px-3 md:px-4 py-2 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm md:text-base"
+                    onkeypress="if(event.key === 'Enter') app.submitComment()">
+                <button class="bg-dw-primary text-black px-4 py-2 rounded-lg font-bold hover:bg-white transition-colors"
+                    onclick="app.submitComment()"><i class="fas fa-paper-plane"></i></button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Radar Modal -->
+    <div id="radar-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
+        <div class="glass-panel w-full max-w-md rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
+            id="radar-modal-content">
+            <div
+                class="flex justify-between items-center p-4 border-b border-white/10 bg-gradient-to-r from-dw-secondary/30 to-black">
+                <h2 class="text-lg md:text-xl font-display font-bold flex items-center"><i
+                        class="fas fa-compact-disc text-dw-primary mr-2 animate-spin-slow"></i> Release Radar</h2>
+                <button class="text-dw-muted hover:text-white p-2 transition-colors"
+                    onclick="app.closeModal('radar-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-4 space-y-4">
+                <p class="text-sm text-dw-muted mb-4">Kommende Dialektwerk Releases (Q1 2027)</p>
+                <div class="bg-black/40 border border-white/5 rounded-lg p-3 flex items-center space-x-3">
+                    <div class="w-10 h-10 rounded bg-dw-primary/20 flex items-center justify-center text-dw-primary"><i
+                            class="fas fa-calendar-alt"></i></div>
+                    <div>
+                        <div class="font-bold text-white text-sm">Neues Album von Aya405</div>
+                        <div class="text-xs text-dw-muted">Dropt am 15. Januar</div>
+                    </div>
+                </div>
+                <div class="bg-black/40 border border-white/5 rounded-lg p-3 flex items-center space-x-3">
+                    <div
+                        class="w-10 h-10 rounded bg-dw-secondary/20 flex items-center justify-center text-dw-secondary">
+                        <i class="fas fa-fire"></i>
+                    </div>
+                    <div>
+                        <div class="font-bold text-white text-sm">Bas44 EP Preview</div>
+                        <div class="text-xs text-dw-muted">Exklusive Pre-Listening Party</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Notifications Modal -->
+    <div id="notifications-modal"
+        class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
+        <div class="glass-panel w-full max-w-sm rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
+            id="notifications-modal-content">
+            <div class="flex justify-between items-center p-4 border-b border-white/10 bg-black/40">
+                <h2 class="text-lg md:text-xl font-display font-bold flex items-center"><i
+                        class="fas fa-bell text-dw-accent mr-2"></i> Benachrichtigungen</h2>
+                <button class="text-dw-muted hover:text-white p-2 transition-colors"
+                    onclick="app.closeModal('notifications-modal')"><i class="fas fa-times"></i></button>
+            </div>
+            <div class="p-2 space-y-1 max-h-[60vh] overflow-y-auto">
+                <div
+                    class="p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors border-l-2 border-dw-accent">
+                    <div class="text-sm text-white font-medium">Aya405 hat deinen Track geliked!</div>
+                    <div class="text-xs text-dw-muted mt-1">Vor 5 Minuten</div>
+                </div>
+                <div
+                    class="p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors border-l-2 border-dw-primary">
+                    <div class="text-sm text-white font-medium">Neuer Kommentar von ManiMundart</div>
+                    <div class="text-xs text-dw-muted mt-1">"Gueti Lines, extrem geil gmacht!"</div>
+                </div>
+                <div class="p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
+                    <div class="text-sm text-gray-400 font-medium">Bas44 folgt dir jetzt.</div>
+                    <div class="text-xs text-dw-muted mt-1">Gestern</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Globales Toast -->
+    <div id="toast"
+        class="fixed top-24 md:top-4 right-4 bg-dw-secondary text-white px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg transform translate-x-[150%] transition-transform duration-300 z-[250] flex items-center space-x-3 border border-white/10 text-sm md:text-base">
+        <i class="fas fa-info-circle shrink-0"></i>
+        <span id="toast-message" class="break-words-custom">Meldung!</span>
+    </div>
+
+    <!-- ================= INTERAKTIVE LOGIK ================= -->
+    <script>
+        // Beobachter für externe Icon-Libraries (Fixt das Problem fehlender Icons in der Navbar)
+        const iconObserver = setInterval(() => {
+            if (window.lucide && window.lucide.createIcons) {
+                window.lucide.createIcons();
+            }
+        }, 1000);
+
+        const app = {
+            /**
+             * App Status (State Management)
+             */
+            state: {
+                currentView: 'feed',
+                currentCommunityId: 'dw_global',
+                currentChannelId: 'feed_tracks',
+                searchQuery: '',
+                data: {
+                    communities: [],
+                    channels: [],
+                    posts: [],
+                    chats: {}
+                },
+                isPlayerFullscreen: false
+            },
+
+            /**
+             * Audio Playlist Konfiguration (Mit Cover-Support)
+             */
+            playlist: [
+                {
+                    title: "copacabasel",
+                    artist: "Aya405 ft. Bas44",
+                    src: "../audio/copacabasel.mp3",
+                    videoSrc: "../video/mein_musikvideo.mp4",
+                    cover: "../images/copacabasel.jpg"
+                },
+                {
+                    title: "leopardospächt (analyse)",
+                    artist: "KIGOD",
+                    src: "../audio/leopardospächt.m4a",
+                    videoSrc: "../videos/leopard.mp4",
+                    cover: "../images/leopard.jpeg"
+                },
+                {
+                    title: "melodie",
+                    artist: "Ty P",
+                    src: "../audio/melodie Ty P.mp3",
+                    videoSrc: "../videos/melodie.mp4",
+                    cover: "../images/highkick.jpeg"
+                }
+            ],
+            currentTrackIndex: 0,
+            isLooping: true,
+
+            // ... (initData, renderAll etc. bleiben gleich) ...
+
+            /**
+             * AUDIO PLAYER SYNC & LOGIC
+             */
+            audioEl: document.getElementById('global-audio-element'),
+            isPlaying: false,
+
+            initAudio() {
+                this.audioEl = document.getElementById('global-audio-element');
+                this.audioEl.volume = document.querySelectorAll('.sync-volume-slider')[0].value / 100;
+
+                this.audioEl.loop = this.isLooping;
+                this.updateLoopUI();
+
+                this.audioEl.addEventListener('timeupdate', () => {
+                    const ct = this.audioEl.currentTime;
+                    const dur = this.audioEl.duration;
+                    if (dur) {
+                        const pct = (ct / dur) * 100;
+                        document.querySelectorAll('.sync-seek-slider').forEach(el => {
+                            el.value = Math.floor(ct);
+                            el.style.background = `linear-gradient(to right, #00ffcc ${pct}%, rgba(255,255,255,0.2) ${pct}%)`;
+                        });
+                        const miniProg = document.getElementById('mobile-mini-progress');
+                        if (miniProg) miniProg.style.width = `${pct}%`;
+                        this.syncDOM('.sync-time-current', 'textContent', this.formatTime(ct));
+                    }
+                });
+
+                this.audioEl.addEventListener('loadedmetadata', () => {
+                    document.querySelectorAll('.sync-seek-slider').forEach(el => el.max = Math.floor(this.audioEl.duration));
+                    this.syncDOM('.sync-time-total', 'textContent', this.formatTime(this.audioEl.duration));
+                });
+
+                this.audioEl.addEventListener('ended', () => {
+                    if (!this.isLooping) {
+                        this.playNext(null);
+                    }
+                });
+
+                // FIX: Video Sync Events - Überprüft auf 'hidden' Klasse statt fehlerhaftem src
+                const bgVideo = document.getElementById('fullscreen-bg-video');
+                this.audioEl.addEventListener('play', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden')) {
+                        bgVideo.play().catch(err => console.warn("Autoplay blockiert:", err));
+                    }
+                });
+                this.audioEl.addEventListener('pause', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden')) bgVideo.pause();
+                });
+                this.audioEl.addEventListener('seeked', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden') && bgVideo.duration >= this.audioEl.currentTime) {
+                        bgVideo.currentTime = this.audioEl.currentTime;
+                    }
+                });
+            },
+
+            playTrack(src, title, artist, trackFromFeed = false) {
+                let trackObj = this.playlist.find(t => t.src === src);
+                if (trackFromFeed && trackObj) {
+                    this.currentTrackIndex = this.playlist.indexOf(trackObj);
+                } else if (!trackObj) {
+                    trackObj = this.playlist[this.currentTrackIndex];
+                }
+
+                this.audioEl.src = src;
+                this.syncDOM('.sync-title', 'textContent', title);
+                this.syncDOM('.sync-artist', 'textContent', artist);
+
+                if (trackObj && trackObj.cover) {
+                    this.syncDOM('.sync-cover', 'src', trackObj.cover);
+                }
+
+                // FIX: Sauberes Resetten des Video-Elements, wenn kein Video existiert
+                const bgVideo = document.getElementById('fullscreen-bg-video');
+                if (trackObj && trackObj.videoSrc) {
+                    bgVideo.src = trackObj.videoSrc;
+                    bgVideo.classList.remove('hidden');
+                } else {
+                    bgVideo.removeAttribute('src');
+                    bgVideo.load();
+                    bgVideo.classList.add('hidden');
+                }
+
+                this.audioEl.play().then(() => {
+                    this.isPlaying = true;
+                    // Der Video-Play-Befehl ist hier gelöscht, da er nun vollautomatisch über den 'play' Listener in initAudio() getriggert wird!
+
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
+                    });
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
+                }).catch(e => {
+                    console.error(e);
+                    this.showToast("Fehler: Audiodatei konnte nicht geladen werden.");
+                });
+            },
+
+            togglePlay(e) {
+                if (e) e.stopPropagation();
+
+                if (!this.audioEl.src) {
+                    const t = this.playlist[0];
+                    return this.playTrack(t.src, t.title, t.artist);
+                }
+
+                if (this.isPlaying) {
+                    this.audioEl.pause();
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-pause'); el.classList.add('fa-play');
+                    });
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.remove('record-spin'));
+                } else {
+                    this.audioEl.play();
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
+                    });
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
+                }
+                this.isPlaying = !this.isPlaying;
+            },
+            /**
+             * Generiert die App-Daten (Mock Backend mit Mundart Fokus)
+             */
+            initData() {
+                // Communities
+                this.state.data.communities = [
+                    { id: 'dw_global', name: 'Dialektwerk Hub', icon: '🇨🇭', color: 'from-blue-600 to-cyan-500' },
+                    { id: 'zueri', name: 'Züri Beats', icon: '🦁', color: 'from-blue-800 to-white' },
+                    { id: 'baern', name: 'Bärndütsch Rap', icon: '🐻', color: 'from-red-600 to-yellow-600' },
+                    { id: 'basel', name: 'Basel Vibes', icon: '🎸', color: 'from-gray-800 to-gray-400' },
+                    { id: 'innerschweiz', name: 'Innerschwiiz Folk', icon: '🏔️', color: 'from-green-700 to-green-400' }
+                ];
+
+                // Kanäle
+                const baseChannels = [
+                    { id: 'chat_general', name: 'allgemein', type: 'chat', category: 'Lounge' },
+                    { id: 'chat_collab', name: 'collab-suche', type: 'chat', category: 'Lounge' },
+                    { id: 'feed_tracks', name: 'neue-tracks', type: 'feed', category: 'Mundart Sounds' },
+                    { id: 'feed_feedback', name: 'mix-feedback', type: 'feed', category: 'Mundart Sounds' }
+                ];
+
+                // Kombiniere Communities und Kanäle
+                this.state.data.communities.forEach(c => {
+                    baseChannels.forEach(ch => {
+                        const globalId = `${c.id}_${ch.id}`;
+                        this.state.data.channels.push({ ...ch, id: globalId, communityId: c.id });
+                        if (ch.type === 'chat') {
+                            this.state.data.chats[globalId] = [];
+                        }
+                    });
+                });
+
+                const authors = ["Aya405", "Bas44", "ManiMundart", "Chrigu_Vox", "BärnerGiele", "Züri_Flow", "TextSchmied_CH", "Aare_Vibes"];
+                const contentMix = [
+                    "Hey Lüt, was haltet dir vo mine neue Bärndütsch-Lines? Ha probiert chli meh Wortspiil inezbringe.",
+                    "Das Fördergelder-Gsuech bi dr Stadt Bärn isch dure! Jetzt chöme d'Mittel für d'Mundart-Plattform.",
+                    "Wer isch am Start fürs Release? Wird massiv für d'Schwiizer Rap-Szene!",
+                    "Weiss öpper, wie me d'Vocals am beschte abmischt, damit dr Züridütsch-Dialäkt so richtig usechunnt?",
+                    "Ha geschter de Text für d'Maturaarbeit komplett umgschribe. Isch jetzt voll uf Bärndütsch.",
+                    "Git's da inne Lüt, wo Tipps hei für gueti Mundart-Rhymes? Mir gönd d'Ideä us.",
+                    "Suche öpper, wo cha en Hook singe. Am liebste Zentralschwiizer Dialekt oder Bündnerdütsch."
+                ];
+
+                // Generiere 50 Feed-Beiträge
+                for (let i = 0; i < 50; i++) {
+                    const isAudio = Math.random() > 0.6;
+                    const cId = this.state.data.communities[Math.floor(Math.random() * this.state.data.communities.length)].id;
+                    const track = this.playlist[Math.floor(Math.random() * this.playlist.length)];
+                    const author = isAudio ? track.artist : authors[Math.floor(Math.random() * authors.length)];
+
+                    this.state.data.posts.push({
+                        id: `post_${i}`,
+                        communityId: cId,
+                        author: author,
+                        avatar: `https://ui-avatars.com/api/?name=${author.replace(/\s+/g, '+')}&background=random&color=fff`,
+                        time: `Vor ${Math.floor(Math.random() * 48 + 1)}h`,
+                        title: isAudio ? track.title : `Gedanke vo ${author}`,
+                        content: contentMix[Math.floor(Math.random() * contentMix.length)],
+                        likes: Math.floor(Math.random() * 250),
+                        hasLiked: false,
+                        hasBookmarked: false,
+                        comments: [],
+                        isAudio: isAudio,
+                        track: isAudio ? track : null
+                    });
+                }
+
+                // Generiere initiale Chat Nachrichten
+                const defaultChat = this.state.data.chats['dw_global_chat_general'];
+                if (defaultChat) {
+                    defaultChat.push(
+                        { author: 'Chrigu_Vox', time: '14:20', content: 'Giele, d\'Mundart-Szene brucht gnau so e Plattform!' },
+                        { author: 'ManiMundart', time: '14:25', content: 'Voll! Wenn goht d DB offiziell live?' },
+                        { author: 'Aya405', time: '14:30', content: 'Ich glaube Afangs 2027.' },
+                        { author: 'Bas44', time: '14:35', content: 'Genau, d Vorbereitige loufe uf Hochtoure.' }
+                    );
+                }
+            },
+
+            /**
+             * RENDER FUNKTIONEN
+             */
+            renderAll() {
+                this.renderSidebar();
+                this.renderChannels();
+                this.renderContent();
+                this.renderMembers();
+            },
+
+            renderSidebar() {
+                const el = document.getElementById('community-list');
+                el.innerHTML = '';
+                this.state.data.communities.forEach(c => {
+                    const isActive = this.state.currentCommunityId === c.id;
+
+                    let activeBarClass = isActive ? 'h-8 md:h-10' : 'h-3 scale-y-0 group-hover:scale-y-100';
+                    let iconBgClass = isActive ? `rounded-[14px] md:rounded-[16px] border-white/50 shadow-[0_0_15px_theme(colors.dw.primary)]` : `rounded-[20px] md:rounded-[24px] group-hover:rounded-[16px] border-white/5`;
+
+                    el.innerHTML += `
+                        <div class="relative group" onclick="app.selectCommunity('${c.id}')">
+                            <div class="absolute left-0 w-1 bg-white rounded-r-lg -ml-1 top-1/2 -translate-y-1/2 transition-all duration-300 ${activeBarClass}"></div>
+                            <div class="w-10 h-10 md:w-12 md:h-12 ${iconBgClass} transition-all duration-300 flex items-center justify-center cursor-pointer overflow-hidden border bg-gradient-to-br ${c.color}">
+                                <span class="text-white text-base md:text-xl">${c.icon}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            renderChannels() {
+                const comm = this.state.data.communities.find(c => c.id === this.state.currentCommunityId);
+                const commChannels = this.state.data.channels.filter(ch => ch.communityId === comm.id);
+                const categories = [...new Set(commChannels.map(ch => ch.category))];
+
+                document.getElementById('current-community-name').textContent = comm.name;
+
+                const desktopEl = document.getElementById('channel-list-container');
+                desktopEl.innerHTML = '';
+
+                categories.forEach(cat => {
+                    let html = `<div class="mb-5"><h3 class="text-[10px] md:text-xs font-semibold text-dw-muted uppercase tracking-wider mb-2 px-2">${cat}</h3><div class="space-y-1">`;
+
+                    commChannels.filter(ch => ch.category === cat).forEach(ch => {
+                        const isActive = this.state.currentChannelId === ch.id;
+                        const icon = ch.type === 'chat' ? 'fa-hashtag' : 'fa-music';
+                        const colorClass = isActive ? 'active-channel' : 'hover:bg-white/5 text-dw-muted hover:text-white';
+
+                        html += `
+                            <div class="flex items-center px-2 py-2 rounded cursor-pointer transition-colors ${colorClass}" onclick="app.selectChannel('${ch.id}', '${ch.type}')">
+                                <i class="fas ${icon} mr-3 w-4 text-center ${ch.type === 'feed' ? 'text-dw-secondary' : ''}"></i>
+                                <span class="truncate text-sm font-medium">${ch.name}</span>
+                            </div>
+                        `;
+                    });
+                    html += `</div></div>`;
+                    desktopEl.innerHTML += html;
+                });
+
+                // Mobile Dropdown Sync
+                const mobileDropdown = document.getElementById('mobile-channel-dropdown');
+                if (mobileDropdown) {
+                    let mobileHtml = `<div class="p-3 bg-black/50 text-xs text-dw-primary font-bold uppercase tracking-wider">${comm.name} Kanäle</div>`;
+
+                    commChannels.forEach(ch => {
+                        const icon = ch.type === 'chat' ? 'fa-hashtag' : 'fa-music';
+                        const activeStyle = this.state.currentChannelId === ch.id ? 'bg-dw-primary/20 text-white' : 'text-gray-300 hover:bg-white/5';
+
+                        mobileHtml += `
+                            <div class="p-4 border-b border-white/5 flex items-center space-x-3 cursor-pointer ${activeStyle} transition-colors" onclick="app.selectChannel('${ch.id}', '${ch.type}'); app.toggleDropdown('mobile-channel-dropdown')">
+                                <i class="fas ${icon} ${ch.type === 'feed' ? 'text-dw-secondary' : 'text-dw-muted'}"></i>
+                                <span class="font-medium text-sm">${ch.name}</span>
+                            </div>
+                        `;
+                    });
+                    mobileDropdown.innerHTML = mobileHtml;
+                }
+            },
+
+            renderContent() {
+                const isChat = this.state.currentView === 'chat';
+
+                // Toggles Visibility
+                document.getElementById('view-chat').classList.toggle('hidden', !isChat);
+                document.getElementById('chat-input-area').classList.toggle('hidden', !isChat);
+                document.getElementById('view-feed').classList.toggle('hidden', isChat);
+
+                // Update Header
+                const channel = this.state.data.channels.find(ch => ch.id === this.state.currentChannelId);
+                if (channel) {
+                    document.getElementById('header-title').textContent = channel.name;
+                    document.getElementById('header-icon').className = `fas ${isChat ? 'fa-hashtag' : 'fa-music'} text-dw-muted mr-2`;
+                }
+
+                if (isChat) this.renderChat();
+                else this.renderFeed();
+            },
+
+            renderFeed() {
+                const container = document.getElementById('feed-posts');
+                container.innerHTML = '';
+
+                let posts = this.state.data.posts.filter(p => p.communityId === this.state.currentCommunityId);
+
+                // Suche filtern
+                if (this.state.searchQuery) {
+                    const q = this.state.searchQuery.toLowerCase();
+                    posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
+                }
+
+                document.getElementById('feed-empty-state').classList.toggle('hidden', posts.length > 0);
+
+                posts.forEach(post => {
+                    let media = '';
+                    if (post.isAudio) {
+                        media = `
+                            <div class="mt-3 md:mt-4 bg-black/40 rounded-lg p-2 md:p-3 border border-white/5 flex items-center space-x-3 md:space-x-4 hover:border-dw-primary/30 transition-colors">
+                                <button class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dw-primary text-black flex items-center justify-center hover:scale-105 transition-transform shrink-0" onclick="app.playTrack('${post.track.src}', '${post.track.title}', '${post.author}', true)">
+                                    <i class="fas fa-play ml-0.5 md:ml-1 text-sm md:text-base"></i>
+                                </button>
+                                <div class="flex-1 min-w-0">
+                                    <div class="font-bold text-white text-xs md:text-sm truncate">${post.title}</div>
+                                    <div class="text-[10px] md:text-xs text-dw-muted">Audio Track</div>
+                                </div>
+                            </div>
+                        `;
+                    }
+
+                    container.innerHTML += `
+                        <article class="glass-panel p-0 rounded-xl overflow-hidden mb-4 md:mb-6 animate-slide-up hover:border-white/20 transition-all duration-300">
+                            <div class="flex">
+                                <div class="w-10 md:w-12 bg-black/20 flex flex-col items-center py-3 md:py-4 space-y-1 md:space-y-2 border-r border-white/5 shrink-0">
+                                    <button class="hover:text-dw-primary transition-colors ${post.hasLiked ? 'text-dw-accent' : 'text-dw-muted'}" onclick="app.toggleLike('${post.id}')">
+                                        <i class="fas fa-arrow-up text-sm md:text-lg"></i>
+                                    </button>
+                                    <span class="font-bold text-[10px] md:text-xs">${post.likes}</span>
+                                </div>
+                                <div class="flex-1 p-3 md:p-5 min-w-0">
+                                    <div class="flex items-center space-x-2 text-[10px] md:text-xs text-dw-muted mb-2 md:mb-3">
+                                        <img src="${post.avatar}" class="w-4 h-4 md:w-5 md:h-5 rounded-full shrink-0">
+                                        <span class="font-bold text-white truncate">${post.author}</span>
+                                        <span>•</span>
+                                        <span class="shrink-0">${post.time}</span>
+                                    </div>
+                                    <h2 class="text-sm md:text-lg font-bold text-white mb-1 md:mb-2 leading-tight break-words-custom">${post.title}</h2>
+                                    <p class="text-gray-300 text-xs md:text-sm leading-relaxed break-words-custom">${post.content}</p>
+                                    ${media}
+                                    <div class="flex items-center space-x-3 md:space-x-5 mt-3 md:mt-5 pt-3 md:pt-4 border-t border-white/5 text-dw-muted text-[10px] md:text-sm font-semibold">
+                                        <button class="hover:text-white flex items-center transition-colors" onclick="app.openComments('${post.id}')">
+                                            <i class="far fa-comment-alt mr-1.5 md:mr-2"></i> ${post.comments.length} <span class="hidden md:inline ml-1">Kommentare</span>
+                                        </button>
+                                        <button class="hover:text-white flex items-center transition-colors" onclick="app.showToast('Link kopiert!')">
+                                            <i class="fas fa-share mr-1.5 md:mr-2"></i> Teilen
+                                        </button>
+                                        <button class="ml-auto hover:text-white transition-colors ${post.hasBookmarked ? 'bookmarked' : ''}" onclick="app.toggleBookmark('${post.id}', this)">
+                                            <i class="${post.hasBookmarked ? 'fas' : 'far'} fa-bookmark text-sm md:text-base"></i>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+                        </article>
+                    `;
+                });
+            },
+
+            renderChat() {
+                const container = document.getElementById('chat-messages');
+                container.innerHTML = '';
+                const messages = this.state.data.chats[this.state.currentChannelId] || [];
+
+                messages.forEach(msg => {
+                    container.innerHTML += `
+                        <div class="flex hover:bg-black/20 p-2 rounded -mx-1 md:-mx-2 transition-colors">
+                            <img src="https://ui-avatars.com/api/?name=${msg.author.replace(/\s+/g, '+')}&background=random&color=fff" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 mt-0.5 shrink-0">
+                            <div class="flex flex-col min-w-0">
+                                <div class="flex items-baseline space-x-2">
+                                    <span class="font-bold text-white text-xs md:text-base truncate">${msg.author}</span>
+                                    <span class="text-[9px] md:text-xs text-dw-muted shrink-0">${msg.time}</span>
+                                </div>
+                                <span class="text-gray-300 mt-0.5 md:mt-1 text-xs md:text-base leading-relaxed break-words-custom">${msg.content}</span>
+                            </div>
+                        </div>
+                    `;
+                });
+
+                setTimeout(() => {
+                    const scrollArea = document.getElementById('main-content-scroll');
+                    scrollArea.scrollTop = scrollArea.scrollHeight;
+                }, 50);
+            },
+
+            renderMembers() {
+                const authors = ["Aya405", "Bas44", "ManiMundart", "Chrigu_Vox"];
+                let html = '';
+                authors.forEach(name => {
+                    html += `
+                        <div class="flex items-center space-x-3 hover:bg-white/5 p-2 rounded cursor-pointer group transition-colors">
+                            <div class="relative shrink-0">
+                                <img src="https://ui-avatars.com/api/?name=${name.replace(/\s+/g, '+')}&background=random&color=fff" class="w-8 h-8 rounded-full">
+                                <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-black"></div>
+                            </div>
+                            <span class="text-sm font-semibold text-gray-300 group-hover:text-white transition-colors truncate">${name}</span>
+                        </div>
+                    `;
+                });
+                const el = document.getElementById('online-members');
+                if (el) el.innerHTML = html;
+            },
+
+            /**
+             * USER LOGIC
+             */
+            selectCommunity(id) {
+                this.state.currentCommunityId = id;
+                const firstFeed = this.state.data.channels.find(ch => ch.communityId === id && ch.type === 'feed');
+                if (firstFeed) {
+                    this.state.currentChannelId = firstFeed.id;
+                    this.state.currentView = 'feed';
+                }
+
+                if (window.innerWidth <= 768) {
+                    document.getElementById('main-content-scroll').scrollTop = 0;
+                }
+
+                this.renderAll();
+                this.showToast('Gewechselt zu: ' + this.state.data.communities.find(c => c.id === id).name);
+            },
+
+            selectChannel(id, type) {
+                this.state.currentChannelId = id;
+                this.state.currentView = type;
+                this.renderChannels();
+                this.renderContent();
+            },
+
+            toggleMobileSearch() {
+                const el = document.getElementById('mobile-search-container');
+                el.classList.toggle('hidden');
+                if (!el.classList.contains('hidden')) {
+                    setTimeout(() => document.getElementById('mobile-search-input').focus(), 100);
+                }
+            },
+
+            handleSearch(e) {
+                this.state.searchQuery = e.target.value;
+                this.renderFeed();
+
+                // Synchronisiere Eingabefelder
+                const dSearch = document.getElementById('desktop-search');
+                const mSearch = document.getElementById('mobile-search-input');
+                if (dSearch) dSearch.value = this.state.searchQuery;
+                if (mSearch) mSearch.value = this.state.searchQuery;
+            },
+
+            handleChatSubmit(e) {
+                if (e.key === 'Enter') this.submitChatBtn();
+            },
+
+            submitChatBtn() {
+                const input = document.getElementById('chat-input');
+                const text = input.value.trim();
+                if (!text) return;
+
+                if (!this.state.data.chats[this.state.currentChannelId]) {
+                    this.state.data.chats[this.state.currentChannelId] = [];
+                }
+
+                this.state.data.chats[this.state.currentChannelId].push({
+                    author: 'Der Schwiizer Experte', content: text, time: 'Gerade eben'
+                });
+
+                input.value = '';
+                this.renderChat();
+            },
+
+            submitNewPost() {
+                const title = document.getElementById('new-post-title').value.trim();
+                const content = document.getElementById('new-post-content').value.trim();
+
+                if (!title && !content) {
+                    this.showToast('Bitte Text oder Titel eingeben!'); return;
+                }
+
+                this.state.data.posts.unshift({
+                    id: 'post_new_' + Date.now(),
+                    communityId: this.state.currentCommunityId,
+                    author: 'Der Schwiizer Experte',
+                    avatar: 'https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff',
+                    time: 'Gerade eben',
+                    title: title || 'Neues Update',
+                    content: content,
+                    likes: 0, hasLiked: false, hasBookmarked: false, comments: [], isAudio: false
+                });
+
+                this.closeModal('upload-modal');
+                document.getElementById('new-post-title').value = '';
+                document.getElementById('new-post-content').value = '';
+
+                // Clear Search and Refresh
+                this.state.searchQuery = '';
+                document.getElementById('desktop-search').value = '';
+                document.getElementById('mobile-search-input').value = '';
+                this.renderFeed();
+                this.showToast('Erfolgreich gepostet!');
+            },
+
+            toggleLike(postId) {
+                const post = this.state.data.posts.find(p => p.id === postId);
+                if (post) {
+                    post.hasLiked = !post.hasLiked;
+                    post.likes += post.hasLiked ? 1 : -1;
+                    this.renderFeed();
+                }
+            },
+
+            toggleBookmark(postId, btnEl) {
+                const post = this.state.data.posts.find(p => p.id === postId);
+                if (post) {
+                    post.hasBookmarked = !post.hasBookmarked;
+                    this.renderFeed();
+                    this.showToast(post.hasBookmarked ? 'Gespeichert!' : 'Aus Lesezeichen entfernt!');
+                }
+            },
+
+            shareCommunity() {
+                const comm = this.state.data.communities.find(c => c.id === this.state.currentCommunityId);
+                const shareData = {
+                    title: comm.name + ' - Dialektwerk',
+                    text: `Komm in die ${comm.name} Community auf Dialektwerk!`,
+                    url: window.location.href
+                };
+
+                if (navigator.share) {
+                    navigator.share(shareData).catch(err => console.log('Teilen abgebrochen'));
+                } else {
+                    navigator.clipboard.writeText(window.location.href).then(() => {
+                        this.showToast(`Link für ${comm.name} in die Zwischenablage kopiert!`);
+                    });
+                }
+
+                const drop = document.getElementById('community-dropdown');
+                if (drop) drop.classList.add('hidden');
+            },
+
+            /**
+             * COMMENTS
+             */
+            openComments(postId) {
+                const post = this.state.data.posts.find(p => p.id === postId);
+                document.getElementById('active-comment-post-id').value = postId;
+                this.renderCommentsList(post);
+                this.openModal('comments-modal');
+            },
+
+            renderCommentsList(post) {
+                const list = document.getElementById('comments-list');
+                list.innerHTML = '';
+                if (post.comments.length === 0) {
+                    list.innerHTML = '<div class="text-center text-dw-muted py-10 text-xs md:text-base">Noch keine Diskussion. Sei der Erste!</div>';
+                    return;
+                }
+                post.comments.forEach(c => {
+                    list.innerHTML += `
+                        <div class="flex space-x-2 md:space-x-3 bg-black/20 p-2 md:p-4 rounded-lg border border-white/5">
+                            <img src="https://ui-avatars.com/api/?name=${c.author.replace(/\s+/g, '+')}&background=random&color=fff" class="w-6 h-6 md:w-8 md:h-8 rounded-full shrink-0">
+                            <div class="min-w-0">
+                                <div class="text-[11px] md:text-sm font-bold text-white truncate">${c.author} <span class="text-[9px] md:text-xs font-normal text-dw-muted ml-1 md:ml-2">${c.time}</span></div>
+                                <div class="text-xs md:text-sm text-gray-300 mt-0.5 md:mt-1 break-words-custom">${c.text}</div>
+                            </div>
+                        </div>
+                    `;
+                });
+            },
+
+            submitComment() {
+                const postId = document.getElementById('active-comment-post-id').value;
+                const input = document.getElementById('new-comment-input');
+                const text = input.value.trim();
+
+                if (!text) return;
+                const post = this.state.data.posts.find(p => p.id === postId);
+                if (post) {
+                    post.comments.push({ author: 'Der Schwiizer Experte', text: text, time: 'Gerade eben' });
+                    input.value = '';
+                    this.renderCommentsList(post);
+                    this.renderFeed();
+                }
+            },
+
+            /**
+             * AUDIO PLAYER SYNC & LOGIC
+             */
+            audioEl: document.getElementById('global-audio-element'),
+            isPlaying: false,
+
+            initAudio() {
+                this.audioEl = document.getElementById('global-audio-element');
+                this.audioEl.volume = document.querySelectorAll('.sync-volume-slider')[0].value / 100;
+
+                // Initialize Loop Set
+                this.audioEl.loop = this.isLooping;
+                this.updateLoopUI();
+
+                // Time Updates -> Sync all Progress Bars
+                this.audioEl.addEventListener('timeupdate', () => {
+                    const ct = this.audioEl.currentTime;
+                    const dur = this.audioEl.duration;
+
+                    if (dur) {
+                        const pct = (ct / dur) * 100;
+
+                        // Update Ranges
+                        document.querySelectorAll('.sync-seek-slider').forEach(el => {
+                            el.value = Math.floor(ct);
+                            el.style.background = `linear-gradient(to right, #00ffcc ${pct}%, rgba(255,255,255,0.2) ${pct}%)`;
+                        });
+
+                        // Update Mobile Mini Progress Line
+                        const miniProg = document.getElementById('mobile-mini-progress');
+                        if (miniProg) miniProg.style.width = `${pct}%`;
+
+                        // Update Text
+                        this.syncDOM('.sync-time-current', 'textContent', this.formatTime(ct));
+                    }
+                });
+
+                // Metadata Updates -> Sync Max Values
+                this.audioEl.addEventListener('loadedmetadata', () => {
+                    document.querySelectorAll('.sync-seek-slider').forEach(el => el.max = Math.floor(this.audioEl.duration));
+                    this.syncDOM('.sync-time-total', 'textContent', this.formatTime(this.audioEl.duration));
+                });
+
+                // Ended Event -> Next Track if Loop is disabled
+                this.audioEl.addEventListener('ended', () => {
+                    if (!this.isLooping) {
+                        this.playNext(null);
+                    }
+                });
+            },
+
+            /**
+             * Helfer für das Synchronisieren mehrerer gleicher DOM-Elemente
+             */
+            syncDOM(selector, prop, val) {
+                document.querySelectorAll(selector).forEach(el => {
+                    if (prop === 'textContent') el.textContent = val;
+                    else if (prop === 'src') el.src = val;
+                    else if (prop === 'className') el.className = val;
+                });
+            },
+
+            playTrack(src, title, artist, trackFromFeed = false) {
+                if (trackFromFeed) {
+                    const idx = this.playlist.findIndex(t => t.src === src);
+                    if (idx !== -1) this.currentTrackIndex = idx;
+                }
+
+                this.audioEl.src = src;
+                this.syncDOM('.sync-title', 'textContent', title);
+                this.syncDOM('.sync-artist', 'textContent', artist);
+
+                this.audioEl.play().then(() => {
+                    this.isPlaying = true;
+                    // Alle Play Buttons zu Pause
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
+                    });
+                    // Animation für Vinyl Cover starten
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
+                }).catch(e => {
+                    console.error(e);
+                    this.showToast("Fehler: Audiodatei konnte nicht geladen werden.");
+                });
+            },
+
+            togglePlay(e) {
+                if (e) e.stopPropagation(); // Verhindert Fullscreen-Trigger auf dem Button
+
+                if (!this.audioEl.src) {
+                    // Start first Track
+                    const t = this.playlist[0];
+                    return this.playTrack(t.src, t.title, t.artist);
+                }
+
+                if (this.isPlaying) {
+                    this.audioEl.pause();
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-pause'); el.classList.add('fa-play');
+                    });
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.remove('record-spin'));
+                } else {
+                    this.audioEl.play();
+                    document.querySelectorAll('.play-icon-sync').forEach(el => {
+                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
+                    });
+                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
+                }
+                this.isPlaying = !this.isPlaying;
+            },
+
+            playNext(e) {
+                if (e) e.stopPropagation();
+                this.currentTrackIndex = (this.currentTrackIndex + 1) % this.playlist.length;
+                const nextTrack = this.playlist[this.currentTrackIndex];
+                this.playTrack(nextTrack.src, nextTrack.title, nextTrack.artist);
+            },
+
+            playPrevious(e) {
+                if (e) e.stopPropagation();
+                this.currentTrackIndex = (this.currentTrackIndex - 1 + this.playlist.length) % this.playlist.length;
+                const prevTrack = this.playlist[this.currentTrackIndex];
+                this.playTrack(prevTrack.src, prevTrack.title, prevTrack.artist);
+            },
+
+            toggleLoop(e) {
+                if (e) e.stopPropagation();
+                this.isLooping = !this.isLooping;
+                this.audioEl.loop = this.isLooping;
+                this.updateLoopUI();
+                this.showToast(this.isLooping ? 'Wiederholung aktiviert' : 'Wiederholung deaktiviert');
+            },
+
+            updateLoopUI() {
+                document.querySelectorAll('.btn-loop-sync').forEach(el => {
+                    if (this.isLooping) {
+                        el.classList.add('text-dw-primary');
+                        el.classList.remove('text-dw-muted');
+                    } else {
+                        el.classList.remove('text-dw-primary');
+                        el.classList.add('text-dw-muted');
+                    }
+                });
+            },
+
+            seekAudio(e) {
+                this.audioEl.currentTime = e.target.value;
+            },
+
+            changeVolume(e) {
+                this.audioEl.volume = e.target.value / 100;
+                // Sync if multiple volume sliders exist
+                document.querySelectorAll('.sync-volume-slider').forEach(el => el.value = e.target.value);
+            },
+
+            toggleMute(e) {
+                if (e) e.stopPropagation();
+                this.audioEl.muted = !this.audioEl.muted;
+                const volClass = this.audioEl.muted ? 'fas fa-volume-mute text-dw-accent cursor-pointer' : 'fas fa-volume-up cursor-pointer hover:text-white transition-colors';
+                this.syncDOM('.sync-volume-icon', 'className', volClass);
+            },
+
+            formatTime(s) {
+                if (isNaN(s)) return "0:00";
+                const m = Math.floor(s / 60);
+                const sec = Math.floor(s % 60);
+                return `${m}:${sec < 10 ? '0' : ''}${sec}`;
+            },
+
+            toggleFullscreenPlayer() {
+                this.state.isPlayerFullscreen = !this.state.isPlayerFullscreen;
+                const modal = document.getElementById('fullscreen-player');
+                if (this.state.isPlayerFullscreen) {
+                    modal.classList.remove('translate-y-full');
+                } else {
+                    modal.classList.add('translate-y-full');
+                }
+            },
+
+            /**
+             * MODALS & UTILS
+             */
+            openModal(id) {
+                const m = document.getElementById(id);
+                m.classList.remove('hidden');
+                setTimeout(() => m.children[0].classList.remove('scale-95', 'opacity-0'), 10);
+            },
+
+            closeModal(id) {
+                const m = document.getElementById(id);
+                m.children[0].classList.add('scale-95', 'opacity-0');
+                setTimeout(() => m.classList.add('hidden'), 200);
+            },
+
+            toggleDropdown(id) {
+                document.getElementById(id).classList.toggle('hidden');
+            },
+
+            showToast(msg) {
+                const t = document.getElementById('toast');
+                document.getElementById('toast-message').textContent = msg;
+                t.classList.remove('translate-x-[150%]');
+                setTimeout(() => t.classList.add('translate-x-[150%]'), 3000);
+            }
+        };
+
+        // Event Listener zum Schließen von Dropdowns bei externen Klicks
+        document.addEventListener('click', (e) => {
+            if (!e.target.closest('#channel-sidebar') && !e.target.closest('#community-dropdown')) {
+                const drop = document.getElementById('community-dropdown');
+                if (drop) drop.classList.add('hidden');
+            }
+            if (!e.target.closest('header') && !e.target.closest('.fixed.top-0.left-0.w-full.h-\\[80px\\]') && !e.target.closest('#mobile-search-container')) {
+                // Nur schließen, wenn man nicht gerade in die Suchleiste klickt
+                const mDrop = document.getElementById('mobile-channel-dropdown');
+                if (mDrop) mDrop.classList.add('hidden');
+            }
+        });
+
+        // App Initialisierung
+        window.addEventListener('DOMContentLoaded', () => {
+            app.initData();
+            app.renderAll();
+            app.initAudio();
+        });
+    </script>
+</body>
+
+</html>
