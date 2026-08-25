@@ -1,0 +1,1147 @@
+<!DOCTYPE html>
+<html lang="de" class="h-full dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dialektwerk – Das Schwiizerdütsch Sprach-Labor 3000</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        // Zwingt Tailwind, nur auf die 'dark'-Klasse zu reagieren und ignoriert OS-Präferenzen
+        tailwind.config = {
+            darkMode: 'class'
+        }
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/tone@14.8.49/build/Tone.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap"
+        rel="stylesheet">
+    <!-- Icon Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Externe DW Navigations-Files -->
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="../common/navbar.js" defer></script>
+    <style>
+        body {
+            font-family: 'Inter', sans-serif;
+        }
+
+        .glass-card {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(226, 232, 240, 0.8);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.85);
+            border: 1px solid rgba(51, 65, 85, 0.8);
+        }
+
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 9999px;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #475569;
+        }
+
+        /* Darker Theme Overrides */
+        .dark body,
+        .dark.bg-slate-950 {
+            background-color: #050505 !important;
+            color: #e4e4e7 !important;
+        }
+
+        .dark .bg-slate-900 {
+            background-color: #111111 !important;
+        }
+
+        .dark .bg-slate-800 {
+            background-color: #1a1a1a !important;
+        }
+
+        .dark .border-slate-800,
+        .dark .border-slate-700 {
+            border-color: #27272a !important;
+        }
+
+        .dark .glass-card {
+            background: rgba(10, 10, 10, 0.85) !important;
+            border: 1px solid rgba(40, 40, 40, 0.8) !important;
+        }
+
+        .dark .text-slate-400 {
+            color: #a1a1aa !important;
+        }
+
+        .dark .text-slate-300 {
+            color: #d4d4d8 !important;
+        }
+
+        .dark .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #3f3f46 !important;
+        }
+    </style>
+</head>
+
+<body
+    class="h-full bg-slate-50 dark:bg-slate-950 text-slate-800 dark:text-slate-100 flex flex-col transition-colors duration-300">
+    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[130px] z-[80]"></div>
+    <header
+        class="sticky top-0 z-50 glass-card border-b border-slate-200 dark:border-slate-800 px-6 py-4 flex items-center justify-between shadow-sm">
+        <div class="flex items-center space-x-3">
+            <div
+                class="bg-red-600 text-white font-black px-3 py-1.5 rounded-xl text-lg tracking-wider shadow-md shadow-red-500/20">
+                DW</div>
+            <div>
+                <h1
+                    class="font-bold text-xl tracking-tight bg-gradient-to-r from-red-600 to-amber-500 bg-clip-text text-transparent">
+                    Dialektwerk</h1>
+                <p class="text-xs text-slate-500 dark:text-slate-400">Schweizerdeutsch Sprach-Labor & Kultur-Hub</p>
+            </div>
+        </div>
+        <div class="flex items-center space-x-3">
+            <nav
+                class="hidden md:flex space-x-1 bg-slate-200/60 dark:bg-slate-800/60 p-1 rounded-xl text-sm font-medium">
+                <button onclick="switchTab('lexicon')" id="nav-lexicon"
+                    class="px-4 py-2 rounded-lg transition-all bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm">Dialekt-Atlas</button>
+                <button onclick="switchTab('translator')" id="nav-translator"
+                    class="px-4 py-2 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-red-500">Übersetzer</button>
+                <button onclick="switchTab('quiz')" id="nav-quiz"
+                    class="px-4 py-2 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-red-500">Mundart-Quiz</button>
+                <button onclick="switchTab('soundlab')" id="nav-soundlab"
+                    class="px-4 py-2 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-red-500">Audio-Labor</button>
+                <button onclick="switchTab('archive')" id="nav-archive"
+                    class="px-4 py-2 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-red-500">Idiotikon-Archiv</button>
+            </nav>
+            <button onclick="toggleDarkMode()"
+                class="p-2.5 rounded-xl bg-slate-200/80 dark:bg-slate-800 hover:bg-slate-300 dark:hover:bg-slate-700 transition-all text-slate-700 dark:text-slate-300"
+                aria-label="Dark Mode Toggle">
+                <svg id="theme-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                        d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                    </path>
+                </svg>
+            </button>
+        </div>
+    </header>
+
+    <main class="flex-1 overflow-hidden p-4 md:p-6 max-w-7xl mx-auto w-full flex flex-col">
+
+        <!-- Mobile Navigation Bar -->
+        <div class="flex md:hidden overflow-x-auto space-x-2 pb-3 mb-2 shrink-0">
+            <button onclick="switchTab('lexicon')" id="mb-nav-lexicon"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white shrink-0">Dialekt-Atlas</button>
+            <button onclick="switchTab('translator')" id="mb-nav-translator"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">Übersetzer</button>
+            <button onclick="switchTab('quiz')" id="mb-nav-quiz"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">Mundart-Quiz</button>
+            <button onclick="switchTab('soundlab')" id="mb-nav-soundlab"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">Audio-Labor</button>
+            <button onclick="switchTab('archive')" id="mb-nav-archive"
+                class="px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0">Idiotikon-Archiv</button>
+        </div>
+
+        <div id="tab-lexicon" class="flex-1 flex flex-col md:flex-row gap-6 overflow-hidden">
+            <!-- Left sidebar: Filter and Search -->
+            <div class="w-full md:w-80 glass-card rounded-2xl p-5 flex flex-col shrink-0 shadow-sm overflow-hidden">
+                <h2 class="font-bold text-lg mb-3 flex items-center justify-between">
+                    <span>Regionen & Filter</span>
+                    <span id="word-count-badge"
+                        class="text-xs bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-2.5 py-1 rounded-full font-semibold">0
+                        Begriffe</span>
+                </h2>
+                <div class="relative mb-3">
+                    <input type="text" id="lexicon-search" oninput="filterLexicon()"
+                        placeholder="Begriff oder Hochdeutsch suchen..."
+                        class="w-full pl-10 pr-4 py-2.5 bg-slate-100 dark:bg-slate-900 rounded-xl text-sm border border-slate-200 dark:border-slate-800 focus:outline-none focus:ring-2 focus:ring-red-500 transition-all">
+                    <svg class="w-4 h-4 text-slate-400 absolute left-3.5 top-3.5" fill="none" stroke="currentColor"
+                        viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                            d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                    </svg>
+                </div>
+                <div class="flex flex-wrap gap-1.5 mb-4">
+                    <button onclick="filterRegion('Alle')" id="reg-Alle"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white transition-all">Alle</button>
+                    <button onclick="filterRegion('Bern')" id="reg-Bern"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Bern</button>
+                    <button onclick="filterRegion('Zürich')" id="reg-Zürich"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Zürich</button>
+                    <button onclick="filterRegion('Basel')" id="reg-Basel"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Basel</button>
+                    <button onclick="filterRegion('St. Gallen')" id="reg-St. Gallen"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Ostschweiz</button>
+                    <button onclick="filterRegion('Wallis')" id="reg-Wallis"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Wallis</button>
+                    <button onclick="filterRegion('Graubünden')" id="reg-Graubünden"
+                        class="region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all">Graubünden</button>
+                </div>
+                <div id="lexicon-list" class="flex-1 overflow-y-auto custom-scrollbar space-y-2 pr-1">
+                    <!-- Dynamic Items populated by JS -->
+                </div>
+            </div>
+
+            <!-- Right detail view -->
+            <div class="flex-1 glass-card rounded-2xl p-6 flex flex-col shadow-sm overflow-y-auto custom-scrollbar">
+                <div id="lexicon-detail"
+                    class="flex-1 flex flex-col justify-center items-center text-center text-slate-400 p-8">
+                    <svg class="w-16 h-16 mb-4 stroke-1" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                            d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253">
+                        </path>
+                    </svg>
+                    <h3 class="text-lg font-semibold text-slate-700 dark:text-slate-300 mb-1">Wählen Sie einen
+                        Dialektbegriff aus</h3>
+                    <p class="text-sm max-w-md">Entdecken Sie Etymologie, Aussprache-Nuancen, Beispielsätze und
+                        regionale Verbreitung aus unserem Schweizer Mundart-Archiv.</p>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-translator" class="hidden flex-1 flex flex-col md:flex-row gap-6 overflow-hidden">
+            <div class="flex-1 glass-card rounded-2xl p-6 flex flex-col shadow-sm">
+                <h2 class="font-bold text-xl mb-4 flex items-center justify-between">
+                    <span>Hochdeutsch ➔ Schwiizerdütsch Übersetzer</span>
+                    <span
+                        class="text-xs bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full">KI-Heuristik
+                        v2.4</span>
+                </h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-4 flex-1 mb-4">
+                    <div class="flex flex-col">
+                        <label
+                            class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Hochdeutsch
+                            (Eingabe)</label>
+                        <textarea id="translate-input"
+                            placeholder="Geben Sie hier einen Satz ein (z.B. Ich gehe heute in Zürich in ein Restaurant und trinke Kaffee mit Milch)..."
+                            class="flex-1 w-full p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-sm focus:outline-none focus:ring-2 focus:ring-red-500 resize-none custom-scrollbar"></textarea>
+                    </div>
+                    <div class="flex flex-col">
+                        <label
+                            class="text-xs font-semibold text-slate-500 dark:text-slate-400 mb-1 uppercase tracking-wider">Schweizerdeutsch
+                            (Ausgabe)</label>
+                        <div id="translate-output"
+                            class="flex-1 w-full p-4 bg-slate-100 dark:bg-slate-900 rounded-xl border border-slate-200 dark:border-slate-800 text-sm overflow-y-auto custom-scrollbar font-medium text-red-600 dark:text-red-400">
+                            Übersetzter Dialekttext erscheint hier...
+                        </div>
+                    </div>
+                </div>
+                <div class="flex flex-wrap items-center justify-between gap-4">
+                    <div class="flex items-center space-x-2">
+                        <span class="text-sm font-semibold">Zielregion:</span>
+                        <select id="dialect-target-region"
+                            class="bg-slate-100 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 px-3 py-2 rounded-xl text-sm font-medium focus:outline-none">
+                            <option value="bern">Berndütsch (gschmidig & langsam)</option>
+                            <option value="zuerich">Züridütsch (schnäll & direkt)</option>
+                            <option value="basel">Baseldytsch (singend & hell)</option>
+                            <option value="ostschweiz">Ostschwiizerisch (rollend)</option>
+                            <option value="wallis">Wallisertüütsch (archaisch)</option>
+                        </select>
+                    </div>
+                    <button onclick="performTranslation()"
+                        class="bg-red-600 hover:bg-red-700 text-white font-bold px-6 py-2.5 rounded-xl shadow-lg shadow-red-500/20 transition-all flex items-center space-x-2">
+                        <span>Übersetzen</span>
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M14 5l7 7m0 0l-7 7m7-7H3"></path>
+                        </svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-quiz" class="hidden flex-1 flex-col overflow-y-auto p-4 md:p-6 custom-scrollbar">
+            <!-- Quiz Selection View -->
+            <div id="quiz-selection" class="max-w-6xl mx-auto w-full animate-fadeIn">
+                <div class="text-center mb-8">
+                    <h2
+                        class="text-3xl font-black mb-3 bg-gradient-to-r from-red-600 to-amber-500 bg-clip-text text-transparent">
+                        Mundart-Quiz Auswahl</h2>
+                    <p class="text-slate-500 dark:text-slate-400 max-w-2xl mx-auto">Wählen Sie aus 10 verschiedenen
+                        Themengebieten und Regionen, um Ihr Schwiizerdütsch-Wissen auf die Probe zu stellen!</p>
+                </div>
+                <div id="quiz-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-5 gap-4">
+                    <!-- Populated by JS -->
+                </div>
+            </div>
+
+            <!-- Active Quiz View -->
+            <div id="quiz-active" class="hidden flex-1 flex-col items-center justify-center h-full">
+                <div class="glass-card rounded-2xl p-8 max-w-xl w-full shadow-lg text-center relative overflow-hidden">
+                    <button onclick="showQuizSelection()"
+                        class="absolute top-4 left-4 text-slate-400 hover:text-red-500 transition-colors">
+                        <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                        </svg>
+                    </button>
+                    <div class="absolute top-0 left-0 right-0 h-1.5 bg-slate-200 dark:bg-slate-800">
+                        <div id="quiz-progress-bar" class="h-full bg-red-600 transition-all duration-300"
+                            style="width: 0%;"></div>
+                    </div>
+                    <div class="flex justify-between items-center mb-6 mt-4">
+                        <span id="quiz-counter" class="text-xs font-bold uppercase tracking-wider text-slate-500">Frage
+                            1 von X</span>
+                        <span id="quiz-score"
+                            class="text-xs font-bold bg-amber-100 dark:bg-amber-900/40 text-amber-600 dark:text-amber-400 px-3 py-1 rounded-full">Punkte:
+                            0</span>
+                    </div>
+                    <h2 id="quiz-question" class="text-xl font-bold mb-2 text-slate-900 dark:text-white">Frage?</h2>
+                    <p id="quiz-subtitle" class="text-xs text-slate-500 dark:text-slate-400 mb-6">Wählen Sie die
+                        korrekte Antwort aus.</p>
+                    <div id="quiz-options" class="space-y-3 mb-6">
+                        <!-- Dynamic Options -->
+                    </div>
+                    <div id="quiz-feedback" class="hidden p-4 rounded-xl text-sm mb-4 font-medium transition-all"></div>
+                    <button id="quiz-next-btn" onclick="nextQuizQuestion()"
+                        class="hidden w-full bg-slate-800 hover:bg-slate-900 dark:bg-slate-700 dark:hover:bg-slate-600 text-white font-bold py-3 rounded-xl transition-all shadow-md">Nächste
+                        Frage</button>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-soundlab" class="hidden flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+            <div class="glass-card rounded-2xl p-6 md:p-8 shadow-sm max-w-5xl mx-auto w-full">
+                <h2
+                    class="font-bold text-3xl mb-3 bg-gradient-to-r from-red-600 to-amber-500 bg-clip-text text-transparent">
+                    Dialekt-Synthesizer & Tonhöhen-Labor</h2>
+                <p class="text-slate-600 dark:text-slate-400 mb-6 max-w-3xl">Schweizerdeutsch zeichnet sich durch ein
+                    oftmals langsameres Tempo und eine markante, singende Intonation mit melodischen Höhen und Tiefen
+                    aus. Visualisieren Sie hier die Sprachmelodien.</p>
+
+                <div
+                    class="relative w-full h-40 md:h-56 bg-slate-950 rounded-2xl mb-8 shadow-inner border border-slate-800 overflow-hidden group">
+                    <div
+                        class="absolute inset-0 pointer-events-none bg-[url('https://placehold.co/800x400/000/111?text=+')] opacity-20 bg-cover mix-blend-overlay">
+                    </div>
+                    <canvas id="audio-visualizer" class="w-full h-full absolute top-0 left-0"></canvas>
+                    <div class="absolute top-3 left-4 flex items-center space-x-2">
+                        <span class="w-2.5 h-2.5 rounded-full bg-red-500 animate-pulse"></span>
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-widest">Live Waveform</span>
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 md:grid-cols-3 gap-4 mb-8">
+                    <div onclick="playMelody('bern')"
+                        class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-red-500 hover:shadow-md cursor-pointer transition-all text-center group relative overflow-hidden">
+                        <div class="absolute inset-0 bg-red-500/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform font-black text-xl">
+                            BE</div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-1">Berndütsch Melodie</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Getragen, gedehnt, beruhigender Fallton
+                        </p>
+                    </div>
+                    <div onclick="playMelody('zuerich')"
+                        class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-blue-500 hover:shadow-md cursor-pointer transition-all text-center group relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-blue-500/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform font-black text-xl">
+                            ZH</div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-1">Züridütsch Rhythmus</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Rasch, prägnant, rhythmischer Aufstieg</p>
+                    </div>
+                    <div onclick="playMelody('wallis')"
+                        class="p-5 rounded-2xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-purple-500 hover:shadow-md cursor-pointer transition-all text-center group relative overflow-hidden">
+                        <div
+                            class="absolute inset-0 bg-purple-500/5 opacity-0 group-hover:opacity-100 transition-opacity">
+                        </div>
+                        <div
+                            class="w-12 h-12 bg-purple-100 dark:bg-purple-900/40 text-purple-600 dark:text-purple-400 rounded-xl flex items-center justify-center mx-auto mb-3 group-hover:scale-110 transition-transform font-black text-xl">
+                            VS</div>
+                        <h3 class="font-bold text-slate-800 dark:text-slate-200 mb-1">Walliser Intonation</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400">Archaisch, markanter Sprachduktus</p>
+                    </div>
+                </div>
+
+                <div
+                    class="bg-slate-100 dark:bg-slate-900 rounded-xl p-6 border border-slate-200 dark:border-slate-800 shadow-sm">
+                    <h3 class="font-bold text-sm mb-4 uppercase tracking-wider text-slate-500 text-center">Interaktives
+                        Phonetisches Keyboard</h3>
+                    <div id="piano-keys" class="flex justify-center gap-1 mb-6 overflow-x-auto pb-4 px-2">
+                        <!-- Rendered via JS -->
+                    </div>
+                    <div class="text-center">
+                        <span id="synth-status"
+                            class="text-xs font-mono text-slate-500 bg-white dark:bg-slate-950 border border-slate-200 dark:border-slate-800 px-4 py-1.5 rounded-full shadow-inner">Synthesizer
+                            initialisiert. Drücken Sie eine Taste.</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div id="tab-archive" class="hidden flex-1 flex-col gap-6 overflow-y-auto p-4 md:p-6 custom-scrollbar">
+            <div class="max-w-6xl mx-auto w-full space-y-6">
+                <div class="glass-card rounded-2xl p-6 md:p-8 shadow-sm text-center md:text-left">
+                    <h2
+                        class="font-bold text-3xl mb-3 bg-gradient-to-r from-red-600 to-amber-500 bg-clip-text text-transparent">
+                        Schweizerisches Forschungs-Archiv</h2>
+                    <p class="text-slate-600 dark:text-slate-400 max-w-3xl md:mx-0 mx-auto text-sm md:text-base">
+                        Tiefgreifende Einblicke in die zwei wichtigsten Grundlagenwerke der deutschschweizerischen
+                        Dialektologie: Das historische Idiotikon und den phänomenologischen Sprachatlas.</p>
+                </div>
+
+                <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <!-- Idiotikon Card -->
+                    <div
+                        class="glass-card p-6 md:p-8 rounded-2xl border-l-4 border-l-red-600 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
+                        <div
+                            class="absolute -right-16 -top-16 opacity-5 group-hover:opacity-10 transition-opacity text-red-600">
+                            <svg class="w-64 h-64" fill="currentColor" viewBox="0 0 24 24">
+                                <path
+                                    d="M4 19.5A2.5 2.5 0 016.5 17H20V4H6.5A2.5 2.5 0 004 6.5v13zM20 21H6.5A4.5 4.5 0 012 16.5v-11A4.5 4.5 0 016.5 1h14a1 1 0 011 1v18a1 1 0 01-1 1z" />
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl mb-2 text-slate-900 dark:text-white">Schweizerisches Idiotikon
+                        </h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">Das gewaltige
+                            <em>Wörterbuch der schweizerdeutschen Sprache</em> dokumentiert den lebenden und
+                            historischen Wortschatz (inklusive Walsergebiete Norditaliens) vom Spätmittelalter bis in
+                            die Gegenwart.
+                        </p>
+                        <div
+                            class="p-5 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <div class="flex items-center justify-between mb-2">
+                                <h4 class="text-xs font-bold text-red-600 dark:text-red-400 uppercase tracking-wider">
+                                    Aktuelle Edition</h4>
+                                <span
+                                    class="text-[10px] bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-2 py-0.5 rounded font-bold">2026</span>
+                            </div>
+                            <p class="text-sm font-mono text-slate-700 dark:text-slate-300">Band 17 (Z) im Abschluss.
+                                Letzte Publikationen rund um die Wortfamilien <span class="font-bold">Zëlt,
+                                    Zëlte(n)</span>.</p>
+                        </div>
+                    </div>
+
+                    <!-- SDS Card -->
+                    <div
+                        class="glass-card p-6 md:p-8 rounded-2xl border-l-4 border-l-amber-500 relative overflow-hidden group shadow-sm hover:shadow-md transition-all">
+                        <div
+                            class="absolute -right-16 -top-16 opacity-5 group-hover:opacity-10 transition-opacity text-amber-500">
+                            <svg class="w-64 h-64" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.5"
+                                    d="M9 20l-5.447-2.724A1 1 0 013 16.382V5.618a1 1 0 011.447-.894L9 7m0 13l6-3m-6 3V7m6 10l4.553 2.276A1 1 0 0021 18.382V7.618a1 1 0 00-.553-.894L15 4m0 13V4m0 0L9 7">
+                                </path>
+                            </svg>
+                        </div>
+                        <h3 class="font-bold text-2xl mb-2 text-slate-900 dark:text-white">Sprachatlas (SDS)</h3>
+                        <p class="text-sm text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">Der <em>Sprachatlas
+                                der deutschen Schweiz</em> dokumentiert auf über 1500 Sprachkarten die Mundarten. Die
+                            bahnbrechenden mündlichen Erhebungen fanden zwischen 1939 und 1958 statt.</p>
+                        <div
+                            class="p-5 bg-slate-100 dark:bg-slate-900/80 rounded-xl border border-slate-200 dark:border-slate-800">
+                            <h4
+                                class="text-xs font-bold text-amber-600 dark:text-amber-400 uppercase tracking-wider mb-2">
+                                Digitales SDS-Archiv</h4>
+                            <ul class="text-sm font-mono text-slate-700 dark:text-slate-300 space-y-1">
+                                <li>• <span class="text-slate-500">Lautkarten:</span> Aussprache von 'Geiss'</li>
+                                <li>• <span class="text-slate-500">Wortkarten:</span> Begriffe für 'Stalljauche'</li>
+                                <li>• <span class="text-slate-500">Formenkarten:</span> Grammatik 'das' vs. 'däs'</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Kleiner Sprachatlas -->
+                <div
+                    class="glass-card rounded-2xl p-6 md:p-8 shadow-sm flex flex-col md:flex-row gap-8 items-center border border-slate-200 dark:border-slate-800 hover:border-slate-300 dark:hover:border-slate-700 transition-all">
+                    <div
+                        class="w-full md:w-1/3 aspect-square bg-slate-200 dark:bg-slate-900 rounded-xl flex items-center justify-center p-4 relative overflow-hidden border border-slate-300 dark:border-slate-700 shadow-inner group">
+
+                        <!-- Integrierte Apfelrest-Karte (Bütschgi, Bürzi, Gröibschi) als SVG -->
+                        <div
+                            class="absolute inset-0 opacity-90 group-hover:scale-105 transition-transform duration-700 flex items-center justify-center">
+                            <svg viewBox="0 0 300 300" class="w-full h-full" fill="none"
+                                xmlns="http://www.w3.org/2000/svg">
+                                <!-- Abstrakte Umrisse Schweiz -->
+                                <path d="M 30 180 Q 90 100 150 110 T 260 130 Q 290 200 230 250 T 120 280 Z"
+                                    fill="currentColor" class="text-slate-300 dark:text-slate-800" />
+
+                                <!-- Bern Region (Bürzi) -->
+                                <circle cx="95" cy="195" r="35" fill="currentColor"
+                                    class="text-red-400 dark:text-red-900/60" opacity="0.8" />
+                                <text x="95" y="200" font-family="Inter, sans-serif" font-size="12" font-weight="800"
+                                    fill="currentColor" class="text-red-700 dark:text-red-300"
+                                    text-anchor="middle">Bürzi</text>
+
+                                <!-- Zürich / Ostschweiz Region (Bütschgi) -->
+                                <circle cx="210" cy="150" r="45" fill="currentColor"
+                                    class="text-blue-400 dark:text-blue-900/60" opacity="0.8" />
+                                <text x="210" y="155" font-family="Inter, sans-serif" font-size="14" font-weight="800"
+                                    fill="currentColor" class="text-blue-700 dark:text-blue-300"
+                                    text-anchor="middle">Bütschgi</text>
+
+                                <!-- Basel / Nordwestschweiz Region (Gröibschi) -->
+                                <circle cx="130" cy="115" r="32" fill="currentColor"
+                                    class="text-purple-400 dark:text-purple-900/60" opacity="0.8" />
+                                <text x="130" y="119" font-family="Inter, sans-serif" font-size="11" font-weight="800"
+                                    fill="currentColor" class="text-purple-800 dark:text-purple-300"
+                                    text-anchor="middle">Gröibschi</text>
+                            </svg>
+                        </div>
+
+                        <div class="z-10 text-center relative pointer-events-none mt-24">
+                            <div
+                                class="w-10 h-10 bg-slate-900/90 dark:bg-slate-100/90 rounded-full flex items-center justify-center mx-auto mb-2 shadow-lg backdrop-blur">
+                                <svg class="w-5 h-5 text-white dark:text-slate-900" fill="none" stroke="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z">
+                                    </path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                </svg>
+                            </div>
+                            <span
+                                class="font-bold text-xs bg-slate-900/90 dark:bg-slate-100/90 backdrop-blur text-white dark:text-slate-900 px-3 py-1.5 rounded-full shadow-sm">Karte
+                                #50: Apfelrest</span>
+                        </div>
+                    </div>
+                    <div class="flex-1">
+                        <span
+                            class="text-xs font-bold bg-blue-100 dark:bg-blue-900/40 text-blue-600 dark:text-blue-400 px-3 py-1 rounded-full mb-4 inline-block">Für
+                            den Alltag</span>
+                        <h3 class="font-bold text-3xl mb-3 text-slate-900 dark:text-white">Kleiner Sprachatlas der
+                            deutschen Schweiz</h3>
+                        <p class="text-base text-slate-600 dark:text-slate-300 mb-6 leading-relaxed">Für die breite
+                            Öffentlichkeit wurden 121 farbige Flächenkarten neu gezeichnet (KSDS). Entdecken Sie
+                            spielend leicht, ob in Ihrer Region der Rest eines Apfels als <strong
+                                class="text-red-500">«Bütschgi»</strong>, <strong
+                                class="text-amber-500">«Bürzi»</strong> oder <strong
+                                class="text-purple-500">«Gröibschi»</strong> bezeichnet wird.</p>
+                        <div class="flex items-center gap-4">
+                            <button onclick="document.getElementById('atlas-msg').classList.remove('hidden')"
+                                class="px-6 py-3 bg-slate-800 dark:bg-slate-700 hover:bg-slate-700 dark:hover:bg-slate-600 text-white rounded-xl text-sm font-semibold transition-all shadow-md">
+                                Karten durchsuchen
+                            </button>
+                            <span id="atlas-msg"
+                                class="hidden text-sm font-medium text-emerald-600 dark:text-emerald-400 animate-fadeIn">Das
+                                interaktive Modul lädt in Kürze...</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </main>
+
+    <script>
+        // Comprehensive Swiss German Dialect Lexicon Database
+        const dialectLexicon = [
+            {
+                id: 1,
+                term: "Chuchichäschtli",
+                hochdeutsch: "Küchenkästchen",
+                region: "Alle",
+                ipa: "/ˈχʊχɪˌχæʃtli/",
+                etymologie: "Zusammensetzung aus 'Chuchi' (Küche) und 'Chäschtli' (Kästchen). Berühmt als Aussprachetest für Nicht-Muttersprachler aufgrund der dreifachen ch-Laute.",
+                beispiel: "Stöu d Chöpf in ds Chuchichäschtli ufe.",
+                audioMelody: [523.25, 440, 392, 523.25]
+            },
+            {
+                id: 2,
+                term: "Güsel",
+                hochdeutsch: "Müll, Abfall",
+                region: "Zürich",
+                ipa: "/ˈɡyːzəl/",
+                etymologie: "Mittelhochdeutsch 'gîsel' (Unrat, Schmutz). Im Raum Zürich und Ostschweiz der Standardbegriff für Kehricht.",
+                beispiel: "Wosch du bitte de Güsel abe bringe?",
+                audioMelody: [440, 349.23, 392]
+            },
+            {
+                id: 3,
+                term: "Bhaltüechli",
+                hochdeutsch: "Taschentuch / Andenken",
+                region: "Bern",
+                ipa: "/ˈb̥haltˌyəχli/",
+                etymologie: "Von 'behalten'. Ursprünglich ein verziertes Stoff-Taschentuch, das man als Liebesgabe oder Erinnerung behielt.",
+                beispiel: "Ha dr es Bhaltüechli mitgno vo mire Reis.",
+                audioMelody: [392, 440, 523.25, 493.88]
+            },
+            {
+                id: 4,
+                term: "Überschnapp",
+                hochdeutsch: "Überraschung / Verrücktheit",
+                region: "Basel",
+                ipa: "/ˈyːbərˌʃnap/",
+                etymologie: "Verbindung aus 'über' und 'schnappen'. Beschreibt einen plötzlichen Sinneswandel oder eine exzessive Begeisterung.",
+                beispiel: "Dr ganz Määrt isch hüt en reinen Überschnapp.",
+                audioMelody: [523.25, 587.33, 523.25]
+            },
+            {
+                id: 5,
+                term: "Chnorz",
+                hochdeutsch: "Mühe, Knochenarbeit",
+                region: "Ostschweiz",
+                ipa: "/ˈχnɔrt͡s/",
+                etymologie: "Abgeleitet von knotigem Holz oder verhärteten Knorpeln. Steht für eine schwierige, zähe Angelegenheit.",
+                beispiel: "Dä Bericht z schriibe gsi isch en echte Chnorz.",
+                audioMelody: [349.23, 329.63, 293.66]
+            },
+            {
+                id: 6,
+                term: "Gschnätzlets",
+                hochdeutsch: "Geschnetzeltes (z.B. Zürcher Art)",
+                region: "Zürich",
+                ipa: "/ˈɡʃnæt͡sləts/",
+                etymologie: "Partizip II von 'geschnitzeln' (in kleine Streifen schneiden). Weltberühmter Klassiker der Zürcher Küche.",
+                beispiel: "Morn gits feins Zürcher Gschnätzlets mit Rösti.",
+                audioMelody: [440, 493.88, 523.25, 587.33]
+            },
+            {
+                id: 7,
+                term: "Gäägg",
+                hochdeutsch: "Spleen, Marotte, spassiger Einfall",
+                region: "Wallis",
+                ipa: "/ɡæːɡ/",
+                etymologie: "Typisch walliserischer Ausdruck für eine skurrile Idee oder eine humorvolle Eigenart.",
+                beispiel: "He, das isch aber en schöne Gäägg gsi!",
+                audioMelody: [392, 523.25, 440]
+            },
+            {
+                id: 8,
+                term: "Chachel",
+                hochdeutsch: "Kaffeetasse / Tongefäss",
+                region: "Graubünden",
+                ipa: "/ˈχaχəl/",
+                etymologie: "Von mittelhochdeutschen Ofenkacheln oder Trinkgefässen aus Keramik.",
+                beispiel: "Trinksch no e Chachel Kafi mit mir?",
+                audioMelody: [329.63, 392, 440]
+            },
+            {
+                id: 9,
+                term: "Bsetzistei",
+                hochdeutsch: "Pflasterstein / Kopfsteinpflaster",
+                region: "Bern",
+                ipa: "/ˈb̥sɛt͡siˌʃtæi/",
+                etymologie: "Von 'besetzen' (mit Steinen auslegen). Charakteristisch für Altstadtstrassen in Bern und Zürich.",
+                beispiel: "Uf de Bsetzistei lauft s mit hohe Schuem nid so guet.",
+                audioMelody: [440, 392, 349.23, 329.63]
+            },
+            {
+                id: 10,
+                term: "Schüfeli",
+                hochdeutsch: "Kehrichtschaufel / kleiner Spaten",
+                region: "Basel",
+                ipa: "/ˈʃyːfəli/",
+                etymologie: "Verkleinerungsform von Schaufel (Schüfel).",
+                beispiel: "Hol mir bitte gschwind s Schüfeli und dr Besä.",
+                audioMelody: [523.25, 493.88, 440]
+            }
+        ];
+
+        let currentRegion = 'Alle';
+        let activeTab = 'lexicon';
+
+        function switchTab(tabId) {
+            activeTab = tabId;
+            const tabs = ['lexicon', 'translator', 'quiz', 'soundlab', 'archive'];
+            tabs.forEach(t => {
+                const el = document.getElementById(`tab-${t}`);
+                const navBtn = document.getElementById(`nav-${t}`);
+                const mbNavBtn = document.getElementById(`mb-nav-${t}`);
+
+                if (t === tabId) {
+                    el.classList.remove('hidden');
+                    if (navBtn) {
+                        navBtn.className = "px-4 py-2 rounded-lg transition-all bg-white dark:bg-slate-700 text-red-600 dark:text-red-400 shadow-sm";
+                    }
+                    if (mbNavBtn) {
+                        mbNavBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-red-600 text-white shrink-0";
+                    }
+                } else {
+                    el.classList.add('hidden');
+                    if (navBtn) {
+                        navBtn.className = "px-4 py-2 rounded-lg transition-all text-slate-600 dark:text-slate-300 hover:text-red-500";
+                    }
+                    if (mbNavBtn) {
+                        mbNavBtn.className = "px-3 py-1.5 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-700 dark:text-slate-300 shrink-0";
+                    }
+                }
+            });
+
+            if (tabId === 'lexicon') {
+                renderLexiconList(dialectLexicon);
+            } else if (tabId === 'quiz') {
+                initQuiz();
+            }
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            html.classList.toggle('dark');
+            const isDark = html.classList.contains('dark');
+            const icon = document.getElementById('theme-icon');
+            if (isDark) {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z"></path>';
+            } else {
+                icon.innerHTML = '<path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>';
+            }
+        }
+
+        function filterRegion(region) {
+            currentRegion = region;
+            document.querySelectorAll('.region-btn').forEach(btn => {
+                if (btn.id === `reg-${region}`) {
+                    btn.className = "region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-red-600 text-white transition-all";
+                } else {
+                    btn.className = "region-btn px-3 py-1 rounded-lg text-xs font-semibold bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 transition-all";
+                }
+            });
+            filterLexicon();
+        }
+
+        function filterLexicon() {
+            const query = document.getElementById('lexicon-search').value.toLowerCase();
+            const filtered = dialectLexicon.filter(item => {
+                const matchRegion = currentRegion === 'Alle' || item.region === currentRegion;
+                const matchQuery = item.term.toLowerCase().includes(query) || item.hochdeutsch.toLowerCase().includes(query);
+                return matchRegion && matchQuery;
+            });
+            renderLexiconList(filtered);
+        }
+
+        function renderLexiconList(items) {
+            const listEl = document.getElementById('lexicon-list');
+            document.getElementById('word-count-badge').innerText = `${items.length} Begriffe`;
+
+            if (items.length === 0) {
+                listEl.innerHTML = `<div class="p-6 text-center text-slate-400 text-sm">Keine Begriffe gefunden.</div>`;
+                return;
+            }
+
+            listEl.innerHTML = items.map(item => `
+                <div onclick="selectLexiconItem(${item.id})" class="p-3.5 rounded-xl bg-slate-100 dark:bg-slate-900/80 hover:bg-red-50 dark:hover:bg-red-950/30 border border-slate-200 dark:border-slate-800/80 cursor-pointer transition-all group">
+                    <div class="flex items-center justify-between mb-1">
+                        <span class="font-bold text-sm text-slate-800 dark:text-slate-200 group-hover:text-red-600 dark:group-hover:text-red-400 transition-colors">${item.term}</span>
+                        <span class="text-[10px] bg-slate-200 dark:bg-slate-800 text-slate-600 dark:text-slate-400 px-2 py-0.5 rounded-md font-medium">${item.region}</span>
+                    </div>
+                    <p class="text-xs text-slate-500 dark:text-slate-400">Hochdeutsch: <span class="font-medium text-slate-700 dark:text-slate-300">${item.hochdeutsch}</span></p>
+                </div>
+            `).join('');
+        }
+
+        function selectLexiconItem(id) {
+            const item = dialectLexicon.find(i => i.id === id);
+            if (!item) return;
+
+            const detailEl = document.getElementById('lexicon-detail');
+            detailEl.className = "flex-1 flex flex-col justify-start items-start text-left p-2 animate-fadeIn";
+            detailEl.innerHTML = `
+                <div class="w-full border-b border-slate-200 dark:border-slate-800 pb-4 mb-4">
+                    <div class="flex items-center justify-between mb-2">
+                        <span class="text-xs font-bold uppercase tracking-wider bg-red-100 dark:bg-red-900/40 text-red-600 dark:text-red-400 px-3 py-1 rounded-full">${item.region}</span>
+                        <span class="text-xs font-mono text-slate-400">${item.ipa}</span>
+                    </div>
+                    <h2 class="text-3xl font-black text-slate-900 dark:text-white mb-1">${item.term}</h2>
+                    <p class="text-base text-slate-500 dark:text-slate-400">Hochdeutsch: <strong class="text-slate-700 dark:text-slate-200">${item.hochdeutsch}</strong></p>
+                </div>
+
+                <div class="space-y-4 w-full">
+                    <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Etymologie & Ursprung</h4>
+                        <p class="text-sm text-slate-700 dark:text-slate-300 leading-relaxed">${item.etymologie}</p>
+                    </div>
+
+                    <div class="bg-slate-100 dark:bg-slate-900 p-4 rounded-xl border border-slate-200 dark:border-slate-800">
+                        <h4 class="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Beispielsatz im Dialekt</h4>
+                        <p class="text-sm font-medium text-red-600 dark:text-red-400 italic">„${item.beispiel}“</p>
+                    </div>
+
+                    <div class="pt-2 flex items-center space-x-3">
+                        <button onclick="playItemMelody([${item.audioMelody}])" class="bg-red-600 hover:bg-red-700 text-white font-bold px-4 py-2.5 rounded-xl text-sm shadow-md shadow-red-500/20 transition-all flex items-center space-x-2">
+                            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.536 11.464a5 5 0 010 7.072m2.828-9.9a9 9 0 010 12.728M5.586 15H4a1 1 0 01-1-1v-4a1 1 0 011-1h1.586l4.707-4.707C10.923 3.663 12 4.109 12 5v14c0 .891-1.077 1.337-1.707.707L5.586 15z"></path></svg>
+                            <span>Sprachmelodie abspielen</span>
+                        </button>
+                    </div>
+                </div>
+            `;
+        }
+
+        function performTranslation() {
+            const input = document.getElementById('translate-input').value.trim();
+            const region = document.getElementById('dialect-target-region').value;
+            const outputEl = document.getElementById('translate-output');
+
+            if (!input) {
+                outputEl.innerText = "Bitte geben Sie einen Satz ein.";
+                return;
+            }
+
+            let translated = input;
+
+            if (region === 'bern') {
+                // 1. L-Vokalisierung (Milch -> Miuch, kalt -> chaut, Geld -> Gäud)
+                translated = translated.replace(/il/g, 'iu').replace(/al/g, 'au').replace(/el/g, 'eu').replace(/ol/g, 'ou');
+                // 2. nd -> ng (Hund -> Hung, finden -> finge)
+                translated = translated.replace(/nd/g, 'ng');
+                // 3. k -> ch (Kalt -> Chaut, Kind -> Ching) - Kaffee ausschliessen
+                translated = translated.replace(/\b[kK]/g, 'Ch').replace(/Chaffee/gi, 'Kafi');
+                // 4. Spezifisches Vokabular
+                const bernVocab = {
+                    'ich': 'ig', 'nicht': 'nid', 'ist': 'isch', 'und': 'u', 'wir': 'mir',
+                    'auch': 'ou', 'auf': 'uf', 'haus': 'Huus', 'heute': 'hüt', 'immer': 'geng',
+                    'sehr': 'huerre', 'Mädchen': 'Modi', 'Junge': 'Gieu', 'gehen': 'ga',
+                    'gehe': 'gah', 'habe': 'ha', 'hast': 'hesch', 'hat': 'het', 'alles': 'aues',
+                    'alle': 'aui', 'viel': 'viu', 'kaufen': 'choufe', 'weinen': 'briegge',
+                    'arbeiten': 'schaffe', 'ein': 'es', 'eine': 'e', 'restaurant': 'Beiz', 'schön': 'schön'
+                };
+
+                // Ersetze ganze Wörter
+                for (const [hoch, bern] of Object.entries(bernVocab)) {
+                    const regex = new RegExp(`\\b${hoch}\\b`, 'gi');
+                    translated = translated.replace(regex, bern);
+                }
+
+                // Typische Berner Endung
+                translated += (translated.endsWith('?') || translated.endsWith('!')) ? " gäu." : " gäu?";
+
+            } else {
+                translated = translated
+                    .replace(/nicht/gi, region === 'basel' ? 'nit' : 'nöd')
+                    .replace(/ich/gi, region === 'zuerich' ? 'ich' : 'i')
+                    .replace(/ist/gi, 'isch')
+                    .replace(/und/gi, 'und')
+                    .replace(/haus/gi, 'Huus')
+                    .replace(/zeit/gi, 'Zyt')
+                    .replace(/heute/gi, 'hüt')
+                    .replace(/kaffee/gi, 'Kafi')
+                    .replace(/milch/gi, 'Milch')
+                    .replace(/trinke/gi, 'trinke')
+                    .replace(/gehe/gi, 'gang')
+                    .replace(/restaurant/gi, 'Beiz')
+                    .replace(/schön/gi, 'schön');
+
+                if (region === 'zuerich') {
+                    translated = translated + ", gäll so isch es!";
+                } else if (region === 'wallis') {
+                    translated = "Tscheggsch das: " + translated + " z'Heimet!";
+                }
+            }
+
+            // Satzanfang gross schreiben
+            translated = translated.charAt(0).toUpperCase() + translated.slice(1);
+
+            outputEl.innerText = translated;
+        }
+
+        const quizCategories = [
+            { id: 'bern', title: 'Bärndütsch', desc: 'Rund um d Bundesstadt', color: 'bg-red-500' },
+            { id: 'zueri', title: 'Züritüütsch', desc: 'Schnäll & direkt', color: 'bg-blue-500' },
+            { id: 'basel', title: 'Baseldytsch', desc: 'Singsang am Rhy', color: 'bg-emerald-500' },
+            { id: 'wallis', title: 'Wallisertütsch', desc: 'Höchstalemannisch', color: 'bg-purple-500' },
+            { id: 'ost', title: 'Ostschwiizerisch', desc: 'Breit & rollend', color: 'bg-amber-500' },
+            { id: 'essen', title: 'Chuchi & Ässe', desc: 'Kulinarisches', color: 'bg-orange-500' },
+            { id: 'natur', title: 'Natur & Wätter', desc: 'Flöckli & Bärge', color: 'bg-teal-500' },
+            { id: 'alltag', title: 'Alltag & Huus', desc: 'Besen & Chäschtli', color: 'bg-cyan-600' },
+            { id: 'koerper', title: 'Chopf & Chrage', desc: 'Gesundheit & Körper', color: 'bg-pink-500' },
+            { id: 'schimpf', title: 'Schimpfe & Flueche', desc: 'Lappi & Tubel', color: 'bg-stone-600' }
+        ];
+
+        const quizDatabase = {
+            'bern': [
+                { q: "Was ist ein «Gieu»?", o: ["Ein Junge / Knabe", "Ein Hund", "Ein Vogel", "Ein Mädchen"], a: 0 },
+                { q: "Was bedeutet «geng»?", o: ["selten", "immer / stets", "manchmal", "nie"], a: 1 },
+                { q: "Was macht jemand, der «briegget»?", o: ["Lachen", "Weinen / Heulen", "Schreien", "Rennen"], a: 1 },
+                { q: "Was ist ein «Bhaltüechli»?", o: ["Ein kleines Handtuch", "Ein Kopftuch", "Ein Erinnerungsstück / Andenken", "Ein Papiertaschentuch"], a: 2 }
+            ],
+            'zueri': [
+                { q: "Was ist ein «Chäfer»?", o: ["Ein Käfer / Ein süsses Kind", "Ein Koffer", "Ein kleines Auto", "Ein Käfig"], a: 0 },
+                { q: "Was bedeutet «poschte»?", o: ["Einkaufen gehen", "Post holen", "Schlafen", "Briefe schreiben"], a: 0 },
+                { q: "Was ist ein «Zältli»?", o: ["Ein kleines Zelt", "Ein Bonbon", "Kleingeld", "Ein Kuchenstück"], a: 1 },
+                { q: "Was bedeutet «gstabig»?", o: ["Staubig", "Unbeholfen / Steif", "Stur", "Schnell"], a: 1 }
+            ],
+            'basel': [
+                { q: "Was bedeutet «schaffe»?", o: ["Arbeiten", "Erschaffen", "Trinken", "Schlafen"], a: 0 },
+                { q: "Was ist ein «Bebbi»?", o: ["Ein Basler Bürger", "Ein kleines Baby", "Ein Vogel", "Ein Polizist"], a: 0 },
+                { q: "Was bedeutet «Gugge»?", o: ["Eine Papiertüte / Tasche", "Das Auge", "Ein Fenster", "Eine Kamera"], a: 0 },
+                { q: "Was ist ein «Schugger»?", o: ["Ein Schuhmacher", "Ein Bäcker", "Ein Polizist", "Ein Verbrecher"], a: 2 }
+            ],
+            'wallis': [
+                { q: "Was bedeutet «Güügela»?", o: ["Trinken", "Gackern / Kichern", "Weinen", "Husten"], a: 1 },
+                { q: "Was ist eine «Tschäggätta»?", o: ["Traditionelle Karnevalsfigur", "Eine Bergkatze", "Eine warme Jacke", "Eine Tragetasche"], a: 0 },
+                { q: "Was bedeutet «Hotsch»?", o: ["Schwein / Sau", "Hund", "Kuh", "Pferd"], a: 0 },
+                { q: "Was heisst «Ämmi»?", o: ["Ameise", "Grossmutter", "Amme", "Milch"], a: 1 }
+            ],
+            'ost': [
+                { q: "Was ist ein «Schüblig»?", o: ["Eine Wurst", "Ein Schuh", "Eine Schublade", "Ein Schal"], a: 0 },
+                { q: "Was heisst «bröötle»?", o: ["Grillieren / Feuer machen", "Weinen", "Schimpfen", "Baden"], a: 0 },
+                { q: "Was ist ein «Fink»?", o: ["Ein Hausschuh", "Ein Vogel", "Ein Finger", "Ein Auto"], a: 0 },
+                { q: "Was bedeutet «schumpfe»?", o: ["Schrumpfen", "Schimpfen", "Schnarchen", "Schaufeln"], a: 1 }
+            ],
+            'essen': [
+                { q: "Was ist ein «Gipfeli»?", o: ["Ein Croissant", "Ein Bergsteiger", "Ein Stück Schokolade", "Ein Brot"], a: 0 },
+                { q: "Was versteht man unter «Rüebli»?", o: ["Karotte / Möhre", "Rübe", "Ratte", "Rücken"], a: 0 },
+                { q: "Was ist «Härdöpfel»?", o: ["Kartoffel", "Apfel", "Zwiebel", "Kochtopf"], a: 0 },
+                { q: "Was ist ein «Mütschli»?", o: ["Eine Mütze", "Ein kleines Brötchen", "Eine Fliege", "Ein Teller"], a: 1 }
+            ],
+            'natur': [
+                { q: "Was ist eine «Mugge»?", o: ["Eine Mücke oder Fliege", "Eine kleine Maus", "Der Mond", "Eine Mütze"], a: 0 },
+                { q: "Was bedeutet «chüel»?", o: ["Kühl", "Eine Kuh", "Kohl", "Kalk"], a: 0 },
+                { q: "Was ist «Biswind»?", o: ["Ein warmer Sommerwind", "Ein kalter Nordostwind (Bise)", "Ein Sturmwind", "Ein feuchter Westwind"], a: 1 },
+                { q: "Was bedeutet «schiffe» (in Bezug auf Wetter)?", o: ["Boot fahren", "Stark regnen", "Schneien", "Hageln"], a: 1 }
+            ],
+            'alltag': [
+                { q: "Was ist ein «Natel»?", o: ["Ein Smartphone / Handy", "Eine Nähnadel", "Ein Nagel", "Ein Ladekabel"], a: 0 },
+                { q: "Was bedeutet «Velo»?", o: ["Fahrrad", "Auto", "Zug", "Motorrad"], a: 0 },
+                { q: "Was ist ein «Trottoir»?", o: ["Ein Gehsteig / Bürgersteig", "Eine Treppe", "Eine Tür", "Ein Traktor"], a: 0 },
+                { q: "Was macht man im «Lavabo»?", o: ["Kochen", "Hände waschen / Waschbecken", "Schlafen", "Wäsche aufhängen"], a: 1 }
+            ],
+            'koerper': [
+                { q: "Was ist der «Chopf»?", o: ["Der Kopf", "Ein Topf", "Das Kinn", "Ein Knopf"], a: 0 },
+                { q: "Was heisst «wüescht»?", o: ["Hässlich / Unschön", "Wütend", "Gewaschen", "Gewünscht"], a: 0 },
+                { q: "Was sind «Hoor» oder «Haar»?", o: ["Die Haare", "Die Ohren", "Die Hände", "Die Füsse"], a: 0 },
+                { q: "Was bedeutet «Gring»?", o: ["Ring", "Kopf / Dickschädel", "Hals", "Bauch"], a: 1 }
+            ],
+            'schimpf': [
+                { q: "Was ist ein «Lappi»?", o: ["Ein Dummkopf", "Ein Putzlappen", "Eine Lippe", "Eine kleine Lampe"], a: 0 },
+                { q: "Was bedeutet «Siech»?", o: ["Ein Kerl / Typ (oft abwertend)", "Eine Krankheit", "Eine gute Sicht", "Ein Sieg"], a: 0 },
+                { q: "Was ist ein «Tubel»?", o: ["Ein Idiot / Tölpel", "Eine Taube", "Eine Tuba (Instrument)", "Eine Tabelle"], a: 0 },
+                { q: "Was heisst «Schnure»?", o: ["Eine Schnur", "Das Gesicht / Der Mund (abwertend)", "Eine Schnecke", "Schnell laufen"], a: 1 }
+            ]
+        };
+
+        let currentQuizCategory = null;
+        let currentQuizIndex = 0;
+        let quizScore = 0;
+        let activeQuizQuestions = [];
+
+        function initQuiz() {
+            const grid = document.getElementById('quiz-grid');
+            if (grid && grid.children.length === 0) {
+                grid.innerHTML = quizCategories.map(cat => `
+                    <div onclick="startQuiz('${cat.id}')" class="bg-slate-100 dark:bg-slate-900 rounded-2xl p-5 border border-slate-200 dark:border-slate-800 hover:border-slate-400 dark:hover:border-slate-500 cursor-pointer hover:shadow-lg transition-all group">
+                        <div class="w-10 h-10 ${cat.color} rounded-xl flex items-center justify-center text-white font-bold mb-4 shadow-md group-hover:scale-110 transition-transform">
+                            ${cat.title.charAt(0)}
+                        </div>
+                        <h3 class="font-bold text-slate-800 dark:text-white mb-1 text-lg">${cat.title}</h3>
+                        <p class="text-xs text-slate-500 dark:text-slate-400 font-medium">${cat.desc}</p>
+                    </div>
+                `).join('');
+            }
+            showQuizSelection();
+        }
+
+        function showQuizSelection() {
+            document.getElementById('quiz-selection').classList.remove('hidden');
+            document.getElementById('quiz-active').classList.add('hidden');
+        }
+
+        function startQuiz(categoryId) {
+            currentQuizCategory = quizCategories.find(c => c.id === categoryId);
+            activeQuizQuestions = quizDatabase[categoryId];
+
+            if (!activeQuizQuestions || activeQuizQuestions.length === 0) {
+                alert("Keine Fragen gefunden.");
+                return;
+            }
+
+            document.getElementById('quiz-selection').classList.add('hidden');
+            document.getElementById('quiz-active').classList.remove('hidden');
+            document.getElementById('quiz-active').classList.add('flex');
+
+            currentQuizIndex = 0;
+            quizScore = 0;
+            loadQuizQuestion();
+        }
+
+        function loadQuizQuestion() {
+            if (currentQuizIndex >= activeQuizQuestions.length) {
+                document.getElementById('quiz-question').innerText = `Quiz beendet! 🎉`;
+                document.getElementById('quiz-subtitle').innerText = `Sie haben ${quizScore} von ${activeQuizQuestions.length} Fragen im Modus "${currentQuizCategory.title}" richtig beantwortet.`;
+                document.getElementById('quiz-options').innerHTML = `<button onclick="showQuizSelection()" class="w-full bg-red-600 text-white font-bold py-3 rounded-xl shadow-md hover:bg-red-700 transition-colors">Zurück zur Übersicht</button>`;
+                document.getElementById('quiz-feedback').classList.add('hidden');
+                document.getElementById('quiz-next-btn').classList.add('hidden');
+                document.getElementById('quiz-progress-bar').style.width = `100%`;
+                return;
+            }
+
+            const q = activeQuizQuestions[currentQuizIndex];
+            document.getElementById('quiz-counter').innerText = `Frage ${currentQuizIndex + 1} von ${activeQuizQuestions.length}`;
+            document.getElementById('quiz-score').innerText = `Punkte: ${quizScore}`;
+            document.getElementById('quiz-question').innerText = q.q;
+            document.getElementById('quiz-subtitle').innerText = "Wählen Sie die korrekte Antwort aus:";
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex) / activeQuizQuestions.length) * 100}%`;
+
+            const optionsEl = document.getElementById('quiz-options');
+            optionsEl.innerHTML = q.o.map((opt, idx) => `
+                <button onclick="checkQuizAnswer(${idx}, ${q.a})" class="w-full text-left p-4 rounded-xl bg-slate-100 dark:bg-slate-900 border border-slate-200 dark:border-slate-800 hover:border-red-500 font-medium text-sm transition-all option-btn group">
+                    <span class="inline-block w-6 text-slate-400 group-hover:text-red-500 transition-colors">${String.fromCharCode(65 + idx)}.</span> ${opt}
+                </button>
+            `).join('');
+
+            document.getElementById('quiz-feedback').classList.add('hidden');
+            document.getElementById('quiz-next-btn').classList.add('hidden');
+        }
+
+        function checkQuizAnswer(selected, correct) {
+            const feedbackEl = document.getElementById('quiz-feedback');
+            feedbackEl.classList.remove('hidden');
+
+            if (selected === correct) {
+                quizScore++;
+                feedbackEl.className = "p-4 rounded-xl text-sm mb-4 font-medium bg-emerald-100 dark:bg-emerald-900/40 text-emerald-700 dark:text-emerald-300 border border-emerald-200 dark:border-emerald-800/50";
+                feedbackEl.innerText = "Richtig! Ausgezeichnet gewusst.";
+            } else {
+                feedbackEl.className = "p-4 rounded-xl text-sm mb-4 font-medium bg-red-100 dark:bg-red-900/40 text-red-700 dark:text-red-300 border border-red-200 dark:border-red-800/50";
+                feedbackEl.innerText = `Leider falsch. Die korrekte Antwort war: ${activeQuizQuestions[currentQuizIndex].o[correct]}`;
+            }
+
+            document.getElementById('quiz-score').innerText = `Punkte: ${quizScore}`;
+            document.querySelectorAll('.option-btn').forEach(btn => btn.disabled = true);
+            document.getElementById('quiz-next-btn').classList.remove('hidden');
+            document.getElementById('quiz-progress-bar').style.width = `${((currentQuizIndex + 1) / activeQuizQuestions.length) * 100}%`;
+        }
+
+        function nextQuizQuestion() {
+            currentQuizIndex++;
+            loadQuizQuestion();
+        }
+
+        let synth = null;
+        let analyser = null;
+        let isVisualizing = false;
+
+        function initSynth() {
+            if (!synth) {
+                synth = new Tone.Synth({
+                    oscillator: { type: "triangle" },
+                    envelope: { attack: 0.1, decay: 0.2, sustain: 0.8, release: 0.5 }
+                }).toDestination();
+
+                analyser = new Tone.Analyser("waveform", 256);
+                synth.connect(analyser);
+
+                if (!isVisualizing) {
+                    isVisualizing = true;
+                    drawVisualizer();
+                }
+
+                initKeyboard();
+            }
+        }
+
+        function drawVisualizer() {
+            requestAnimationFrame(drawVisualizer);
+            if (!analyser) return;
+
+            const canvas = document.getElementById('audio-visualizer');
+            if (!canvas) return;
+
+            const ctx = canvas.getContext('2d');
+            const width = canvas.width;
+            const height = canvas.height;
+            const values = analyser.getValue();
+
+            ctx.clearRect(0, 0, width, height);
+
+            ctx.beginPath();
+            ctx.lineJoin = "round";
+            ctx.lineWidth = 3;
+
+            // Create gradient
+            const gradient = ctx.createLinearGradient(0, 0, width, 0);
+            gradient.addColorStop(0, "#ef4444"); // red-500
+            gradient.addColorStop(0.5, "#f59e0b"); // amber-500
+            gradient.addColorStop(1, "#8b5cf6"); // purple-500
+            ctx.strokeStyle = gradient;
+
+            for (let i = 0; i < values.length; i++) {
+                const x = (i / values.length) * width;
+                const y = (0.5 + values[i] * 0.4) * height;
+                if (i === 0) ctx.moveTo(x, y);
+                else ctx.lineTo(x, y);
+            }
+            ctx.stroke();
+        }
+
+        function initKeyboard() {
+            const keysEl = document.getElementById('piano-keys');
+            if (keysEl && keysEl.children.length === 0) {
+                // Diatonic scale roughly mapped
+                const notes = [
+                    { note: 'C4', freq: 261.63 }, { note: 'D4', freq: 293.66 },
+                    { note: 'E4', freq: 329.63 }, { note: 'F4', freq: 349.23 },
+                    { note: 'G4', freq: 392.00 }, { note: 'A4', freq: 440.00 },
+                    { note: 'B4', freq: 493.88 }, { note: 'C5', freq: 523.25 }
+                ];
+
+                keysEl.innerHTML = notes.map(n => `
+                    <div onmousedown="triggerTone(${n.freq}, '${n.note}')" class="w-12 h-32 md:h-40 bg-white dark:bg-slate-200 border border-slate-300 dark:border-slate-400 rounded-b-xl flex items-end justify-center pb-3 cursor-pointer hover:bg-red-50 active:bg-red-200 active:h-31 transition-all shadow-sm">
+                        <span class="text-xs font-bold text-slate-600">${n.note}</span>
+                    </div>
+                `).join('');
+            }
+        }
+
+        function triggerTone(frequency, noteName = '') {
+            initSynth();
+            Tone.start();
+            synth.triggerAttackRelease(frequency, "8n");
+            document.getElementById('synth-status').innerText = `Ton gespielt: ${noteName} (${frequency} Hz)`;
+        }
+
+        function playMelody(region) {
+            initSynth();
+            Tone.start();
+            let notes = [523.25, 440, 392, 440, 523.25];
+            if (region === 'zuerich') {
+                notes = [440, 493.88, 523.25, 587.33, 659.25]; // fast rising
+            } else if (region === 'wallis') {
+                notes = [329.63, 349.23, 392, 329.63]; // archaic
+            }
+
+            const now = Tone.now();
+            notes.forEach((note, index) => {
+                // Adjust tempo slightly based on region
+                let timing = index * 0.25;
+                if (region === 'zuerich') timing = index * 0.15; // faster
+                if (region === 'bern') timing = index * 0.35; // slower
+                synth.triggerAttackRelease(note, "8n", now + timing);
+            });
+            document.getElementById('synth-status').innerText = `Intonation (${region.toUpperCase()}) abgespielt.`;
+        }
+
+        function playItemMelody(notesArray) {
+            initSynth();
+            Tone.start();
+            const now = Tone.now();
+            notesArray.forEach((note, index) => {
+                synth.triggerAttackRelease(note, "8n", now + index * 0.25);
+            });
+            document.getElementById('synth-status').innerText = "Dialekt-Sprachmelodie abgespielt.";
+        }
+
+        // Initialize default view on load
+        window.onload = function () {
+            filterRegion('Alle');
+
+            // Fix canvas resizing
+            const canvas = document.getElementById('audio-visualizer');
+            if (canvas) {
+                canvas.width = canvas.parentElement.clientWidth;
+                canvas.height = canvas.parentElement.clientHeight;
+                window.addEventListener('resize', () => {
+                    canvas.width = canvas.parentElement.clientWidth;
+                    canvas.height = canvas.parentElement.clientHeight;
+                });
+            }
+        };
+    </script>
+</body>
+
+</html>

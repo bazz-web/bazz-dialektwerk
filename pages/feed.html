@@ -53,16 +53,6 @@
                         'slide-up': 'slideUp 0.3s ease-out forwards',
                         'slide-down': 'slideDown 0.2s ease-out forwards',
                         'spin-slow': 'spin 4s linear infinite'
-                    },
-                    keyframes: {
-                        slideUp: {
-                            '0%': { transform: 'translateY(20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        },
-                        slideDown: {
-                            '0%': { transform: 'translateY(-20px)', opacity: '0' },
-                            '100%': { transform: 'translateY(0)', opacity: '1' },
-                        }
                     }
                 }
             }
@@ -86,7 +76,6 @@
             overflow: hidden;
         }
 
-        /* SCROLLBARS */
         ::-webkit-scrollbar {
             width: 5px;
             height: 5px;
@@ -108,11 +97,10 @@
         .glass-panel {
             background: theme('colors.dw.panel');
             backdrop-filter: blur(12px);
-            -webkit-backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.05);
         }
 
-        /* SLIDERS (AUDIO) */
+        /* SLIDERS */
         input[type=range] {
             -webkit-appearance: none;
             width: 100%;
@@ -138,36 +126,35 @@
             border-radius: 2px;
         }
 
-        /* GRID LAYOUT SYSTEM */
+        /* GRID LAYOUT FIX: Auf 130px erweitert, damit die Kigo-Navbar nicht mehr überlappt */
         .app-wrapper {
             position: fixed;
             top: 0;
             right: 0;
             bottom: 0;
-            left: 110px;
-            /* Kigo Navbar Platz */
+            left: 130px;
             display: grid;
-            grid-template-columns: 100px 250px 1fr 300px;
+            grid-template-columns: 80px 250px 1fr 300px;
             z-index: 10;
+            transition: all 0.3s ease;
         }
 
         .global-player {
             position: fixed;
             bottom: 0;
             right: 0;
-            left: 110px;
+            left: 130px;
             height: 80px;
             z-index: 70;
         }
 
-        /* RESPONSIVE BREAKPOINTS */
         @media (max-width: 1200px) {
             .app-wrapper {
                 grid-template-columns: 80px 250px 1fr;
             }
 
-            #right-sidebar {
-                display: none;
+            .sidebar-right {
+                display: none !important;
             }
         }
 
@@ -194,7 +181,7 @@
             }
 
             #channel-sidebar {
-                display: none;
+                display: none !important;
             }
 
             .global-player {
@@ -208,7 +195,27 @@
             }
         }
 
-        /* DYNAMIC STATES */
+        /* PROFILE MODE FIX */
+        .profile-mode {
+            grid-template-columns: 80px 1fr 300px !important;
+        }
+
+        .profile-mode #channel-sidebar {
+            display: none !important;
+        }
+
+        @media (max-width: 1200px) {
+            .profile-mode {
+                grid-template-columns: 80px 1fr !important;
+            }
+        }
+
+        @media (max-width: 992px) {
+            .profile-mode {
+                grid-template-columns: 70px 1fr !important;
+            }
+        }
+
         .liked i {
             color: theme('colors.dw.accent');
             font-weight: 900;
@@ -231,7 +238,6 @@
             word-break: break-word;
         }
 
-        /* VINYL ANIMATION */
         .record-spin {
             animation: spin-slow 4s linear infinite;
         }
@@ -240,22 +246,16 @@
 
 <body class="antialiased font-sans">
 
-    <!-- Kigo Navbar Container -->
-    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[110px] z-[80]"></div>
+    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[130px] z-[80]"></div>
 
     <!-- MOBILE TOP BAR -->
-    <!-- z-[90] und pointer-events-none fixt das Blockade-Problem -->
     <div
         class="fixed top-0 left-0 w-full h-[80px] z-[90] lg:hidden flex items-center justify-between px-3 md:px-4 bg-dw-darker/95 backdrop-blur-md border-b border-white/5 pointer-events-none">
-
-        <!-- Platzhalter für das Hamburger-Menü -->
         <div class="w-[60px] md:w-[80px] shrink-0"></div>
-
-        <!-- Mobile Navigation Actions (pointer-events-auto aktiviert Klicks nur hier) -->
         <div class="flex items-center space-x-3 relative pointer-events-auto">
             <button
                 class="px-4 py-2 rounded-full bg-dw-primary/10 hover:bg-dw-primary text-dw-primary hover:text-black transition-all text-sm font-bold border border-dw-primary/30 flex items-center shadow-[0_0_10px_rgba(0,255,204,0.1)]"
-                onclick="document.getElementById('main-content-scroll').scrollTop = 0;">
+                onclick="app.loadFeedView()">
                 <i class="fas fa-fire mr-2"></i> Feed
             </button>
             <button
@@ -264,8 +264,6 @@
                 <i class="fas fa-compact-disc mr-2"></i> Radar
             </button>
         </div>
-
-        <!-- Mobile Utility Actions -->
         <div class="flex items-center space-x-3 shrink-0 relative pointer-events-auto">
             <button
                 class="w-10 h-10 rounded-full bg-white/5 flex items-center justify-center hover:bg-white/10 text-dw-muted hover:text-white transition-colors"
@@ -282,7 +280,6 @@
         </div>
     </div>
 
-    <!-- Mobile Suchleiste (Drop-Down) -->
     <div id="mobile-search-container"
         class="fixed top-[80px] left-0 w-full bg-dw-dark border-b border-white/10 p-3 z-[85] hidden animate-slide-down">
         <div class="relative">
@@ -302,33 +299,28 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
     <!-- MAIN APP WRAPPER -->
-    <!-- ========================================== -->
-    <div class="app-wrapper">
+    <div id="main-wrapper" class="app-wrapper">
 
-        <!-- 1. Community Sidebar (Ganz links) -->
+        <!-- 1. Community Sidebar -->
         <nav id="server-sidebar"
             class="glass-panel border-r border-r-white/5 flex flex-col items-center py-2 md:py-4 space-y-4 overflow-y-auto pb-24 relative z-10">
-            <div id="community-list" class="flex flex-col space-y-3 w-full items-center">
-                <!-- Injected via JavaScript -->
-            </div>
+            <div id="community-list" class="flex flex-col space-y-3 w-full items-center"></div>
             <div class="w-10 h-10 md:w-12 md:h-12 rounded-full border border-dashed border-white/20 text-dw-primary flex items-center justify-center cursor-pointer hover:bg-white/5 transition-colors mt-auto shrink-0"
                 onclick="app.showToast('Neues Projekt anlegen (Coming Soon)')">
                 <i class="fas fa-plus"></i>
             </div>
         </nav>
 
-        <!-- 2. Channel Sidebar (Sub-Navigation) -->
+        <!-- 2. Channel Sidebar -->
         <aside id="channel-sidebar"
-            class="glass-panel border-r border-r-white/5 flex flex-col overflow-hidden relative z-10">
+            class="glass-panel border-r border-r-white/5 flex flex-col overflow-hidden relative z-10 transition-all">
             <div class="h-16 border-b border-b-white/5 flex items-center px-4 shadow-sm relative cursor-pointer hover:bg-white/5 transition-colors"
                 onclick="app.toggleDropdown('community-dropdown')">
                 <h2 id="current-community-name" class="font-display font-bold text-lg truncate pr-6 text-white">Lade...
                 </h2>
                 <i class="fas fa-chevron-down absolute right-4 text-xs text-dw-muted"></i>
 
-                <!-- Community Einstellungen Dropdown -->
                 <div id="community-dropdown"
                     class="absolute top-14 left-2 right-2 bg-dw-darker border border-white/10 rounded-lg shadow-xl hidden z-50 py-2">
                     <div class="px-4 py-2 hover:bg-white/10 text-sm text-dw-primary cursor-pointer transition-colors"
@@ -343,14 +335,31 @@
             </div>
 
             <div class="flex-1 overflow-y-auto p-3 space-y-6" id="channel-list-container">
-                <!-- Injected via JavaScript -->
+                <!-- Navigation -->
+                <div class="mb-5">
+                    <h3 class="text-[10px] md:text-xs font-semibold text-dw-muted uppercase tracking-wider mb-2 px-2">
+                        Navigation</h3>
+                    <div class="space-y-1">
+                        <div class="flex items-center px-2 py-2 rounded cursor-pointer transition-colors active-channel"
+                            onclick="app.loadFeedView()">
+                            <i class="fas fa-fire mr-3 w-4 text-center text-dw-secondary"></i>
+                            <span class="truncate text-sm font-medium">Feed & Tracks</span>
+                        </div>
+                        <div class="flex items-center px-2 py-2 rounded cursor-pointer transition-colors hover:bg-white/5 text-dw-muted hover:text-white"
+                            onclick="app.loadProfileView()">
+                            <i class="fas fa-user mr-3 w-4 text-center text-dw-primary"></i>
+                            <span class="truncate text-sm font-medium">Mein Profil</span>
+                        </div>
+                    </div>
+                </div>
+                <!-- Kanäle werden hier per JS injiziert -->
+                <div id="dynamic-channels"></div>
             </div>
 
-            <!-- User Status Footer -->
             <div
                 class="h-16 bg-black/40 border-t border-t-white/5 flex items-center px-3 justify-between shrink-0 mb-[80px]">
-                <div
-                    class="flex items-center space-x-2 overflow-hidden hover:bg-white/5 p-1 rounded cursor-pointer transition-colors">
+                <div class="flex items-center space-x-2 overflow-hidden hover:bg-white/5 p-1 rounded cursor-pointer transition-colors flex-1"
+                    onclick="app.loadProfileView()" title="Zum Profil">
                     <img src="https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff"
                         class="w-8 h-8 rounded-full shrink-0">
                     <div class="flex flex-col truncate">
@@ -359,31 +368,27 @@
                     </div>
                 </div>
                 <div class="flex space-x-2 text-dw-muted shrink-0">
-                    <i class="fas fa-microphone hover:text-white cursor-pointer p-1 transition-colors"
-                        onclick="this.classList.toggle('text-dw-accent'); this.classList.toggle('fa-microphone-slash')"></i>
                     <i class="fas fa-headphones hover:text-white cursor-pointer p-1 transition-colors"
                         onclick="this.classList.toggle('text-dw-accent')"></i>
                 </div>
             </div>
         </aside>
 
-        <!-- 3. Haupt-Inhaltsbereich (Feed & Chat) -->
+        <!-- 3. Haupt-Inhaltsbereich -->
         <main class="flex flex-col bg-dw-darker/90 relative overflow-hidden h-full z-10">
 
-            <!-- Desktop Header -->
             <header
                 class="h-14 md:h-16 glass-panel border-b border-b-white/5 flex items-center px-3 md:px-4 justify-between sticky top-0 z-30 shrink-0">
-
                 <div class="flex items-center text-base md:text-lg font-bold cursor-pointer md:cursor-default py-2"
                     onclick="if(window.innerWidth <= 768) app.toggleDropdown('mobile-channel-dropdown')">
                     <i class="fas fa-hashtag text-dw-muted mr-2" id="header-icon"></i>
                     <span id="header-title" class="truncate max-w-[120px] md:max-w-none">allgemein</span>
-                    <i
-                        class="fas fa-chevron-down ml-2 text-xs md:hidden text-dw-muted bg-white/10 p-1.5 rounded-full"></i>
+                    <i class="fas fa-chevron-down ml-2 text-xs md:hidden text-dw-muted bg-white/10 p-1.5 rounded-full"
+                        id="mobile-dropdown-icon"></i>
                 </div>
 
                 <div class="flex items-center space-x-3 md:space-x-4 text-dw-muted relative">
-                    <div class="relative hidden lg:block">
+                    <div class="relative hidden lg:block" id="header-search-box">
                         <input type="text" id="desktop-search" placeholder="Durchsuchen..."
                             class="bg-black border border-white/10 rounded px-3 py-1 text-sm focus:outline-none focus:border-dw-primary w-32 md:w-48 text-white transition-all"
                             onkeyup="app.handleSearch(event)">
@@ -401,18 +406,15 @@
                     </div>
                 </div>
 
-                <!-- Mobile Channel Switcher Dropdown -->
                 <div id="mobile-channel-dropdown"
                     class="absolute top-14 left-0 right-0 bg-dw-dark border-b border-white/10 shadow-2xl hidden z-40 max-h-[60vh] overflow-y-auto">
-                    <!-- Injected via JavaScript -->
                 </div>
             </header>
 
-            <!-- Scrollbarer Content -->
-            <div id="main-content-scroll" class="flex-1 overflow-y-auto p-2 md:p-4 relative pb-28">
+            <div id="main-content-scroll" class="flex-1 overflow-y-auto relative pb-28">
 
-                <!-- Chat View -->
-                <div id="view-chat" class="flex flex-col min-h-full justify-end space-y-4 pb-4 hidden">
+                <!-- ====== ANSICHT 1: CHAT ====== -->
+                <div id="view-chat" class="flex flex-col min-h-full justify-end space-y-4 pb-4 hidden p-2 md:p-4">
                     <div class="mb-4 md:mb-8 mt-auto px-2">
                         <div
                             class="w-12 h-12 md:w-16 md:h-16 rounded-full bg-dw-panel flex items-center justify-center mb-4 border border-white/5">
@@ -423,23 +425,20 @@
                         <p class="text-xs md:text-base text-dw-muted">Tauscht euch über Text-Ideen, Releases und Gigs
                             aus.</p>
                     </div>
-                    <div id="chat-messages" class="space-y-4 px-1 md:px-2">
-                        <!-- Injected via JavaScript -->
-                    </div>
+                    <div id="chat-messages" class="space-y-4 px-1 md:px-2"></div>
                 </div>
 
-                <!-- Feed View -->
-                <div id="view-feed" class="max-w-3xl mx-auto space-y-4 md:space-y-6">
-
-                    <!-- Post Input Box -->
+                <!-- ====== ANSICHT 2: FEED ====== -->
+                <div id="view-feed" class="max-w-3xl mx-auto space-y-4 md:space-y-6 p-2 md:p-4">
                     <div
                         class="glass-panel p-3 md:p-4 rounded-xl flex items-center space-x-2 md:space-x-4 mb-4 md:mb-8">
                         <img src="https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff"
-                            class="w-8 h-8 md:w-10 md:h-10 rounded-full shrink-0">
+                            class="w-8 h-8 md:w-10 md:h-10 rounded-full shrink-0 cursor-pointer hover:opacity-80 transition-opacity"
+                            onclick="app.loadProfileView()" title="Zum Profil">
                         <input type="text" placeholder="Neui Mundart-Tracks oder Text posten..."
                             class="flex-1 min-w-0 bg-black/40 border border-white/10 rounded-lg px-3 md:px-4 py-2 hover:border-white/30 focus:border-dw-primary focus:outline-none cursor-pointer text-white text-xs md:text-base transition-colors"
                             readonly onclick="app.openModal('upload-modal')">
-                        <div class="flex space-x-1 text-dw-muted shrink-0">
+                        <div class="flex space-x-2 text-dw-muted shrink-0">
                             <button class="p-2 hover:text-dw-secondary transition-colors"
                                 onclick="app.openModal('upload-modal')"><i class="fas fa-music"></i></button>
                             <button class="p-2 hover:text-dw-primary transition-colors hide-on-mobile"
@@ -447,18 +446,153 @@
                         </div>
                     </div>
 
-                    <div id="feed-posts" class="space-y-4 md:space-y-6">
-                        <!-- Injected via JavaScript -->
-                    </div>
+                    <div id="feed-posts" class="space-y-4 md:space-y-6"></div>
 
                     <div id="feed-empty-state" class="hidden text-center py-10 text-dw-muted">
                         <i class="fas fa-ghost text-4xl mb-4 opacity-50"></i>
                         <p>Keine Ergebnisse gefunden.</p>
                     </div>
                 </div>
+
+                <!-- ====== ANSICHT 3: PROFIL ====== -->
+                <div id="view-profile" class="hidden flex-col w-full min-h-full">
+                    <div class="h-48 md:h-72 w-full relative bg-dw-dark border-b border-white/10">
+                        <img src="../images/highkick.jpeg" class="w-full h-full object-cover opacity-50">
+                        <div class="absolute inset-0 bg-gradient-to-t from-dw-darker to-transparent"></div>
+                    </div>
+
+                    <div class="px-4 md:px-8 max-w-5xl mx-auto -mt-16 md:-mt-24 relative z-10 w-full">
+                        <div class="flex flex-col md:flex-row md:items-end md:space-x-6">
+                            <div
+                                class="w-32 h-32 md:w-48 md:h-48 rounded-full border-4 border-dw-darker overflow-hidden bg-black shadow-[0_0_30px_rgba(0,0,0,0.8)] shrink-0">
+                                <img src="../images/profile26.jpeg" class="w-full h-full object-cover">
+                            </div>
+
+                            <div class="mt-4 md:mt-0 flex-1 pb-2">
+                                <div class="flex items-center space-x-3 mb-1">
+                                    <h1 class="text-3xl md:text-5xl font-display font-bold text-white tracking-tight">Ty
+                                        P</h1>
+                                    <i class="fas fa-check-circle text-dw-primary text-xl"
+                                        title="Verifizierter Artist"></i>
+                                </div>
+                                <div
+                                    class="flex flex-wrap items-center text-sm md:text-base text-dw-muted gap-2 md:gap-4 font-mono mt-2">
+                                    <span class="flex items-center"><i
+                                            class="fas fa-map-marker-alt mr-1.5 text-dw-accent"></i> Schwiiz</span>
+                                    <span class="flex items-center"><i class="fas fa-music mr-1.5"></i> Mundart
+                                        Artist</span>
+                                    <span
+                                        class="px-2 py-0.5 rounded bg-green-500/10 text-green-400 border border-green-500/20 text-xs flex items-center">
+                                        <span class="w-2 h-2 rounded-full bg-green-500 mr-1.5 animate-pulse"></span>
+                                        Aktiv
+                                    </span>
+                                </div>
+                            </div>
+
+                            <div class="hidden md:flex items-center space-x-3 pb-2">
+                                <a href="https://www.instagram.com/ty_p1314/" target="_blank" rel="noopener noreferrer"
+                                    class="w-12 h-12 rounded-full bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#E1306C] hover:border-[#E1306C] hover:shadow-[0_0_15px_rgba(225,48,108,0.5)] transition-all">
+                                    <i class="fab fa-instagram text-xl"></i>
+                                </a>
+                                <button
+                                    class="px-6 py-3 rounded-full bg-white text-black font-bold hover:shadow-[0_0_20px_rgba(255,255,255,0.2)] transition-all"
+                                    onclick="const t = this.innerText.trim(); if(t === 'Folgen') { this.innerText = 'Gefolgt'; this.classList.replace('bg-white', 'bg-white/10'); this.classList.replace('text-black', 'text-white'); app.showToast('Du folgst Ty P jetzt!'); } else { this.innerText = 'Folgen'; this.classList.replace('bg-white/10', 'bg-white'); this.classList.replace('text-white', 'text-black'); app.showToast('Entfolgt.'); }">
+                                    Folgen
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="flex md:hidden items-center space-x-3 mt-6">
+                            <button
+                                class="flex-1 py-3 rounded-lg bg-white text-black font-bold text-sm shadow-lg transition-all"
+                                onclick="const t = this.innerText.trim(); if(t === 'Folgen') { this.innerText = 'Gefolgt'; this.classList.replace('bg-white', 'bg-white/10'); this.classList.replace('text-black', 'text-white'); app.showToast('Du folgst Ty P jetzt!'); } else { this.innerText = 'Folgen'; this.classList.replace('bg-white/10', 'bg-white'); this.classList.replace('text-white', 'text-black'); app.showToast('Entfolgt.'); }">Folgen</button>
+                            <a href="https://www.instagram.com/ty_p1314/" target="_blank" rel="noopener noreferrer"
+                                class="w-12 h-11 rounded-lg bg-white/5 border border-white/10 flex items-center justify-center text-white hover:bg-[#E1306C] hover:border-[#E1306C] transition-all">
+                                <i class="fab fa-instagram text-lg"></i>
+                            </a>
+                        </div>
+
+                        <div
+                            class="mt-8 md:mt-10 p-5 md:p-6 rounded-2xl bg-dw-panel border border-white/5 shadow-lg max-w-3xl">
+                            <h3 class="text-xs font-bold text-dw-muted uppercase tracking-wider mb-3">Über Ty P</h3>
+                            <p class="text-gray-300 leading-relaxed text-sm md:text-base">
+                                Mundart Artist us dr Schwiiz. Check mini neuste Releases und Tracks uf
+                                Dialektwerk.<br><br>
+                                Offe für Collabs und neui Projekt.
+                            </p>
+                        </div>
+
+                        <div
+                            class="flex items-center space-x-6 md:space-x-8 mt-10 border-b border-white/10 overflow-x-auto">
+                            <button id="tab-top-tracks"
+                                class="pb-3 text-white font-bold border-b-2 border-dw-primary transition-colors whitespace-nowrap"
+                                onclick="app.switchProfileTab('top-tracks')">Top Tracks</button>
+                            <button id="tab-liked-tracks"
+                                class="pb-3 text-dw-muted hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap"
+                                onclick="app.switchProfileTab('liked-tracks')">Gelikete Tracks</button>
+                            <button
+                                class="pb-3 text-dw-muted hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap"
+                                onclick="app.loadFeedView(); const s = document.getElementById('desktop-search'); s.value='Ty P'; app.handleSearch({target: s}); app.showToast('Zeige Beiträge von Ty P');">Beiträge
+                                im Feed</button>
+                        </div>
+
+                        <div id="profile-top-tracks" class="mt-6 space-y-2 max-w-4xl pb-10">
+                            <!-- Track 1: Melodie -->
+                            <div class="group flex items-center p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10"
+                                onclick="app.playTrack('../audio/melodie_Ty_P.mp3', 'melodie', 'Ty P')">
+                                <div class="w-8 md:w-10 text-center text-dw-muted group-hover:hidden text-sm">1</div>
+                                <div class="w-8 md:w-10 text-center text-dw-primary hidden group-hover:block"><i
+                                        class="fas fa-play"></i></div>
+                                <img src="https://placehold.co/100x100/1a1a2e/ff0055?text=melodie"
+                                    class="w-10 h-10 md:w-12 md:h-12 rounded mx-2 md:mx-3 object-cover">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <div class="text-white font-bold text-sm md:text-base truncate">melodie <span
+                                            class="ml-2 px-1.5 py-0.5 rounded bg-dw-primary/20 text-dw-primary border border-dw-primary/30 text-[9px] uppercase tracking-wider">Top
+                                            Release</span></div>
+                                    <div class="text-dw-muted text-xs md:text-sm truncate">Ty P</div>
+                                </div>
+                                <button
+                                    class="ml-2 text-dw-muted hover:text-dw-accent transition-colors hidden md:block px-2"
+                                    onclick="event.stopPropagation(); const icon = this.querySelector('i'); if(icon.classList.contains('far')) { icon.classList.replace('far', 'fas'); this.classList.add('text-dw-accent'); this.classList.remove('text-dw-muted'); app.showToast('Geliked!'); } else { icon.classList.replace('fas', 'far'); this.classList.remove('text-dw-accent'); this.classList.add('text-dw-muted'); app.showToast('Like entfernt.'); }">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="ml-2 text-dw-muted hover:text-white w-8 text-center"
+                                    onclick="event.stopPropagation(); app.showToast('Link kopiert!')"><i
+                                        class="fas fa-share-alt"></i></button>
+                            </div>
+
+                            <!-- Track 2: termoguideextremB Mix -->
+                            <div class="group flex items-center p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10"
+                                onclick="app.playTrack('../audio/termoguideextremB.mp3', 'Neuä mix vo termoguideextremB', 'Der Schwiizer Experte')">
+                                <div class="w-8 md:w-10 text-center text-dw-muted group-hover:hidden text-sm">2</div>
+                                <div class="w-8 md:w-10 text-center text-dw-primary hidden group-hover:block"><i
+                                        class="fas fa-play"></i></div>
+                                <img src="https://placehold.co/100x100/1a1a2e/00ffcc?text=NDM"
+                                    class="w-10 h-10 md:w-12 md:h-12 rounded mx-2 md:mx-3 object-cover">
+                                <div class="flex-1 min-w-0 pr-4">
+                                    <div class="text-white font-bold text-sm md:text-base truncate">Neuä mix vo
+                                        termoguideextremB</div>
+                                    <div class="text-dw-muted text-xs md:text-sm truncate">Der Schwiizer Experte</div>
+                                </div>
+                                <button
+                                    class="ml-2 text-dw-muted hover:text-dw-accent transition-colors hidden md:block px-2"
+                                    onclick="event.stopPropagation(); const icon = this.querySelector('i'); if(icon.classList.contains('far')) { icon.classList.replace('far', 'fas'); this.classList.add('text-dw-accent'); this.classList.remove('text-dw-muted'); app.showToast('Geliked!'); } else { icon.classList.replace('fas', 'far'); this.classList.remove('text-dw-accent'); this.classList.add('text-dw-muted'); app.showToast('Like entfernt.'); }">
+                                    <i class="far fa-heart"></i>
+                                </button>
+                                <button class="ml-2 text-dw-muted hover:text-white w-8 text-center"
+                                    onclick="event.stopPropagation(); app.showToast('Link kopiert!')"><i
+                                        class="fas fa-share-alt"></i></button>
+                            </div>
+                        </div>
+
+                        <!-- Tracklist Area: Gelikete Tracks (Dynamisch) -->
+                        <div id="profile-liked-tracks" class="mt-6 space-y-2 max-w-4xl pb-10 hidden">
+                        </div>
+
+                    </div>
+                </div>
             </div>
 
-            <!-- Sticky Chat Input Area -->
             <div id="chat-input-area"
                 class="shrink-0 p-2 md:p-4 bg-dw-darker/80 backdrop-blur-md hidden border-t border-white/5 pb-20 md:pb-24">
                 <div
@@ -472,37 +606,62 @@
             </div>
         </main>
 
-        <!-- 4. Info Sidebar (Rechts, Desktop only) -->
+        <!-- 4. Info Sidebar -->
         <aside id="right-sidebar"
-            class="glass-panel border-l border-l-white/5 bg-dw-dark/30 flex flex-col overflow-hidden z-10 pb-20">
-            <div class="h-16 border-b border-b-white/5 flex items-center px-4">
-                <h3 class="font-bold text-sm">Community Info</h3>
-            </div>
-            <div class="flex-1 overflow-y-auto p-4 space-y-6">
-                <div class="bg-black/20 p-4 rounded-lg border border-white/5">
-                    <h4 class="font-display text-dw-primary mb-2">Über Dialektwerk</h4>
-                    <p class="text-sm text-dw-muted leading-relaxed">Die Datenbank und Community für Schwiizerdütschi
-                        Musigkünstler. Finde Kollaborationen, teile Tracks und entdecke neui Artists us de Szene.</p>
+            class="sidebar-right glass-panel border-l border-l-white/5 bg-dw-dark/30 flex flex-col overflow-hidden z-10 pb-20">
+
+            <div id="sidebar-feed" class="flex flex-col h-full w-full">
+                <div class="h-16 border-b border-b-white/5 flex items-center px-4 shrink-0">
+                    <h3 class="font-bold text-sm">Community Info</h3>
                 </div>
-                <div>
-                    <h3 class="text-xs font-semibold text-dw-muted uppercase tracking-wider mb-3 flex items-center">
-                        <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Aktiv (Online)
-                    </h3>
-                    <div id="online-members" class="space-y-2">
-                        <!-- Injected via JavaScript -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                    <div class="bg-black/20 p-4 rounded-lg border border-white/5">
+                        <h4 class="font-display text-dw-primary mb-2">Über Dialektwerk</h4>
+                        <p class="text-sm text-dw-muted leading-relaxed">Die Datenbank und Community für
+                            Schwiizerdütschi Musigartist. Finde Kollaborationen, teile Tracks und entdecke neui
+                            Artists us de Szene.</p>
+                    </div>
+                    <div>
+                        <h3 class="text-xs font-semibold text-dw-muted uppercase tracking-wider mb-3 flex items-center">
+                            <span class="w-2 h-2 rounded-full bg-green-500 mr-2"></span> Aktiv (Online)
+                        </h3>
+                        <div id="online-members" class="space-y-2"></div>
                     </div>
                 </div>
             </div>
+
+            <div id="sidebar-profile" class="hidden flex-col h-full w-full">
+                <div class="h-16 border-b border-b-white/5 flex items-center px-4 shrink-0">
+                    <h3 class="font-bold text-sm">Artist Status</h3>
+                </div>
+                <div class="flex-1 overflow-y-auto p-4 space-y-6">
+                    <div
+                        class="bg-gradient-to-br from-dw-darker to-green-900/20 p-5 rounded-xl border border-green-500/20 shadow-lg">
+                        <div class="flex items-center mb-3">
+                            <i class="fas fa-handshake text-green-400 text-xl mr-3"></i>
+                            <h4 class="font-display font-bold text-white">Kollabo-Börse</h4>
+                        </div>
+                        <ul class="space-y-2 text-sm text-gray-300">
+                            <li class="flex items-start"><i class="fas fa-check text-green-500 mt-1 mr-2 text-xs"></i>
+                                Offen für Features</li>
+                            <li class="flex items-start"><i class="fas fa-times text-dw-accent mt-1 mr-2 text-xs"></i>
+                                Beat-Anfragen</li>
+                        </ul>
+                        <button
+                            class="w-full mt-4 bg-green-500/10 hover:bg-green-500/30 border border-green-500/30 text-green-400 py-2 rounded-lg font-bold text-sm transition-colors"
+                            onclick="app.showToast('Anfrage gesendet')">
+                            Anfrage senden
+                        </button>
+                    </div>
+                </div>
+            </div>
+
         </aside>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MINI PLAYER (Bottom Bar)                   -->
-    <!-- ========================================== -->
+    <!-- MINI PLAYER -->
     <div class="global-player bg-dw-dark border-t border-white/10 flex items-center px-2 md:px-4 shadow-[0_-10px_30px_rgba(0,0,0,0.8)] transition-all"
         onclick="if(window.innerWidth <= 768) app.toggleFullscreenPlayer()">
-
-        <!-- Mobile Progress Indicator (Slim Bar on top) -->
         <div class="absolute top-0 left-0 h-[2px] bg-dw-primary/30 w-full md:hidden">
             <div id="mobile-mini-progress" class="h-full bg-dw-primary transition-all duration-100" style="width: 0%">
             </div>
@@ -513,7 +672,6 @@
                 class="relative w-10 h-10 md:w-14 md:h-14 rounded-full overflow-hidden mr-2 md:mr-3 bg-black border border-white/10 shrink-0 shadow-[0_0_10px_rgba(0,0,0,0.5)] player-cover-container">
                 <img src="https://placehold.co/100x100/1a1a2e/00ffcc?text=DW"
                     class="w-full h-full object-cover opacity-90 sync-cover">
-                <!-- Vinyl Loch -->
                 <div
                     class="absolute inset-0 m-auto w-2 h-2 md:w-3 md:h-3 bg-dw-darker rounded-full border border-white/20">
                 </div>
@@ -522,6 +680,10 @@
                 <span class="font-bold text-white text-xs md:text-sm truncate sync-title">Kein Track</span>
                 <span class="text-[10px] md:text-xs text-dw-muted truncate sync-artist">---</span>
             </div>
+            <button class="hidden md:block ml-2 text-dw-muted hover:text-dw-accent transition-colors"
+                onclick="event.stopPropagation(); const icon = this.querySelector('i'); if(icon.classList.contains('far')) { icon.classList.replace('far', 'fas'); this.classList.add('text-dw-accent'); this.classList.remove('text-dw-muted'); app.showToast('Track zu Favoriten hinzugefügt!'); } else { icon.classList.replace('fas', 'far'); this.classList.remove('text-dw-accent'); this.classList.add('text-dw-muted'); app.showToast('Like entfernt.'); }">
+                <i class="far fa-heart text-lg"></i>
+            </button>
         </div>
 
         <div class="flex md:flex-col items-center justify-end md:justify-center flex-1 px-1 md:px-4 min-w-0">
@@ -555,30 +717,21 @@
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- FULLSCREEN MOBILE PLAYER (Mit Video BG)    -->
-    <!-- ========================================== -->
+    <!-- FULLSCREEN MOBILE PLAYER -->
     <div id="fullscreen-player"
         class="fixed inset-0 bg-dw-darker z-[120] flex flex-col transform translate-y-full transition-transform duration-300 overflow-hidden">
-
-        <!-- NEU: Background Video (Autoplay, Loop, Muted für Mobile-Kompatibilität) -->
-        <video id="fullscreen-bg-video" src="../videos/copacabasel.mp4" autoplay loop muted playsinline
-            class="absolute inset-0 w-full h-full object-cover z-0 opacity-50"></video>
-        <!-- Schatten-Overlay, damit der Text lesbar bleibt -->
+        <video id="fullscreen-bg-video" src="" autoplay loop muted playsinline
+            class="absolute inset-0 w-full h-full object-cover z-0 opacity-40 hidden"></video>
         <div class="absolute inset-0 bg-gradient-to-b from-dw-darker/60 via-dw-darker/80 to-dw-darker z-0"></div>
 
-        <!-- Header -->
         <div class="relative z-10 flex items-center justify-between p-4 pt-10">
-            <button class="text-dw-muted hover:text-white p-2 transition-colors" onclick="app.toggleFullscreenPlayer()">
-                <i class="fas fa-chevron-down text-xl"></i>
-            </button>
+            <button class="text-dw-muted hover:text-white p-2 transition-colors"
+                onclick="app.toggleFullscreenPlayer()"><i class="fas fa-chevron-down text-xl"></i></button>
             <span class="text-xs font-bold text-dw-muted uppercase tracking-widest">Jetzt läuft</span>
-            <button class="text-dw-muted hover:text-white p-2 transition-colors" onclick="app.showToast('Audio Menü')">
-                <i class="fas fa-ellipsis-h text-xl"></i>
-            </button>
+            <button class="text-dw-muted hover:text-white p-2 transition-colors"
+                onclick="app.showToast('Audio Menü')"><i class="fas fa-ellipsis-h text-xl"></i></button>
         </div>
 
-        <!-- Cover Art (drehende Schallplatte) -->
         <div class="relative z-10 flex-1 flex items-center justify-center p-8">
             <div
                 class="w-full max-w-[300px] aspect-square rounded-full overflow-hidden bg-black border border-white/10 shadow-[0_0_40px_rgba(0,0,0,0.8)] player-cover-container relative">
@@ -588,7 +741,6 @@
             </div>
         </div>
 
-        <!-- Controls & Infos -->
         <div class="relative z-10 p-6 pb-12">
             <div class="flex justify-between items-end mb-6">
                 <div class="flex flex-col min-w-0">
@@ -596,7 +748,8 @@
                     <p class="text-lg text-dw-muted truncate sync-artist">---</p>
                 </div>
                 <button class="text-dw-primary hover:text-white transition-colors"
-                    onclick="app.showToast('Geliked!')"><i class="far fa-heart text-2xl"></i></button>
+                    onclick="const icon = this.querySelector('i'); if(icon.classList.contains('far')) { icon.classList.replace('far', 'fas'); app.showToast('Geliked!'); } else { icon.classList.replace('fas', 'far'); app.showToast('Like entfernt.'); }"><i
+                        class="far fa-heart text-2xl"></i></button>
             </div>
 
             <div class="mb-8">
@@ -610,9 +763,7 @@
 
             <div class="flex items-center justify-between">
                 <button class="text-dw-primary hover:text-white transition-colors btn-loop-sync"
-                    onclick="app.toggleLoop(event)">
-                    <i class="fas fa-repeat text-xl"></i>
-                </button>
+                    onclick="app.toggleLoop(event)"><i class="fas fa-repeat text-xl"></i></button>
                 <button class="text-white hover:text-dw-primary transition-colors" onclick="app.playPrevious(event)"><i
                         class="fas fa-step-backward text-3xl"></i></button>
                 <button
@@ -622,20 +773,15 @@
                 </button>
                 <button class="text-white hover:text-dw-primary transition-colors" onclick="app.playNext(event)"><i
                         class="fas fa-step-forward text-3xl"></i></button>
-                <button class="text-dw-muted hover:text-white transition-colors"><i
-                        class="fas fa-random text-xl"></i></button>
+                <button class="text-dw-muted hover:text-white transition-colors"
+                    onclick="app.showToast('Shuffle aktiviert')"><i class="fas fa-random text-xl"></i></button>
             </div>
         </div>
     </div>
 
-    <!-- Hidden Audio Element -->
     <audio id="global-audio-element"></audio>
 
-    <!-- ========================================== -->
-    <!-- MODALS                                     -->
-    <!-- ========================================== -->
-
-    <!-- Upload Modal -->
+    <!-- MODALS -->
     <div id="upload-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
         <div class="glass-panel w-full max-w-2xl rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
@@ -645,25 +791,78 @@
                 <button class="text-dw-muted hover:text-white transition-colors p-2"
                     onclick="app.closeModal('upload-modal')"><i class="fas fa-times text-lg md:text-xl"></i></button>
             </div>
-            <div class="p-4 md:p-6 space-y-3 md:space-y-4">
-                <input type="text" id="new-post-title" placeholder="Titel des Tracks oder Beitrags..."
-                    class="w-full bg-black/50 border border-white/10 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm md:text-base">
-                <textarea id="new-post-content"
-                    placeholder="Erzähl der Community von deinem Projekt, teile Lyrics oder stelle Fragen..."
-                    class="w-full bg-black/50 border border-white/10 rounded-lg px-3 md:px-4 py-2 md:py-3 focus:outline-none focus:border-dw-primary text-white h-24 md:h-32 resize-none transition-colors text-sm md:text-base"></textarea>
-                <div class="flex justify-end space-x-3 md:space-x-4 pt-2">
+
+            <div class="p-4 md:p-6 space-y-3 md:space-y-4 max-h-[75vh] overflow-y-auto">
+                <div class="flex flex-col md:flex-row space-y-3 md:space-y-0 md:space-x-4">
+                    <div class="flex-1">
+                        <label class="block text-[10px] text-dw-muted uppercase tracking-wider mb-1 px-1">Autor /
+                            Artist</label>
+                        <input type="text" id="new-post-author" placeholder="Dein Künstlername..."
+                            class="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm">
+                    </div>
+                    <div class="w-full md:w-1/3">
+                        <label
+                            class="block text-[10px] text-dw-muted uppercase tracking-wider mb-1 px-1">Kategorie</label>
+                        <select id="new-post-category"
+                            class="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm appearance-none cursor-pointer">
+                            <option value="Allgemein">Allgemein</option>
+                            <option value="Track Release">Track Release</option>
+                            <option value="Feedback">Feedback</option>
+                            <option value="Kollabo">Kollabo-Suche</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-dw-muted uppercase tracking-wider mb-1 px-1">Titel</label>
+                    <input type="text" id="new-post-title" placeholder="Titel des Tracks oder Beitrags..."
+                        class="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm font-bold">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-dw-muted uppercase tracking-wider mb-1 px-1">Tags</label>
+                    <input type="text" id="new-post-tags" placeholder="Kommagetrennt (z.B. Rap, Bern, Beat)..."
+                        class="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-dw-primary text-white transition-colors text-sm">
+                </div>
+
+                <div>
+                    <label class="block text-[10px] text-dw-muted uppercase tracking-wider mb-1 px-1">Beschreibung /
+                        Lyrics</label>
+                    <textarea id="new-post-content" placeholder="Erzähl der Community von deinem Projekt..."
+                        class="w-full bg-black/50 border border-white/10 rounded-lg px-3 py-2 focus:outline-none focus:border-dw-primary text-white h-24 md:h-28 resize-none transition-colors text-sm"></textarea>
+                </div>
+
+                <div class="flex flex-wrap gap-2 pt-2 border-t border-white/5 mt-2">
                     <button
-                        class="px-4 md:px-6 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors text-xs md:text-base"
+                        class="flex items-center space-x-2 text-dw-muted hover:text-dw-primary transition-colors text-xs font-semibold px-2 py-1 rounded bg-white/5 border border-white/5"
+                        onclick="document.getElementById('audio-upload').click()">
+                        <i class="fas fa-music text-dw-secondary"></i><span>Audio anhängen</span>
+                    </button>
+                    <button
+                        class="flex items-center space-x-2 text-dw-muted hover:text-dw-primary transition-colors text-xs font-semibold px-2 py-1 rounded bg-white/5 border border-white/5"
+                        onclick="document.getElementById('image-upload').click()">
+                        <i class="far fa-image text-dw-primary"></i><span>Bild / Cover anhängen</span>
+                    </button>
+                    <input type="file" id="audio-upload" accept="audio/*" class="hidden"
+                        onchange="app.handleAudioSelect(event)">
+                    <input type="file" id="image-upload" accept="image/*" class="hidden"
+                        onchange="app.handleImageSelect(event)">
+                </div>
+
+                <div id="upload-previews" class="flex flex-col space-y-2 empty:hidden mt-2"></div>
+
+                <div class="flex justify-end space-x-3 pt-4">
+                    <button
+                        class="px-4 py-2 rounded-lg border border-white/10 text-white hover:bg-white/5 transition-colors text-sm"
                         onclick="app.closeModal('upload-modal')">Abbrechen</button>
                     <button
-                        class="px-4 md:px-6 py-2 rounded-lg bg-dw-primary text-black font-bold hover:bg-white transition-colors text-xs md:text-base"
-                        onclick="app.submitNewPost()">Posten</button>
+                        class="px-6 py-2 rounded-lg bg-dw-primary text-black font-bold hover:bg-white transition-colors text-sm shadow-[0_0_15px_rgba(0,255,204,0.3)]"
+                        onclick="app.submitNewPost()">Online stellen</button>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Comments Modal -->
     <div id="comments-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
         <div class="glass-panel w-full max-w-2xl h-[85vh] md:h-[80vh] flex flex-col rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
@@ -673,9 +872,7 @@
                 <button class="text-dw-muted hover:text-white transition-colors p-2"
                     onclick="app.closeModal('comments-modal')"><i class="fas fa-times text-lg md:text-xl"></i></button>
             </div>
-            <div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4" id="comments-list">
-                <!-- Kommentare werden hier injiziert -->
-            </div>
+            <div class="flex-1 overflow-y-auto p-3 md:p-4 space-y-3 md:space-y-4" id="comments-list"></div>
             <div class="p-3 md:p-4 border-t border-white/10 bg-black/40 flex space-x-2">
                 <input type="hidden" id="active-comment-post-id">
                 <input type="text" id="new-comment-input" placeholder="Feedback schreiben..."
@@ -687,38 +884,117 @@
         </div>
     </div>
 
-    <!-- Radar Modal -->
     <div id="radar-modal"
         class="fixed inset-0 bg-black/80 backdrop-blur-sm z-[200] hidden flex items-center justify-center p-2 md:p-4">
-        <div class="glass-panel w-full max-w-md rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200"
+        <div class="glass-panel w-full max-w-lg rounded-2xl overflow-hidden border border-white/10 transform scale-95 opacity-0 transition-all duration-200 shadow-2xl"
             id="radar-modal-content">
             <div
-                class="flex justify-between items-center p-4 border-b border-white/10 bg-gradient-to-r from-dw-secondary/30 to-black">
-                <h2 class="text-lg md:text-xl font-display font-bold flex items-center"><i
-                        class="fas fa-compact-disc text-dw-primary mr-2 animate-spin-slow"></i> Release Radar</h2>
-                <button class="text-dw-muted hover:text-white p-2 transition-colors"
-                    onclick="app.closeModal('radar-modal')"><i class="fas fa-times"></i></button>
-            </div>
-            <div class="p-4 space-y-4">
-                <p class="text-sm text-dw-muted mb-4">Kommende Dialektwerk Releases (Q1 2027)</p>
-                <div class="bg-black/40 border border-white/5 rounded-lg p-3 flex items-center space-x-3">
-                    <div class="w-10 h-10 rounded bg-dw-primary/20 flex items-center justify-center text-dw-primary"><i
-                            class="fas fa-calendar-alt"></i></div>
-                    <div>
-                        <div class="font-bold text-white text-sm">Neues Album von Aya405</div>
-                        <div class="text-xs text-dw-muted">Dropt am 15. Januar</div>
-                    </div>
-                </div>
-                <div class="bg-black/40 border border-white/5 rounded-lg p-3 flex items-center space-x-3">
+                class="flex justify-between items-center p-4 border-b border-white/10 bg-gradient-to-r from-dw-secondary/40 via-dw-darker to-black">
+                <div class="flex items-center space-x-3">
                     <div
-                        class="w-10 h-10 rounded bg-dw-secondary/20 flex items-center justify-center text-dw-secondary">
-                        <i class="fas fa-fire"></i>
+                        class="w-10 h-10 rounded-xl bg-dw-primary/10 border border-dw-primary/30 flex items-center justify-center text-dw-primary shadow-[0_0_12px_rgba(0,255,204,0.2)]">
+                        <i class="fas fa-compact-disc text-xl animate-spin-slow"></i>
                     </div>
                     <div>
-                        <div class="font-bold text-white text-sm">Bas44 EP Preview</div>
-                        <div class="text-xs text-dw-muted">Exklusive Pre-Listening Party</div>
+                        <h2 class="text-lg md:text-xl font-display font-bold text-white flex items-center">
+                            Release Radar
+                            <span
+                                class="ml-2 text-[10px] font-mono px-2 py-0.5 rounded-full bg-dw-primary/20 text-dw-primary border border-dw-primary/30">DJ
+                                SET</span>
+                        </h2>
+                        <p class="text-xs text-dw-muted">Mundart Release DJ Playlist</p>
                     </div>
                 </div>
+                <button class="text-dw-muted hover:text-white p-2 transition-colors"
+                    onclick="app.closeModal('radar-modal')"><i class="fas fa-times text-lg"></i></button>
+            </div>
+
+            <div class="p-4 space-y-3 max-h-[65vh] overflow-y-auto">
+                <div class="p-3 rounded-xl bg-white/5 border border-white/5 flex items-center justify-between text-xs">
+                    <span class="text-dw-muted"><i class="fas fa-headphones mr-1.5 text-dw-primary"></i> Kuratiert für
+                        Dialektwerk</span>
+                    <button class="text-dw-primary hover:underline font-bold flex items-center"
+                        onclick="app.playTrack(app.playlist[0].src, app.playlist[0].title, app.playlist[0].artist); app.closeModal('radar-modal');">
+                        <i class="fas fa-play-circle mr-1 text-sm"></i> Alle abspielen
+                    </button>
+                </div>
+
+                <div
+                    class="bg-black/40 border border-white/5 hover:border-dw-primary/30 p-3 rounded-xl flex items-center space-x-3 transition-all group">
+                    <div
+                        class="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-dw-darker border border-white/10">
+                        <img src="https://placehold.co/100x100/1a1a2e/00ffcc?text=Copa"
+                            class="w-full h-full object-cover">
+                        <button
+                            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-dw-primary transition-opacity"
+                            onclick="app.playTrack('../audio/copacabasel.mp3', 'copacabasel', 'julexfan99 ft. termoguideextremB'); app.closeModal('radar-modal');"><i
+                                class="fas fa-play"></i></button>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white font-bold text-sm truncate">copacabasel</span>
+                            <span
+                                class="px-1.5 py-0.2 bg-dw-accent/20 text-dw-accent text-[9px] font-bold rounded">NEU</span>
+                        </div>
+                        <div class="text-xs text-dw-muted truncate">julexfan99 ft. termoguideextremB • Basel Vibes</div>
+                    </div>
+                    <button
+                        class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-dw-primary group-hover:text-black text-dw-muted flex items-center justify-center transition-all shrink-0"
+                        onclick="app.playTrack('../audio/copacabasel.mp3', 'copacabasel', 'julexfan99 ft. termoguideextremB'); app.closeModal('radar-modal');"><i
+                            class="fas fa-play text-xs ml-0.5"></i></button>
+                </div>
+
+                <div
+                    class="bg-black/40 border border-white/5 hover:border-dw-primary/30 p-3 rounded-xl flex items-center space-x-3 transition-all group">
+                    <div
+                        class="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-dw-darker border border-white/10">
+                        <img src="https://placehold.co/100x100/1a1a2e/7000ff?text=Leopard"
+                            class="w-full h-full object-cover">
+                        <button
+                            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-dw-primary transition-opacity"
+                            onclick="app.playTrack('../audio/leopardospaecht.m4a', 'leopardospächt (analyse)', 'julexfan99'); app.closeModal('radar-modal');"><i
+                                class="fas fa-play"></i></button>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white font-bold text-sm truncate">leopardospächt (analyse)</span>
+                            <span
+                                class="px-1.5 py-0.2 bg-dw-secondary/30 text-dw-secondary text-[9px] font-bold rounded">HOT</span>
+                        </div>
+                        <div class="text-xs text-dw-muted truncate">julexfan99 • Bärndütsch Rap</div>
+                    </div>
+                    <button
+                        class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-dw-primary group-hover:text-black text-dw-muted flex items-center justify-center transition-all shrink-0"
+                        onclick="app.playTrack('../audio/leopardospaecht.m4a', 'leopardospächt (analyse)', 'julexfan99'); app.closeModal('radar-modal');"><i
+                            class="fas fa-play text-xs ml-0.5"></i></button>
+                </div>
+
+                <div
+                    class="bg-black/40 border border-white/5 hover:border-dw-primary/30 p-3 rounded-xl flex items-center space-x-3 transition-all group">
+                    <div
+                        class="relative w-12 h-12 rounded-lg overflow-hidden shrink-0 bg-dw-darker border border-white/10">
+                        <img src="https://placehold.co/100x100/1a1a2e/ff0055?text=Melodie"
+                            class="w-full h-full object-cover">
+                        <button
+                            class="absolute inset-0 bg-black/60 opacity-0 group-hover:opacity-100 flex items-center justify-center text-dw-primary transition-opacity"
+                            onclick="app.playTrack('../audio/melodie_Ty_P.mp3', 'melodie', 'Ty P'); app.closeModal('radar-modal');"><i
+                                class="fas fa-play"></i></button>
+                    </div>
+                    <div class="flex-1 min-w-0">
+                        <div class="flex items-center space-x-2">
+                            <span class="text-white font-bold text-sm truncate">melodie</span>
+                        </div>
+                        <div class="text-xs text-dw-muted truncate">Ty P • Dialektwerk Hub</div>
+                    </div>
+                    <button
+                        class="w-8 h-8 rounded-full bg-white/5 group-hover:bg-dw-primary group-hover:text-black text-dw-muted flex items-center justify-center transition-all shrink-0"
+                        onclick="app.playTrack('../audio/melodie_Ty_P.mp3', 'melodie', 'Ty P'); app.closeModal('radar-modal');"><i
+                            class="fas fa-play text-xs ml-0.5"></i></button>
+                </div>
+            </div>
+
+            <div class="p-3 bg-black/40 border-t border-white/5 text-center text-xs text-dw-muted">
+                Wöchentlich aktualisiert von der Dialektwerk Redaktion
             </div>
         </div>
     </div>
@@ -737,7 +1013,7 @@
             <div class="p-2 space-y-1 max-h-[60vh] overflow-y-auto">
                 <div
                     class="p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors border-l-2 border-dw-accent">
-                    <div class="text-sm text-white font-medium">Aya405 hat deinen Track geliked!</div>
+                    <div class="text-sm text-white font-medium">julexfan99 hat deinen Track geliked!</div>
                     <div class="text-xs text-dw-muted mt-1">Vor 5 Minuten</div>
                 </div>
                 <div
@@ -746,203 +1022,136 @@
                     <div class="text-xs text-dw-muted mt-1">"Gueti Lines, extrem geil gmacht!"</div>
                 </div>
                 <div class="p-3 hover:bg-white/5 rounded-lg cursor-pointer transition-colors">
-                    <div class="text-sm text-gray-400 font-medium">Bas44 folgt dir jetzt.</div>
+                    <div class="text-sm text-gray-400 font-medium">termoguideextremB folgt dir jetzt.</div>
                     <div class="text-xs text-dw-muted mt-1">Gestern</div>
                 </div>
             </div>
         </div>
     </div>
 
-    <!-- Globales Toast -->
     <div id="toast"
         class="fixed top-24 md:top-4 right-4 bg-dw-secondary text-white px-4 md:px-6 py-2 md:py-3 rounded-lg shadow-lg transform translate-x-[150%] transition-transform duration-300 z-[250] flex items-center space-x-3 border border-white/10 text-sm md:text-base">
-        <i class="fas fa-info-circle shrink-0"></i>
-        <span id="toast-message" class="break-words-custom">Meldung!</span>
+        <i class="fas fa-info-circle shrink-0"></i><span id="toast-message">Meldung!</span>
     </div>
 
     <!-- ================= INTERAKTIVE LOGIK ================= -->
     <script>
-        // Beobachter für externe Icon-Libraries (Fixt das Problem fehlender Icons in der Navbar)
-        const iconObserver = setInterval(() => {
-            if (window.lucide && window.lucide.createIcons) {
-                window.lucide.createIcons();
-            }
-        }, 1000);
-
         const app = {
-            /**
-             * App Status (State Management)
-             */
             state: {
                 currentView: 'feed',
                 currentCommunityId: 'dw_global',
                 currentChannelId: 'feed_tracks',
                 searchQuery: '',
-                data: {
-                    communities: [],
-                    channels: [],
-                    posts: [],
-                    chats: {}
-                },
+                data: { communities: [], channels: [], posts: [], chats: {} },
                 isPlayerFullscreen: false
             },
 
-            /**
-             * Audio Playlist Konfiguration (Mit Cover-Support)
-             */
             playlist: [
-                {
-                    title: "copacabasel",
-                    artist: "Aya405 ft. Bas44",
-                    src: "../audio/copacabasel.mp3",
-                    videoSrc: "../video/mein_musikvideo.mp4",
-                    cover: "../images/copacabasel.jpg"
-                },
-                {
-                    title: "leopardospächt (analyse)",
-                    artist: "KIGOD",
-                    src: "../audio/leopardospächt.m4a",
-                    videoSrc: "../videos/leopard.mp4",
-                    cover: "../images/leopard.jpeg"
-                },
-                {
-                    title: "melodie",
-                    artist: "Ty P",
-                    src: "../audio/melodie Ty P.mp3",
-                    videoSrc: "../videos/melodie.mp4",
-                    cover: "../images/highkick.jpeg"
-                }
+                { title: "melodie", artist: "Ty P", src: "../audio/melodie_Ty_P.mp3", videoSrc: "", cover: "https://placehold.co/500x500/1a1a2e/ff0055?text=Melodie" },
+                { title: "copacabasel", artist: "julexfan99 ft. termoguideextremB", src: "../audio/copacabasel.mp3", videoSrc: "../videos/copacabasel.mp4", cover: "https://placehold.co/500x500/1a1a2e/00ffcc?text=Copa" },
+                { title: "leopardospächt (analyse)", artist: "julexfan99", src: "../audio/leopardospaecht.m4a", videoSrc: "", cover: "https://placehold.co/500x500/1a1a2e/7000ff?text=Leopard" },
+                { title: "Neuä mix vo termoguideextremB", artist: "Der Schwiizer Experte", src: "../audio/termoguideextremB.wav", videoSrc: "", cover: "https://placehold.co/500x500/1a1a2e/00ffcc?text=NDM" }
             ],
             currentTrackIndex: 0,
             isLooping: true,
+            tempUpload: { audio: null, image: null },
 
-            // ... (initData, renderAll etc. bleiben gleich) ...
+            loadProfileView() {
+                document.getElementById('view-feed').classList.add('hidden');
+                document.getElementById('view-chat').classList.add('hidden');
+                document.getElementById('chat-input-area').classList.add('hidden');
 
-            /**
-             * AUDIO PLAYER SYNC & LOGIC
-             */
-            audioEl: document.getElementById('global-audio-element'),
-            isPlaying: false,
+                document.getElementById('channel-sidebar').classList.add('hidden');
+                document.getElementById('channel-sidebar').classList.remove('flex');
 
-            initAudio() {
-                this.audioEl = document.getElementById('global-audio-element');
-                this.audioEl.volume = document.querySelectorAll('.sync-volume-slider')[0].value / 100;
+                document.getElementById('view-profile').classList.remove('hidden');
+                document.getElementById('view-profile').classList.add('flex');
+                document.getElementById('header-title').textContent = 'Artist Profil';
 
-                this.audioEl.loop = this.isLooping;
-                this.updateLoopUI();
+                document.getElementById('main-wrapper').classList.add('profile-mode');
+                document.getElementById('sidebar-feed').classList.add('hidden');
+                document.getElementById('sidebar-profile').classList.remove('hidden');
+                document.getElementById('sidebar-profile').classList.add('flex');
+                document.getElementById('header-search-box').classList.add('hidden');
 
-                this.audioEl.addEventListener('timeupdate', () => {
-                    const ct = this.audioEl.currentTime;
-                    const dur = this.audioEl.duration;
-                    if (dur) {
-                        const pct = (ct / dur) * 100;
-                        document.querySelectorAll('.sync-seek-slider').forEach(el => {
-                            el.value = Math.floor(ct);
-                            el.style.background = `linear-gradient(to right, #00ffcc ${pct}%, rgba(255,255,255,0.2) ${pct}%)`;
-                        });
-                        const miniProg = document.getElementById('mobile-mini-progress');
-                        if (miniProg) miniProg.style.width = `${pct}%`;
-                        this.syncDOM('.sync-time-current', 'textContent', this.formatTime(ct));
-                    }
-                });
+                this.switchProfileTab('top-tracks');
+                document.getElementById('main-content-scroll').scrollTop = 0;
+            },
 
-                this.audioEl.addEventListener('loadedmetadata', () => {
-                    document.querySelectorAll('.sync-seek-slider').forEach(el => el.max = Math.floor(this.audioEl.duration));
-                    this.syncDOM('.sync-time-total', 'textContent', this.formatTime(this.audioEl.duration));
-                });
+            loadFeedView() {
+                document.getElementById('view-profile').classList.add('hidden');
+                document.getElementById('view-profile').classList.remove('flex');
+                document.getElementById('view-chat').classList.add('hidden');
+                document.getElementById('chat-input-area').classList.add('hidden');
 
-                this.audioEl.addEventListener('ended', () => {
-                    if (!this.isLooping) {
-                        this.playNext(null);
-                    }
-                });
+                document.getElementById('channel-sidebar').classList.remove('hidden');
+                document.getElementById('channel-sidebar').classList.add('flex');
 
-                // FIX: Video Sync Events - Überprüft auf 'hidden' Klasse statt fehlerhaftem src
-                const bgVideo = document.getElementById('fullscreen-bg-video');
-                this.audioEl.addEventListener('play', () => {
-                    if (bgVideo && !bgVideo.classList.contains('hidden')) {
-                        bgVideo.play().catch(err => console.warn("Autoplay blockiert:", err));
-                    }
-                });
-                this.audioEl.addEventListener('pause', () => {
-                    if (bgVideo && !bgVideo.classList.contains('hidden')) bgVideo.pause();
-                });
-                this.audioEl.addEventListener('seeked', () => {
-                    if (bgVideo && !bgVideo.classList.contains('hidden') && bgVideo.duration >= this.audioEl.currentTime) {
-                        bgVideo.currentTime = this.audioEl.currentTime;
-                    }
+                document.getElementById('view-feed').classList.remove('hidden');
+                const channel = this.state.data.channels.find(ch => ch.id === this.state.currentChannelId);
+                document.getElementById('header-title').textContent = channel ? channel.name : 'allgemein';
+
+                document.getElementById('main-wrapper').classList.remove('profile-mode');
+                document.getElementById('sidebar-profile').classList.add('hidden');
+                document.getElementById('sidebar-profile').classList.remove('flex');
+                document.getElementById('sidebar-feed').classList.remove('hidden');
+                document.getElementById('sidebar-feed').classList.add('flex');
+                document.getElementById('header-search-box').classList.remove('hidden');
+
+                document.getElementById('main-content-scroll').scrollTop = 0;
+            },
+
+            switchProfileTab(tab) {
+                const tabTop = document.getElementById('tab-top-tracks');
+                const tabLiked = document.getElementById('tab-liked-tracks');
+                const contentTop = document.getElementById('profile-top-tracks');
+                const contentLiked = document.getElementById('profile-liked-tracks');
+
+                if (tab === 'top-tracks') {
+                    tabTop.className = "pb-3 text-white font-bold border-b-2 border-dw-primary transition-colors whitespace-nowrap";
+                    tabLiked.className = "pb-3 text-dw-muted hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap";
+                    contentTop.classList.remove('hidden');
+                    contentLiked.classList.add('hidden');
+                } else if (tab === 'liked-tracks') {
+                    tabLiked.className = "pb-3 text-white font-bold border-b-2 border-dw-primary transition-colors whitespace-nowrap";
+                    tabTop.className = "pb-3 text-dw-muted hover:text-white border-b-2 border-transparent transition-colors whitespace-nowrap";
+                    contentLiked.classList.remove('hidden');
+                    contentTop.classList.add('hidden');
+                    this.renderLikedTracks();
+                }
+            },
+
+            renderLikedTracks() {
+                const container = document.getElementById('profile-liked-tracks');
+                if (!container) return;
+                container.innerHTML = '';
+
+                const likedPosts = this.state.data.posts.filter(p => p.hasLiked && p.isAudio && p.track);
+
+                if (likedPosts.length === 0) {
+                    container.innerHTML = '<div class="text-center py-10 text-dw-muted text-sm"><i class="far fa-heart text-3xl mb-3 opacity-50"></i><br>Du hast noch keine Tracks geliked.</div>';
+                    return;
+                }
+
+                likedPosts.forEach((post, index) => {
+                    container.innerHTML += `
+                        <div class="group flex items-center p-3 rounded-lg hover:bg-white/5 transition-colors cursor-pointer border border-transparent hover:border-white/10" onclick="app.playTrack('${post.track.src}', '${post.track.title.replace(/'/g, "\\'")}', '${post.track.artist.replace(/'/g, "\\'")}')">
+                            <div class="w-8 md:w-10 text-center text-dw-muted group-hover:hidden text-sm">${index + 1}</div>
+                            <div class="w-8 md:w-10 text-center text-dw-primary hidden group-hover:block"><i class="fas fa-play"></i></div>
+                            <img src="${post.track.cover || 'https://placehold.co/100x100/1a1a2e/00ffcc?text=DW'}" class="w-10 h-10 md:w-12 md:h-12 rounded mx-2 md:mx-3 object-cover">
+                            <div class="flex-1 min-w-0 pr-4">
+                                <div class="text-white font-bold text-sm md:text-base truncate">${post.track.title}</div>
+                                <div class="text-dw-muted text-xs md:text-sm truncate">${post.track.artist}</div>
+                            </div>
+                            <button class="ml-2 text-dw-accent hover:text-white transition-colors hidden md:block px-2" onclick="event.stopPropagation(); app.toggleLike('${post.id}')">
+                                <i class="fas fa-heart"></i>
+                            </button>
+                        </div>
+                    `;
                 });
             },
 
-            playTrack(src, title, artist, trackFromFeed = false) {
-                let trackObj = this.playlist.find(t => t.src === src);
-                if (trackFromFeed && trackObj) {
-                    this.currentTrackIndex = this.playlist.indexOf(trackObj);
-                } else if (!trackObj) {
-                    trackObj = this.playlist[this.currentTrackIndex];
-                }
-
-                this.audioEl.src = src;
-                this.syncDOM('.sync-title', 'textContent', title);
-                this.syncDOM('.sync-artist', 'textContent', artist);
-
-                if (trackObj && trackObj.cover) {
-                    this.syncDOM('.sync-cover', 'src', trackObj.cover);
-                }
-
-                // FIX: Sauberes Resetten des Video-Elements, wenn kein Video existiert
-                const bgVideo = document.getElementById('fullscreen-bg-video');
-                if (trackObj && trackObj.videoSrc) {
-                    bgVideo.src = trackObj.videoSrc;
-                    bgVideo.classList.remove('hidden');
-                } else {
-                    bgVideo.removeAttribute('src');
-                    bgVideo.load();
-                    bgVideo.classList.add('hidden');
-                }
-
-                this.audioEl.play().then(() => {
-                    this.isPlaying = true;
-                    // Der Video-Play-Befehl ist hier gelöscht, da er nun vollautomatisch über den 'play' Listener in initAudio() getriggert wird!
-
-                    document.querySelectorAll('.play-icon-sync').forEach(el => {
-                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
-                    });
-                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
-                }).catch(e => {
-                    console.error(e);
-                    this.showToast("Fehler: Audiodatei konnte nicht geladen werden.");
-                });
-            },
-
-            togglePlay(e) {
-                if (e) e.stopPropagation();
-
-                if (!this.audioEl.src) {
-                    const t = this.playlist[0];
-                    return this.playTrack(t.src, t.title, t.artist);
-                }
-
-                if (this.isPlaying) {
-                    this.audioEl.pause();
-                    document.querySelectorAll('.play-icon-sync').forEach(el => {
-                        el.classList.remove('fa-pause'); el.classList.add('fa-play');
-                    });
-                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.remove('record-spin'));
-                } else {
-                    this.audioEl.play();
-                    document.querySelectorAll('.play-icon-sync').forEach(el => {
-                        el.classList.remove('fa-play'); el.classList.add('fa-pause');
-                    });
-                    document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
-                }
-                this.isPlaying = !this.isPlaying;
-            },
-            /**
-             * Generiert die App-Daten (Mock Backend mit Mundart Fokus)
-             */
             initData() {
-                // Communities
                 this.state.data.communities = [
                     { id: 'dw_global', name: 'Dialektwerk Hub', icon: '🇨🇭', color: 'from-blue-600 to-cyan-500' },
                     { id: 'zueri', name: 'Züri Beats', icon: '🦁', color: 'from-blue-800 to-white' },
@@ -951,7 +1160,6 @@
                     { id: 'innerschweiz', name: 'Innerschwiiz Folk', icon: '🏔️', color: 'from-green-700 to-green-400' }
                 ];
 
-                // Kanäle
                 const baseChannels = [
                     { id: 'chat_general', name: 'allgemein', type: 'chat', category: 'Lounge' },
                     { id: 'chat_collab', name: 'collab-suche', type: 'chat', category: 'Lounge' },
@@ -959,18 +1167,15 @@
                     { id: 'feed_feedback', name: 'mix-feedback', type: 'feed', category: 'Mundart Sounds' }
                 ];
 
-                // Kombiniere Communities und Kanäle
                 this.state.data.communities.forEach(c => {
                     baseChannels.forEach(ch => {
                         const globalId = `${c.id}_${ch.id}`;
                         this.state.data.channels.push({ ...ch, id: globalId, communityId: c.id });
-                        if (ch.type === 'chat') {
-                            this.state.data.chats[globalId] = [];
-                        }
+                        if (ch.type === 'chat') { this.state.data.chats[globalId] = []; }
                     });
                 });
 
-                const authors = ["Aya405", "Bas44", "ManiMundart", "Chrigu_Vox", "BärnerGiele", "Züri_Flow", "TextSchmied_CH", "Aare_Vibes"];
+                const authors = ["julexfan99", "termoguideextremB", "ManiMundart", "Chrigu_Vox", "BärnerGiele", "Züri_Flow", "TextSchmied_CH", "Aare_Vibes"];
                 const contentMix = [
                     "Hey Lüt, was haltet dir vo mine neue Bärndütsch-Lines? Ha probiert chli meh Wortspiil inezbringe.",
                     "Das Fördergelder-Gsuech bi dr Stadt Bärn isch dure! Jetzt chöme d'Mittel für d'Mundart-Plattform.",
@@ -981,12 +1186,28 @@
                     "Suche öpper, wo cha en Hook singe. Am liebste Zentralschwiizer Dialekt oder Bündnerdütsch."
                 ];
 
-                // Generiere 50 Feed-Beiträge
-                for (let i = 0; i < 50; i++) {
+                const commentPool = [
+                    "Zu wild! 🔥", "Richtig geile Vibe, witer so!", "De Beat knallt extrem. Hesch de sälber gmacht?",
+                    "Finges mega! Chasch mer s'Vocal Preset schicke?", "Absolute Banger 💥", "Krassi Lines, respect.",
+                    "Gfallt mer mega guet!", "Wänne dropt das offiziell?", "Extrem stark abgmischt.", "Brutal! 🤯"
+                ];
+
+                for (let i = 0; i < 40; i++) {
                     const isAudio = Math.random() > 0.6;
                     const cId = this.state.data.communities[Math.floor(Math.random() * this.state.data.communities.length)].id;
                     const track = this.playlist[Math.floor(Math.random() * this.playlist.length)];
                     const author = isAudio ? track.artist : authors[Math.floor(Math.random() * authors.length)];
+
+                    // GENERIERE ZUFÄLLIGE KOMMENTARE FÜR DEN FEED
+                    const numComments = Math.floor(Math.random() * 4); // 0 bis 3 Kommentare
+                    const postComments = [];
+                    for (let j = 0; j < numComments; j++) {
+                        postComments.push({
+                            author: authors[Math.floor(Math.random() * authors.length)],
+                            text: commentPool[Math.floor(Math.random() * commentPool.length)],
+                            time: `Vor ${Math.floor(Math.random() * 59 + 1)} Min`
+                        });
+                    }
 
                     this.state.data.posts.push({
                         id: `post_${i}`,
@@ -999,27 +1220,72 @@
                         likes: Math.floor(Math.random() * 250),
                         hasLiked: false,
                         hasBookmarked: false,
-                        comments: [],
+                        comments: postComments,
                         isAudio: isAudio,
-                        track: isAudio ? track : null
+                        track: isAudio ? track : null,
+                        image: null,
+                        category: isAudio ? 'Track Release' : 'Allgemein',
+                        tags: isAudio ? 'Mundart, Release' : ''
                     });
                 }
 
-                // Generiere initiale Chat Nachrichten
+                // ANGEHEFTETER POST (MIT KOMMENTAREN)
+                this.state.data.posts.unshift({
+                    id: 'post_termoguideextremB',
+                    communityId: this.state.data.communities[0].id,
+                    author: 'Der Schwiizer Experte',
+                    avatar: 'https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff',
+                    time: 'Gerade eben',
+                    title: 'Neuä mix vo termoguideextremB',
+                    content: 'säget mau widr dr neu mix u master vom NDM finget',
+                    likes: 0,
+                    hasLiked: false,
+                    hasBookmarked: false,
+                    comments: [
+                        { author: 'ManiMundart', text: 'Dr Mix tönt scho viel besser! D Vocals chöme suuber use. 🔥', time: 'Vor 5 Min' },
+                        { author: 'julexfan99', text: 'Krass gworde, respect. Wie hesch d Kicks so druckvoll becho?', time: 'Vor 12 Min' }
+                    ],
+                    isAudio: true,
+                    track: {
+                        title: 'Neuä mix vo termoguideextremB',
+                        artist: 'Der Schwiizer Experte',
+                        src: '../audio/termoguideextremB.mp3',
+                        videoSrc: '',
+                        cover: 'https://placehold.co/500x500/1a1a2e/00ffcc?text=NDM'
+                    },
+                    image: null,
+                    category: 'Feedback',
+                    tags: 'Beat, Mix, NDM'
+                });
+
+                this.loadPostsFromLocal();
+
                 const defaultChat = this.state.data.chats['dw_global_chat_general'];
                 if (defaultChat) {
                     defaultChat.push(
                         { author: 'Chrigu_Vox', time: '14:20', content: 'Giele, d\'Mundart-Szene brucht gnau so e Plattform!' },
                         { author: 'ManiMundart', time: '14:25', content: 'Voll! Wenn goht d DB offiziell live?' },
-                        { author: 'Aya405', time: '14:30', content: 'Ich glaube Afangs 2027.' },
-                        { author: 'Bas44', time: '14:35', content: 'Genau, d Vorbereitige loufe uf Hochtoure.' }
+                        { author: 'julexfan99', time: '14:30', content: 'Ich glaube Afangs 2027.' },
+                        { author: 'termoguideextremB', time: '14:35', content: 'Genau, d Vorbereitige loufe uf Hochtoure.' }
                     );
                 }
             },
 
-            /**
-             * RENDER FUNKTIONEN
-             */
+            savePostsToLocal() {
+                const customPosts = this.state.data.posts.filter(p => p.id.startsWith('post_new_'));
+                localStorage.setItem('dw_custom_posts', JSON.stringify(customPosts));
+            },
+
+            loadPostsFromLocal() {
+                const saved = localStorage.getItem('dw_custom_posts');
+                if (saved) {
+                    try {
+                        const parsed = JSON.parse(saved);
+                        this.state.data.posts.splice(1, 0, ...parsed);
+                    } catch (e) { }
+                }
+            },
+
             renderAll() {
                 this.renderSidebar();
                 this.renderChannels();
@@ -1032,7 +1298,6 @@
                 el.innerHTML = '';
                 this.state.data.communities.forEach(c => {
                     const isActive = this.state.currentCommunityId === c.id;
-
                     let activeBarClass = isActive ? 'h-8 md:h-10' : 'h-3 scale-y-0 group-hover:scale-y-100';
                     let iconBgClass = isActive ? `rounded-[14px] md:rounded-[16px] border-white/50 shadow-[0_0_15px_theme(colors.dw.primary)]` : `rounded-[20px] md:rounded-[24px] group-hover:rounded-[16px] border-white/5`;
 
@@ -1053,15 +1318,14 @@
                 const categories = [...new Set(commChannels.map(ch => ch.category))];
 
                 document.getElementById('current-community-name').textContent = comm.name;
-
-                const desktopEl = document.getElementById('channel-list-container');
+                const desktopEl = document.getElementById('dynamic-channels');
+                if (!desktopEl) return;
                 desktopEl.innerHTML = '';
 
                 categories.forEach(cat => {
                     let html = `<div class="mb-5"><h3 class="text-[10px] md:text-xs font-semibold text-dw-muted uppercase tracking-wider mb-2 px-2">${cat}</h3><div class="space-y-1">`;
-
                     commChannels.filter(ch => ch.category === cat).forEach(ch => {
-                        const isActive = this.state.currentChannelId === ch.id;
+                        const isActive = this.state.currentChannelId === ch.id && !document.getElementById('view-feed').classList.contains('hidden');
                         const icon = ch.type === 'chat' ? 'fa-hashtag' : 'fa-music';
                         const colorClass = isActive ? 'active-channel' : 'hover:bg-white/5 text-dw-muted hover:text-white';
 
@@ -1076,15 +1340,12 @@
                     desktopEl.innerHTML += html;
                 });
 
-                // Mobile Dropdown Sync
                 const mobileDropdown = document.getElementById('mobile-channel-dropdown');
                 if (mobileDropdown) {
                     let mobileHtml = `<div class="p-3 bg-black/50 text-xs text-dw-primary font-bold uppercase tracking-wider">${comm.name} Kanäle</div>`;
-
                     commChannels.forEach(ch => {
                         const icon = ch.type === 'chat' ? 'fa-hashtag' : 'fa-music';
                         const activeStyle = this.state.currentChannelId === ch.id ? 'bg-dw-primary/20 text-white' : 'text-gray-300 hover:bg-white/5';
-
                         mobileHtml += `
                             <div class="p-4 border-b border-white/5 flex items-center space-x-3 cursor-pointer ${activeStyle} transition-colors" onclick="app.selectChannel('${ch.id}', '${ch.type}'); app.toggleDropdown('mobile-channel-dropdown')">
                                 <i class="fas ${icon} ${ch.type === 'feed' ? 'text-dw-secondary' : 'text-dw-muted'}"></i>
@@ -1097,14 +1358,15 @@
             },
 
             renderContent() {
-                const isChat = this.state.currentView === 'chat';
+                if (!document.getElementById('view-profile').classList.contains('hidden')) {
+                    this.loadFeedView();
+                }
 
-                // Toggles Visibility
+                const isChat = this.state.currentView === 'chat';
                 document.getElementById('view-chat').classList.toggle('hidden', !isChat);
                 document.getElementById('chat-input-area').classList.toggle('hidden', !isChat);
                 document.getElementById('view-feed').classList.toggle('hidden', isChat);
 
-                // Update Header
                 const channel = this.state.data.channels.find(ch => ch.id === this.state.currentChannelId);
                 if (channel) {
                     document.getElementById('header-title').textContent = channel.name;
@@ -1120,30 +1382,45 @@
                 container.innerHTML = '';
 
                 let posts = this.state.data.posts.filter(p => p.communityId === this.state.currentCommunityId);
-
-                // Suche filtern
                 if (this.state.searchQuery) {
                     const q = this.state.searchQuery.toLowerCase();
-                    posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q));
+                    posts = posts.filter(p => p.title.toLowerCase().includes(q) || p.content.toLowerCase().includes(q) || p.author.toLowerCase().includes(q));
                 }
 
                 document.getElementById('feed-empty-state').classList.toggle('hidden', posts.length > 0);
 
                 posts.forEach(post => {
                     let media = '';
+
                     if (post.isAudio) {
                         media = `
                             <div class="mt-3 md:mt-4 bg-black/40 rounded-lg p-2 md:p-3 border border-white/5 flex items-center space-x-3 md:space-x-4 hover:border-dw-primary/30 transition-colors">
-                                <button class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dw-primary text-black flex items-center justify-center hover:scale-105 transition-transform shrink-0" onclick="app.playTrack('${post.track.src}', '${post.track.title}', '${post.author}', true)">
+                                <button class="w-10 h-10 md:w-12 md:h-12 rounded-full bg-dw-primary text-black flex items-center justify-center hover:scale-105 transition-transform shrink-0" onclick="app.playTrack('${post.track.src}', '${post.track.title.replace(/'/g, "\\'")}', '${post.track.artist.replace(/'/g, "\\'")}', true)">
                                     <i class="fas fa-play ml-0.5 md:ml-1 text-sm md:text-base"></i>
                                 </button>
                                 <div class="flex-1 min-w-0">
                                     <div class="font-bold text-white text-xs md:text-sm truncate">${post.title}</div>
-                                    <div class="text-[10px] md:text-xs text-dw-muted">Audio Track</div>
+                                    <div class="text-[10px] md:text-xs text-dw-muted">Mundart Audio Track</div>
                                 </div>
                             </div>
                         `;
+                    } else if (post.image) {
+                        media = `
+                            <img src="${post.image}" class="w-full h-auto rounded-lg mt-3 md:mt-4 border border-white/5 object-cover max-h-96">
+                        `;
                     }
+
+                    let tagHtml = '';
+                    if (post.tags) {
+                        let tagArray = post.tags.split(',').map(t => t.trim()).filter(t => t);
+                        if (tagArray.length > 0) {
+                            tagHtml = `<div class="mt-2 text-[10px] text-dw-primary font-mono flex flex-wrap gap-1">` +
+                                tagArray.map(t => `<span class="bg-dw-primary/10 px-1.5 py-0.5 rounded border border-dw-primary/20">#${t}</span>`).join('') +
+                                `</div>`;
+                        }
+                    }
+
+                    let catHtml = post.category ? `<span class="bg-white/10 px-1.5 py-0.5 rounded text-[9px] uppercase tracking-wider text-dw-muted">${post.category}</span>` : '';
 
                     container.innerHTML += `
                         <article class="glass-panel p-0 rounded-xl overflow-hidden mb-4 md:mb-6 animate-slide-up hover:border-white/20 transition-all duration-300">
@@ -1156,13 +1433,15 @@
                                 </div>
                                 <div class="flex-1 p-3 md:p-5 min-w-0">
                                     <div class="flex items-center space-x-2 text-[10px] md:text-xs text-dw-muted mb-2 md:mb-3">
-                                        <img src="${post.avatar}" class="w-4 h-4 md:w-5 md:h-5 rounded-full shrink-0">
-                                        <span class="font-bold text-white truncate">${post.author}</span>
+                                        <img src="${post.avatar}" class="w-4 h-4 md:w-5 md:h-5 rounded-full shrink-0 cursor-pointer hover:opacity-80 transition-opacity" onclick="app.loadProfileView()">
+                                        <span class="font-bold text-white truncate cursor-pointer hover:text-dw-primary transition-colors" onclick="app.loadProfileView()">${post.author}</span>
                                         <span>•</span>
                                         <span class="shrink-0">${post.time}</span>
+                                        ${catHtml ? '<span>•</span>' + catHtml : ''}
                                     </div>
                                     <h2 class="text-sm md:text-lg font-bold text-white mb-1 md:mb-2 leading-tight break-words-custom">${post.title}</h2>
                                     <p class="text-gray-300 text-xs md:text-sm leading-relaxed break-words-custom">${post.content}</p>
+                                    ${tagHtml}
                                     ${media}
                                     <div class="flex items-center space-x-3 md:space-x-5 mt-3 md:mt-5 pt-3 md:pt-4 border-t border-white/5 text-dw-muted text-[10px] md:text-sm font-semibold">
                                         <button class="hover:text-white flex items-center transition-colors" onclick="app.openComments('${post.id}')">
@@ -1190,10 +1469,10 @@
                 messages.forEach(msg => {
                     container.innerHTML += `
                         <div class="flex hover:bg-black/20 p-2 rounded -mx-1 md:-mx-2 transition-colors">
-                            <img src="https://ui-avatars.com/api/?name=${msg.author.replace(/\s+/g, '+')}&background=random&color=fff" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 mt-0.5 shrink-0">
+                            <img src="https://ui-avatars.com/api/?name=${msg.author.replace(/\s+/g, '+')}&background=random&color=fff" class="w-8 h-8 md:w-10 md:h-10 rounded-full mr-2 md:mr-4 mt-0.5 shrink-0 cursor-pointer" onclick="app.loadProfileView()">
                             <div class="flex flex-col min-w-0">
                                 <div class="flex items-baseline space-x-2">
-                                    <span class="font-bold text-white text-xs md:text-base truncate">${msg.author}</span>
+                                    <span class="font-bold text-white text-xs md:text-base truncate cursor-pointer hover:text-dw-primary" onclick="app.loadProfileView()">${msg.author}</span>
                                     <span class="text-[9px] md:text-xs text-dw-muted shrink-0">${msg.time}</span>
                                 </div>
                                 <span class="text-gray-300 mt-0.5 md:mt-1 text-xs md:text-base leading-relaxed break-words-custom">${msg.content}</span>
@@ -1209,11 +1488,11 @@
             },
 
             renderMembers() {
-                const authors = ["Aya405", "Bas44", "ManiMundart", "Chrigu_Vox"];
+                const authors = ["Ty P", "julexfan99", "termoguideextremB", "ManiMundart"];
                 let html = '';
                 authors.forEach(name => {
                     html += `
-                        <div class="flex items-center space-x-3 hover:bg-white/5 p-2 rounded cursor-pointer group transition-colors">
+                        <div class="flex items-center space-x-3 hover:bg-white/5 p-2 rounded cursor-pointer group transition-colors" onclick="app.loadProfileView()">
                             <div class="relative shrink-0">
                                 <img src="https://ui-avatars.com/api/?name=${name.replace(/\s+/g, '+')}&background=random&color=fff" class="w-8 h-8 rounded-full">
                                 <div class="absolute bottom-0 right-0 w-2.5 h-2.5 bg-green-500 rounded-full border border-black"></div>
@@ -1226,9 +1505,6 @@
                 if (el) el.innerHTML = html;
             },
 
-            /**
-             * USER LOGIC
-             */
             selectCommunity(id) {
                 this.state.currentCommunityId = id;
                 const firstFeed = this.state.data.channels.find(ch => ch.communityId === id && ch.type === 'feed');
@@ -1236,13 +1512,7 @@
                     this.state.currentChannelId = firstFeed.id;
                     this.state.currentView = 'feed';
                 }
-
-                if (window.innerWidth <= 768) {
-                    document.getElementById('main-content-scroll').scrollTop = 0;
-                }
-
                 this.renderAll();
-                this.showToast('Gewechselt zu: ' + this.state.data.communities.find(c => c.id === id).name);
             },
 
             selectChannel(id, type) {
@@ -1263,8 +1533,6 @@
             handleSearch(e) {
                 this.state.searchQuery = e.target.value;
                 this.renderFeed();
-
-                // Synchronisiere Eingabefelder
                 const dSearch = document.getElementById('desktop-search');
                 const mSearch = document.getElementById('mobile-search-input');
                 if (dSearch) dSearch.value = this.state.searchQuery;
@@ -1292,34 +1560,114 @@
                 this.renderChat();
             },
 
+            handleAudioSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.tempUpload.audio = file;
+                    this.updateUploadPreviews();
+                }
+            },
+
+            handleImageSelect(e) {
+                const file = e.target.files[0];
+                if (file) {
+                    this.tempUpload.image = file;
+                    this.updateUploadPreviews();
+                }
+            },
+
+            removeUpload(type) {
+                this.tempUpload[type] = null;
+                if (type === 'audio') document.getElementById('audio-upload').value = '';
+                if (type === 'image') document.getElementById('image-upload').value = '';
+                this.updateUploadPreviews();
+            },
+
+            updateUploadPreviews() {
+                const container = document.getElementById('upload-previews');
+                container.innerHTML = '';
+                if (this.tempUpload.audio) {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-dw-primary/10 border border-dw-primary/30 p-2 rounded text-xs text-dw-primary">
+                            <span class="truncate"><i class="fas fa-music mr-2"></i> ${this.tempUpload.audio.name}</span>
+                            <i class="fas fa-times cursor-pointer hover:text-white" onclick="app.removeUpload('audio')"></i>
+                        </div>
+                    `;
+                }
+                if (this.tempUpload.image) {
+                    container.innerHTML += `
+                        <div class="flex justify-between items-center bg-dw-primary/10 border border-dw-primary/30 p-2 rounded text-xs text-dw-primary">
+                            <span class="truncate"><i class="far fa-image mr-2"></i> ${this.tempUpload.image.name}</span>
+                            <i class="fas fa-times cursor-pointer hover:text-white" onclick="app.removeUpload('image')"></i>
+                        </div>
+                    `;
+                }
+            },
+
             submitNewPost() {
                 const title = document.getElementById('new-post-title').value.trim();
                 const content = document.getElementById('new-post-content').value.trim();
+                const authorVal = document.getElementById('new-post-author').value.trim() || 'Der Schwiizer Experte';
+                const catVal = document.getElementById('new-post-category').value;
+                const tagsVal = document.getElementById('new-post-tags').value.trim();
 
-                if (!title && !content) {
-                    this.showToast('Bitte Text oder Titel eingeben!'); return;
+                if (!title && !content && !this.tempUpload.audio && !this.tempUpload.image) {
+                    this.showToast('Bitte Text, Track oder Bild eingeben!'); return;
+                }
+
+                let isAudio = !!this.tempUpload.audio;
+                let trackData = null;
+                let imageUrl = null;
+
+                if (this.tempUpload.image) {
+                    imageUrl = URL.createObjectURL(this.tempUpload.image);
+                }
+
+                if (isAudio) {
+                    const audioUrl = URL.createObjectURL(this.tempUpload.audio);
+                    trackData = {
+                        title: title || this.tempUpload.audio.name,
+                        artist: authorVal,
+                        src: audioUrl,
+                        videoSrc: "",
+                        cover: imageUrl || "https://placehold.co/500x500/1a1a2e/00ffcc?text=Neu"
+                    };
+                    this.playlist.unshift(trackData);
                 }
 
                 this.state.data.posts.unshift({
                     id: 'post_new_' + Date.now(),
                     communityId: this.state.currentCommunityId,
-                    author: 'Der Schwiizer Experte',
-                    avatar: 'https://ui-avatars.com/api/?name=Der+Schwiizer+Experte&background=0D8ABC&color=fff',
+                    author: authorVal,
+                    avatar: `https://ui-avatars.com/api/?name=${authorVal.replace(/\s+/g, '+')}&background=0D8ABC&color=fff`,
                     time: 'Gerade eben',
-                    title: title || 'Neues Update',
+                    title: title || (isAudio ? trackData.title : 'Neues Update'),
                     content: content,
-                    likes: 0, hasLiked: false, hasBookmarked: false, comments: [], isAudio: false
+                    likes: 0, hasLiked: false, hasBookmarked: false, comments: [],
+                    isAudio: isAudio,
+                    track: trackData,
+                    image: !isAudio ? imageUrl : null,
+                    category: catVal,
+                    tags: tagsVal
                 });
 
+                this.savePostsToLocal();
                 this.closeModal('upload-modal');
+
                 document.getElementById('new-post-title').value = '';
                 document.getElementById('new-post-content').value = '';
+                document.getElementById('new-post-author').value = '';
+                document.getElementById('new-post-tags').value = '';
+                document.getElementById('new-post-category').value = 'Allgemein';
 
-                // Clear Search and Refresh
+                this.removeUpload('audio');
+                this.removeUpload('image');
+
                 this.state.searchQuery = '';
                 document.getElementById('desktop-search').value = '';
                 document.getElementById('mobile-search-input').value = '';
-                this.renderFeed();
+
+                this.loadFeedView();
                 this.showToast('Erfolgreich gepostet!');
             },
 
@@ -1329,6 +1677,7 @@
                     post.hasLiked = !post.hasLiked;
                     post.likes += post.hasLiked ? 1 : -1;
                     this.renderFeed();
+                    this.renderLikedTracks(); // Update the profile list immediately if we are on it!
                 }
             },
 
@@ -1356,14 +1705,10 @@
                         this.showToast(`Link für ${comm.name} in die Zwischenablage kopiert!`);
                     });
                 }
-
                 const drop = document.getElementById('community-dropdown');
                 if (drop) drop.classList.add('hidden');
             },
 
-            /**
-             * COMMENTS
-             */
             openComments(postId) {
                 const post = this.state.data.posts.find(p => p.id === postId);
                 document.getElementById('active-comment-post-id').value = postId;
@@ -1406,60 +1751,57 @@
                 }
             },
 
-            /**
-             * AUDIO PLAYER SYNC & LOGIC
-             */
             audioEl: document.getElementById('global-audio-element'),
             isPlaying: false,
 
             initAudio() {
                 this.audioEl = document.getElementById('global-audio-element');
                 this.audioEl.volume = document.querySelectorAll('.sync-volume-slider')[0].value / 100;
-
-                // Initialize Loop Set
                 this.audioEl.loop = this.isLooping;
                 this.updateLoopUI();
 
-                // Time Updates -> Sync all Progress Bars
                 this.audioEl.addEventListener('timeupdate', () => {
                     const ct = this.audioEl.currentTime;
                     const dur = this.audioEl.duration;
-
                     if (dur) {
                         const pct = (ct / dur) * 100;
-
-                        // Update Ranges
                         document.querySelectorAll('.sync-seek-slider').forEach(el => {
                             el.value = Math.floor(ct);
                             el.style.background = `linear-gradient(to right, #00ffcc ${pct}%, rgba(255,255,255,0.2) ${pct}%)`;
                         });
-
-                        // Update Mobile Mini Progress Line
                         const miniProg = document.getElementById('mobile-mini-progress');
                         if (miniProg) miniProg.style.width = `${pct}%`;
-
-                        // Update Text
                         this.syncDOM('.sync-time-current', 'textContent', this.formatTime(ct));
                     }
                 });
 
-                // Metadata Updates -> Sync Max Values
                 this.audioEl.addEventListener('loadedmetadata', () => {
                     document.querySelectorAll('.sync-seek-slider').forEach(el => el.max = Math.floor(this.audioEl.duration));
                     this.syncDOM('.sync-time-total', 'textContent', this.formatTime(this.audioEl.duration));
                 });
 
-                // Ended Event -> Next Track if Loop is disabled
                 this.audioEl.addEventListener('ended', () => {
                     if (!this.isLooping) {
                         this.playNext(null);
                     }
                 });
+
+                const bgVideo = document.getElementById('fullscreen-bg-video');
+                this.audioEl.addEventListener('play', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden')) {
+                        bgVideo.play().catch(err => console.warn("Autoplay blockiert:", err));
+                    }
+                });
+                this.audioEl.addEventListener('pause', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden')) bgVideo.pause();
+                });
+                this.audioEl.addEventListener('seeked', () => {
+                    if (bgVideo && !bgVideo.classList.contains('hidden') && bgVideo.duration >= this.audioEl.currentTime) {
+                        bgVideo.currentTime = this.audioEl.currentTime;
+                    }
+                });
             },
 
-            /**
-             * Helfer für das Synchronisieren mehrerer gleicher DOM-Elemente
-             */
             syncDOM(selector, prop, val) {
                 document.querySelectorAll(selector).forEach(el => {
                     if (prop === 'textContent') el.textContent = val;
@@ -1469,22 +1811,37 @@
             },
 
             playTrack(src, title, artist, trackFromFeed = false) {
-                if (trackFromFeed) {
-                    const idx = this.playlist.findIndex(t => t.src === src);
-                    if (idx !== -1) this.currentTrackIndex = idx;
+                let trackObj = this.playlist.find(t => t.src === src);
+                if (trackFromFeed && trackObj) {
+                    this.currentTrackIndex = this.playlist.indexOf(trackObj);
+                } else if (!trackObj) {
+                    trackObj = this.playlist[this.currentTrackIndex];
                 }
 
                 this.audioEl.src = src;
+                this.audioEl.load();
                 this.syncDOM('.sync-title', 'textContent', title);
                 this.syncDOM('.sync-artist', 'textContent', artist);
 
+                if (trackObj && trackObj.cover) {
+                    this.syncDOM('.sync-cover', 'src', trackObj.cover);
+                }
+
+                const bgVideo = document.getElementById('fullscreen-bg-video');
+                if (trackObj && trackObj.videoSrc) {
+                    bgVideo.src = trackObj.videoSrc;
+                    bgVideo.classList.remove('hidden');
+                } else {
+                    bgVideo.removeAttribute('src');
+                    bgVideo.load();
+                    bgVideo.classList.add('hidden');
+                }
+
                 this.audioEl.play().then(() => {
                     this.isPlaying = true;
-                    // Alle Play Buttons zu Pause
                     document.querySelectorAll('.play-icon-sync').forEach(el => {
                         el.classList.remove('fa-play'); el.classList.add('fa-pause');
                     });
-                    // Animation für Vinyl Cover starten
                     document.querySelectorAll('.player-cover-container').forEach(el => el.classList.add('record-spin'));
                 }).catch(e => {
                     console.error(e);
@@ -1493,10 +1850,9 @@
             },
 
             togglePlay(e) {
-                if (e) e.stopPropagation(); // Verhindert Fullscreen-Trigger auf dem Button
+                if (e) e.stopPropagation();
 
-                if (!this.audioEl.src) {
-                    // Start first Track
+                if (!this.audioEl.src || this.audioEl.src === window.location.href) {
                     const t = this.playlist[0];
                     return this.playTrack(t.src, t.title, t.artist);
                 }
@@ -1557,7 +1913,6 @@
 
             changeVolume(e) {
                 this.audioEl.volume = e.target.value / 100;
-                // Sync if multiple volume sliders exist
                 document.querySelectorAll('.sync-volume-slider').forEach(el => el.value = e.target.value);
             },
 
@@ -1585,9 +1940,6 @@
                 }
             },
 
-            /**
-             * MODALS & UTILS
-             */
             openModal(id) {
                 const m = document.getElementById(id);
                 m.classList.remove('hidden');
@@ -1612,20 +1964,17 @@
             }
         };
 
-        // Event Listener zum Schließen von Dropdowns bei externen Klicks
         document.addEventListener('click', (e) => {
             if (!e.target.closest('#channel-sidebar') && !e.target.closest('#community-dropdown')) {
                 const drop = document.getElementById('community-dropdown');
                 if (drop) drop.classList.add('hidden');
             }
             if (!e.target.closest('header') && !e.target.closest('.fixed.top-0.left-0.w-full.h-\\[80px\\]') && !e.target.closest('#mobile-search-container')) {
-                // Nur schließen, wenn man nicht gerade in die Suchleiste klickt
                 const mDrop = document.getElementById('mobile-channel-dropdown');
                 if (mDrop) mDrop.classList.add('hidden');
             }
         });
 
-        // App Initialisierung
         window.addEventListener('DOMContentLoaded', () => {
             app.initData();
             app.renderAll();

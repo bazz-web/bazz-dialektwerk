@@ -1,0 +1,655 @@
+<!DOCTYPE html>
+<html lang="de">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DW Map</title>
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Leaflet CSS for the map -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css"
+        integrity="sha256-p4NxAoJBhIIN+hmNHrzRCf9tD/miZyoHS5obTRR9BMY=" crossorigin="" />
+    <!-- Leaflet MarkerCluster CSS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.css" />
+    <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster@1.4.1/dist/MarkerCluster.Default.css" />
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Externe DW Navigations-Files -->
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="../common/navbar.js" defer></script>
+
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+
+    <style>
+        :root {
+            --bg-body: #f8fafc;
+            --text-main: #0f172a;
+            --bg-header: #ffffff;
+            --border-color: #e2e8f0;
+            --bg-sidebar: #ffffff;
+            --bg-sidebar-header: #f8fafc;
+            --text-muted: #64748b;
+            --card-bg: #ffffff;
+            --card-hover-border: #94a3b8;
+            --card-active-bg: #fef2f2;
+            --input-bg: #ffffff;
+            --tag-bg: #f1f5f9;
+            --tag-text: #334155;
+            --loading-bg: rgba(255, 255, 255, 0.8);
+        }
+
+        .dark {
+            --bg-body: #0f172a;
+            --text-main: #f8fafc;
+            --bg-header: #1e293b;
+            --border-color: #334155;
+            --bg-sidebar: #1e293b;
+            --bg-sidebar-header: #0f172a;
+            --text-muted: #94a3b8;
+            --card-bg: #1e293b;
+            --card-hover-border: #64748b;
+            --card-active-bg: #451a1a;
+            --input-bg: #0f172a;
+            --tag-bg: #334155;
+            --tag-text: #cbd5e1;
+            --loading-bg: rgba(15, 23, 42, 0.8);
+        }
+
+        /* MarkerCluster Custom Styling für das DW Map Theme */
+        .marker-cluster-small,
+        .marker-cluster-medium,
+        .marker-cluster-large {
+            background-color: rgba(220, 38, 38, 0.6);
+            /* Tailwind red-600 mit Transparenz */
+        }
+
+        .marker-cluster-small div,
+        .marker-cluster-medium div,
+        .marker-cluster-large div {
+            background-color: rgba(220, 38, 38, 0.9);
+            color: white;
+            font-family: 'Inter', sans-serif;
+            font-weight: 600;
+        }
+
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--bg-body);
+            color: var(--text-main);
+            display: flex;
+            flex-direction: column;
+            height: 100vh;
+            margin: 0;
+            padding-left: 130px;
+            /* Platzhalter für die fixe DW Sidebar */
+            transition: background-color 0.3s, color 0.3s;
+        }
+
+        header {
+            background-color: var(--bg-header);
+            border-bottom: 1px solid var(--border-color);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            z-index: 10;
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .logo {
+            font-weight: 800;
+            font-size: 1.5rem;
+            color: #dc2626;
+            /* Tailwind red-600 */
+            text-decoration: none;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            cursor: pointer;
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            transition: color 0.2s, background-color 0.2s;
+        }
+
+        .theme-toggle:hover {
+            background-color: var(--border-color);
+            color: var(--text-main);
+        }
+
+        .main-container {
+            display: flex;
+            flex: 1;
+            width: 100%;
+            height: 100%;
+            overflow: hidden;
+            flex-direction: row;
+            /* Natürliche Reihenfolge: Sidebar links, Map rechts */
+        }
+
+        /* Map container */
+        #map-container {
+            flex: 1;
+            position: relative;
+            min-width: 0;
+            /* Verhindert das Kollabieren des Flex-Layouts */
+            height: 100%;
+        }
+
+        #map {
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+        }
+
+        /* Dark mode map tiles filter */
+        .dark .leaflet-layer,
+        .dark .leaflet-control-zoom-in,
+        .dark .leaflet-control-zoom-out,
+        .dark .leaflet-control-attribution {
+            filter: invert(100%) hue-rotate(180deg) brightness(95%) contrast(90%);
+        }
+
+        .sidebar {
+            width: 350px;
+            flex-shrink: 0;
+            background-color: var(--bg-sidebar);
+            border-right: 1px solid var(--border-color);
+            /* Rand nach rechts, da Sidebar jetzt links ist */
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease-in-out, background-color 0.3s, border-color 0.3s;
+            z-index: 20;
+        }
+
+        .sidebar-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid var(--border-color);
+            background-color: var(--bg-sidebar-header);
+            transition: background-color 0.3s, border-color 0.3s;
+        }
+
+        .sidebar-header h1 {
+            color: var(--text-main);
+        }
+
+        .sidebar-header p {
+            color: var(--text-muted);
+        }
+
+        #search-input {
+            background-color: var(--input-bg);
+            color: var(--text-main);
+            border-color: var(--border-color);
+        }
+
+        .sidebar-content {
+            padding: 1.5rem;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .leaflet-popup-content-wrapper {
+            border-radius: 0.5rem;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            background-color: var(--card-bg);
+            color: var(--text-main);
+        }
+
+        .leaflet-popup-tip {
+            background-color: var(--card-bg);
+        }
+
+        .leaflet-popup-content {
+            margin: 1rem;
+            font-family: 'Inter', sans-serif;
+        }
+
+        .leaflet-popup-content p {
+            color: var(--text-muted);
+        }
+
+        .leaflet-popup-content .genre-tag {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        .artist-card {
+            border: 1px solid var(--border-color);
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            cursor: pointer;
+            transition: all 0.2s;
+            background: var(--card-bg);
+        }
+
+        .artist-card:hover {
+            border-color: var(--card-hover-border);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            transform: translateY(-2px);
+        }
+
+        .artist-card.active {
+            border-color: #dc2626;
+            background-color: var(--card-active-bg);
+        }
+
+        .artist-card h3 {
+            color: var(--text-main);
+        }
+
+        .artist-card p {
+            color: var(--text-muted);
+        }
+
+        .artist-card .genre-tag {
+            background-color: var(--tag-bg);
+            color: var(--tag-text);
+        }
+
+        @media (max-width: 768px) {
+            body {
+                padding-left: 0;
+                /* Padding auf mobilen Geräten entfernen */
+            }
+
+            .main-container {
+                flex-direction: column-reverse;
+                height: auto;
+            }
+
+            .sidebar {
+                width: 100%;
+                height: 40vh;
+                /* Take up bottom part of screen */
+                border-right: none;
+                border-top: 1px solid var(--border-color);
+            }
+
+            #map-container {
+                height: 60vh;
+            }
+        }
+
+        #loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: var(--loading-bg);
+            z-index: 1000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-weight: 600;
+            font-size: 1.2rem;
+            color: var(--text-muted);
+            transition: background-color 0.3s, color 0.3s;
+        }
+    </style>
+</head>
+
+<body class="dark">
+
+    <!-- DW Navbar Placeholder -->
+    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[130px] z-[80]"></div>
+
+    <header>
+        <a href="#" class="logo">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8" />
+                <path d="M3 3v5h5" />
+                <path d="M12 7v5l4 2" />
+            </svg>
+            DW Map
+        </a>
+
+        <button id="theme-toggle" class="theme-toggle" aria-label="Toggle Dark Mode">
+            <!-- Sun Icon (shown in dark mode) -->
+            <svg id="theme-toggle-light-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z">
+                </path>
+            </svg>
+            <!-- Moon Icon (shown in light mode) -->
+            <svg id="theme-toggle-dark-icon" class="hidden w-6 h-6" fill="none" stroke="currentColor"
+                viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                    d="M20.354 15.354A9 9 0 018.646 3.646 9.003 9.003 0 0012 21a9.003 9.003 0 008.354-5.646z"></path>
+            </svg>
+        </button>
+    </header>
+
+    <div class="main-container">
+
+        <!-- Sidebar links -->
+        <aside class="sidebar">
+            <div class="sidebar-header">
+                <h1 class="text-xl font-bold mb-2">DW Map</h1>
+                <p class="text-sm">Entdecke die Herkunft deiner Schweizer Lieblings-Acts.</p>
+
+                <!-- Filter/Search -->
+                <div class="mt-4 relative">
+                    <input type="text" id="search-input" placeholder="Künstler suchen..."
+                        class="w-full pl-10 pr-4 py-2 border rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-red-500 focus:border-transparent">
+                    <svg class="absolute left-3 top-2.5 h-4 w-4" style="color: var(--text-muted);"
+                        xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd"
+                            d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z"
+                            clip-rule="evenodd" />
+                    </svg>
+                </div>
+            </div>
+
+            <div class="sidebar-content" id="artist-list">
+                <!-- Artist cards will be injected here via JS -->
+            </div>
+        </aside>
+
+        <!-- Map Area rechts -->
+        <div id="map-container">
+            <div id="loading-overlay">Karte wird geladen...</div>
+            <div id="map"></div>
+        </div>
+    </div>
+
+    <!-- Leaflet JS -->
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"
+        integrity="sha256-20nQCchB9co0qIjJZRGuk2/Z9VM+kNiyxNV1lvTlZBo=" crossorigin=""></script>
+    <!-- Leaflet MarkerCluster JS -->
+    <script src="https://unpkg.com/leaflet.markercluster@1.4.1/dist/leaflet.markercluster.js"></script>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+
+            const themeToggleDarkIcon = document.getElementById('theme-toggle-dark-icon');
+            const themeToggleLightIcon = document.getElementById('theme-toggle-light-icon');
+            const themeToggleBtn = document.getElementById('theme-toggle');
+
+            // Set initial state (dark mode default)
+            if (localStorage.getItem('color-theme') === 'light') {
+                document.body.classList.remove('dark');
+                themeToggleDarkIcon.classList.remove('hidden');
+            } else {
+                // Default to dark
+                document.body.classList.add('dark');
+                themeToggleLightIcon.classList.remove('hidden');
+            }
+
+            themeToggleBtn.addEventListener('click', function () {
+                // toggle icons
+                themeToggleDarkIcon.classList.toggle('hidden');
+                themeToggleLightIcon.classList.toggle('hidden');
+
+                // if set via local storage previously
+                if (localStorage.getItem('color-theme')) {
+                    if (localStorage.getItem('color-theme') === 'light') {
+                        document.body.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    } else {
+                        document.body.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    }
+                    // if NOT set via local storage previously
+                } else {
+                    if (document.body.classList.contains('dark')) {
+                        document.body.classList.remove('dark');
+                        localStorage.setItem('color-theme', 'light');
+                    } else {
+                        document.body.classList.add('dark');
+                        localStorage.setItem('color-theme', 'dark');
+                    }
+                }
+
+            });
+
+            // 1. Mock Data: Artist List
+            // In a real app, this would come from a database or API
+            const artists = [
+                { id: 1, name: "Züri West", location: "Bern", lat: 46.9480, lng: 7.4474, genre: "Mundartrock", description: "Legendäre Berner Rockband." },
+                { id: 2, name: "Patent Ochsner", location: "Bern", lat: 46.9480, lng: 7.4474, genre: "Mundart", description: "Bekannt für ihre poetischen Texte und eingängigen Melodien." },
+                { id: 3, name: "Lo & Leduc", location: "Bern", lat: 46.9580, lng: 7.4374, genre: "Pop / Rap", description: "Berner Rap- und Pop-Duo, Rekordhalter in den Charts." },
+                { id: 4, name: "Bligg", location: "Zürich", lat: 47.3769, lng: 8.5417, genre: "Rap / Pop", description: "Einer der erfolgreichsten Zürcher Musiker." },
+                { id: 5, name: "Gölä", location: "Oppligen", lat: 46.8228, lng: 7.6083, genre: "Mundartrock", description: "Kultfigur des Schweizer Büezer-Rocks." },
+                { id: 6, name: "Hecht", location: "Luzern / Zürich", lat: 47.0502, lng: 8.3093, genre: "Indie Pop", description: "Bekannt für ihre extrem energiereichen Live-Shows. (Pin in Luzern)" },
+                { id: 7, name: "Dabu Fantastic", location: "Mönchaltorf", lat: 47.3117, lng: 8.7233, genre: "Pop", description: "Zürcher Oberländer Pop-Band mit Hits wie 'Angelina'." },
+                { id: 8, name: "Breitbild", location: "Chur", lat: 46.8509, lng: 9.5325, genre: "Hip-Hop", description: "Pioniere des Bündner Rap." },
+                { id: 9, name: "Gimma", location: "Chur", lat: 46.8529, lng: 9.5225, genre: "Hip-Hop", description: "Bündner Rapper und Autor." },
+                { id: 10, name: "Mani Matter", location: "Bern", lat: 46.9450, lng: 7.4574, genre: "Chanson", description: "Der wohl bekannteste Berner Troubadour." },
+                { id: 11, name: "KT Gorique", location: "Sion", lat: 46.2331, lng: 7.3606, genre: "Hip-Hop", description: "Walliser Rapperin, Weltmeisterin im Freestyle." },
+                { id: 12, name: "Baze", location: "Bern", lat: 46.9410, lng: 7.4374, genre: "Hip-Hop", description: "Berner Rap-Urgestein (Chlyklass)." },
+                { id: 13, name: "Stefanie Heinzmann", location: "Visp-Eyholz", lat: 46.2934, lng: 7.8821, genre: "Pop / Soul", description: "Erfolgreiche Walliser Sängerin (teilweise auch englisch, aber oft Mundart-affin)." }
+            ];
+
+            // --- 100 Weitere Mock-Künstler generieren ---
+            // Wir definieren Basis-Orte und streuen die generierten Künstler zufällig darum herum
+            const swissLocations = [
+                { city: "Zürich", lat: 47.3769, lng: 8.5417 },
+                { city: "Bern", lat: 46.9480, lng: 7.4474 },
+                { city: "Basel", lat: 47.5596, lng: 7.5886 },
+                { city: "Luzern", lat: 47.0502, lng: 8.3093 },
+                { city: "St. Gallen", lat: 47.4245, lng: 9.3767 },
+                { city: "Chur", lat: 46.8509, lng: 9.5325 },
+                { city: "Winterthur", lat: 47.4982, lng: 8.7293 },
+                { city: "Biel/Bienne", lat: 47.1368, lng: 7.2468 },
+                { city: "Thun", lat: 46.7580, lng: 7.6280 },
+                { city: "Freiburg", lat: 46.8065, lng: 7.1513 },
+                { city: "Schaffhausen", lat: 47.6973, lng: 8.6349 },
+                { city: "Aarau", lat: 47.3913, lng: 8.0452 },
+                { city: "Sion", lat: 46.2331, lng: 7.3606 },
+                { city: "Lugano", lat: 46.0037, lng: 8.9511 }
+            ];
+
+            const mockGenres = ["Mundartrock", "Hip-Hop", "Pop", "Indie", "Reggae", "Singer-Songwriter", "Trap", "Folk"];
+            const mockNamePartsA = ["Gipfel", "See", "Stadt", "Dorf", "Alpen", "Tal", "Rhy", "Aare", "Limmat", "Gletscher"];
+            const mockNamePartsB = ["Buben", "Meitschi", "Sound", "Vibes", "Crew", "Kollektiv", "Stimmen", "Klang", "Tones"];
+            const mockPrefixes = ["Die", "The", "MC", "DJ", "Band", "Projekt"];
+
+            for (let i = 14; i <= 113; i++) {
+                const loc = swissLocations[Math.floor(Math.random() * swissLocations.length)];
+                const genre = mockGenres[Math.floor(Math.random() * mockGenres.length)];
+
+                let name = "";
+                if (Math.random() > 0.4) {
+                    name = mockPrefixes[Math.floor(Math.random() * mockPrefixes.length)] + " ";
+                }
+                name += mockNamePartsA[Math.floor(Math.random() * mockNamePartsA.length)] + " " + mockNamePartsB[Math.floor(Math.random() * mockNamePartsB.length)];
+
+                // Leichter zufälliger Offset, damit die Pins nicht exakt aufeinanderliegen (Streuung ca. 10-20km)
+                const latOffset = (Math.random() - 0.5) * 0.15;
+                const lngOffset = (Math.random() - 0.5) * 0.25;
+
+                artists.push({
+                    id: i,
+                    name: name,
+                    location: loc.city + " & Umgebung",
+                    lat: loc.lat + latOffset,
+                    lng: loc.lng + lngOffset,
+                    genre: genre,
+                    description: `Ein aufstrebender Act aus der Region ${loc.city}. Bekannt für ihren frischen ${genre}-Sound.`
+                });
+            }
+            // ---------------------------------------------
+
+            // 2. Initialize the Map
+            const mapCenter = [46.8182, 8.2275]; // Center of Switzerland
+            const defaultZoom = 8;
+
+            const map = L.map('map').setView(mapCenter, defaultZoom);
+
+            // Wichtig: Kartengrösse aktualisieren, falls Flexbox die Box im Hintergrund verzögert zeichnet
+            setTimeout(() => { map.invalidateSize(); }, 300);
+
+            // Add tile layer (OpenStreetMap for a clean look)
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}{r}.png', {
+                attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors &copy; <a href="https://carto.com/attributions">CARTO</a>',
+                subdomains: 'abcd',
+                maxZoom: 20
+            }).addTo(map);
+
+            // Remove loading overlay once tiles start loading
+            map.on('load', () => {
+                document.getElementById('loading-overlay').style.display = 'none';
+            });
+            // Fallback to remove overlay after a short time if 'load' event is missed
+            setTimeout(() => {
+                document.getElementById('loading-overlay').style.display = 'none';
+            }, 1000);
+
+            // 3. Custom Map Marker Icon
+            const customIcon = L.divIcon({
+                className: 'custom-div-icon',
+                html: `<div style="background-color: #dc2626; width: 20px; height: 20px; border-radius: 50%; border: 3px solid white; box-shadow: 0 2px 5px rgba(0,0,0,0.3);"></div>`,
+                iconSize: [20, 20],
+                iconAnchor: [10, 10], // Center of the icon
+                popupAnchor: [0, -10] // Just above the icon
+            });
+
+            // MarkerClusterGroup initialisieren (bündelt nahegelegene Pins)
+            let markerCluster = L.markerClusterGroup({
+                showCoverageOnHover: false,
+                maxClusterRadius: 40 // Radius, ab wann Pins gebündelt werden
+            });
+            map.addLayer(markerCluster);
+
+            // Store markers to manage them later
+            const markers = {};
+
+            // 4. Render Artists on Map and in Sidebar
+            const artistListContainer = document.getElementById('artist-list');
+
+            function renderArtists(artistData) {
+                // Clear existing
+                artistListContainer.innerHTML = '';
+                // Cluster Group leeren
+                markerCluster.clearLayers();
+
+                // Clear existing markers from object reference
+                for (const key in markers) {
+                    delete markers[key];
+                }
+
+                if (artistData.length === 0) {
+                    artistListContainer.innerHTML = '<p class="text-slate-500 italic">Keine Künstler gefunden.</p>';
+                    return;
+                }
+
+                artistData.forEach(artist => {
+                    // Create Marker
+                    const marker = L.marker([artist.lat, artist.lng], { icon: customIcon });
+
+                    // Marker Popup Content
+                    const popupContent = `
+                        <div class="text-center">
+                            <h3 class="font-bold text-lg mb-1">${artist.name}</h3>
+                            <p class="text-sm mb-2" style="color: var(--text-muted);">${artist.location}</p>
+                            <span class="inline-block genre-tag text-xs px-2 py-1 rounded-full mb-2">${artist.genre}</span>
+                            <p class="text-xs line-clamp-2" style="color: var(--text-muted);">${artist.description}</p>
+                        </div>
+                    `;
+                    marker.bindPopup(popupContent);
+
+                    // Marker der Cluster-Gruppe hinzufügen statt direkt der Map
+                    markerCluster.addLayer(marker);
+                    markers[artist.id] = marker;
+
+                    // Create Sidebar Card
+                    const card = document.createElement('div');
+                    card.className = 'artist-card';
+                    card.id = `card-${artist.id}`;
+                    card.innerHTML = `
+                        <h3 class="font-bold text-md">${artist.name}</h3>
+                        <div class="flex justify-between items-center mt-1">
+                            <p class="text-sm flex items-center gap-1">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                                ${artist.location}
+                            </p>
+                            <span class="text-xs genre-tag px-2 py-0.5 rounded">${artist.genre}</span>
+                        </div>
+                    `;
+
+                    // Interaction: Click card -> Open map popup and center
+                    card.addEventListener('click', () => {
+                        // Reset all active classes
+                        document.querySelectorAll('.artist-card').forEach(c => c.classList.remove('active'));
+                        // Set this active
+                        card.classList.add('active');
+
+                        // Pan map and open popup (Cluster muss evtl. zuerst reinzoomen)
+                        markerCluster.zoomToShowLayer(marker, () => {
+                            marker.openPopup();
+                        });
+
+                        // Scroll sidebar to card if needed (especially on mobile)
+                        card.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                    });
+
+                    // Interaction: Open marker popup -> highlight card
+                    marker.on('popupopen', () => {
+                        document.querySelectorAll('.artist-card').forEach(c => c.classList.remove('active'));
+                        const activeCard = document.getElementById(`card-${artist.id}`);
+                        if (activeCard) {
+                            activeCard.classList.add('active');
+                            activeCard.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+                        }
+                    });
+
+                    artistListContainer.appendChild(card);
+                });
+            }
+
+            // Initial render
+            renderArtists(artists);
+
+            // 5. Search Functionality
+            const searchInput = document.getElementById('search-input');
+
+            searchInput.addEventListener('input', (e) => {
+                const searchTerm = e.target.value.toLowerCase();
+
+                const filteredArtists = artists.filter(artist => {
+                    return artist.name.toLowerCase().includes(searchTerm) ||
+                        artist.location.toLowerCase().includes(searchTerm) ||
+                        artist.genre.toLowerCase().includes(searchTerm);
+                });
+
+                renderArtists(filteredArtists);
+
+                // If filtering resulted in visible markers, optionally bound the map to them
+                if (filteredArtists.length > 0 && filteredArtists.length < artists.length) {
+                    map.fitBounds(markerCluster.getBounds().pad(0.1));
+                } else if (filteredArtists.length === artists.length) {
+                    // Reset map view if search is empty
+                    map.setView(mapCenter, defaultZoom);
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>

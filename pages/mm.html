@@ -1,0 +1,543 @@
+<!DOCTYPE html>
+<html lang="de" class="dark">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DW Mach mit! - Redesign</title>
+
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
+
+    <!-- Icon Libraries -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Externe DW Navigations-Files -->
+    <link rel="stylesheet" href="../common/kigostyle.css">
+    <link rel="stylesheet" href="../common/navbar.css">
+    <script src="../common/navbar.js" defer></script>
+    <!-- Tailwind Config for Dark Mode and Custom Colors -->
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['"Plus Jakarta Sans"', 'sans-serif'],
+                    },
+                    colors: {
+                        dw: {
+                            lila: '#8b5cf6', // Violet 500
+                            dark: '#0f172a', // Slate 900
+                            glass: 'rgba(255, 255, 255, 0.05)',
+                        }
+                    },
+                    animation: {
+                        'blob': 'blob 7s infinite',
+                        'modal-in': 'modalIn 0.3s ease-out forwards',
+                    },
+                    keyframes: {
+                        blob: {
+                            '0%': { transform: 'translate(0px, 0px) scale(1)' },
+                            '33%': { transform: 'translate(30px, -50px) scale(1.1)' },
+                            '66%': { transform: 'translate(-20px, 20px) scale(0.9)' },
+                            '100%': { transform: 'translate(0px, 0px) scale(1)' },
+                        },
+                        modalIn: {
+                            '0%': { opacity: '0', transform: 'scale(0.95) translateY(10px)' },
+                            '100%': { opacity: '1', transform: 'scale(1) translateY(0)' },
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        body {
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        /* Hide scrollbar for cleaner look but keep functionality */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: transparent;
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: #475569;
+            border-radius: 4px;
+        }
+
+        .dark ::-webkit-scrollbar-thumb {
+            background: #334155;
+        }
+
+        /* Glassmorphism Utilities */
+        .glass-card {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .dark .glass-card {
+            background: rgba(15, 23, 42, 0.6);
+            backdrop-filter: blur(16px);
+            -webkit-backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            box-shadow: 0 4px 30px rgba(0, 0, 0, 0.5);
+        }
+
+        /* Input Styling */
+        .fancy-input {
+            width: 100%;
+            background: transparent;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.75rem 1rem;
+            color: #1e293b;
+            transition: all 0.2s;
+        }
+
+        .dark .fancy-input {
+            border-color: #334155;
+            color: #f8fafc;
+        }
+
+        .fancy-input:focus {
+            outline: none;
+            border-color: #8b5cf6;
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.2);
+        }
+
+        .dark .fancy-input:focus {
+            box-shadow: 0 0 0 3px rgba(139, 92, 246, 0.3);
+        }
+
+        .fancy-label {
+            display: block;
+            font-size: 0.875rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            color: #475569;
+        }
+
+        .dark .fancy-label {
+            color: #cbd5e1;
+        }
+    </style>
+</head>
+
+<body
+    class="bg-slate-50 text-slate-900 dark:bg-[#09090b] dark:text-white transition-colors duration-300 min-h-screen relative overflow-x-hidden font-sans">
+
+    <!-- DW Navbar Placeholder -->
+    <div id="navbar-placeholder" class="fixed left-0 top-0 h-full w-[130px] z-[80]"></div>
+
+    <!-- Hintergrund Effekte -->
+    <div class="fixed inset-0 z-0 pointer-events-none overflow-hidden">
+        <div
+            class="absolute top-0 left-1/4 w-96 h-96 bg-purple-400/30 dark:bg-violet-900/40 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob">
+            <img src="../images/dwlogo3.svg" class="w-100 h-100" alt="">
+        </div>
+        <div
+            class="absolute top-0 right-1/4 w-96 h-96 bg-fuchsia-400/30 dark:bg-fuchsia-900/40 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob animation-delay-2000">
+            <img src="../images/dwlogo3.svg" class="w-100 h-100" alt="">
+        </div>
+        <div
+            class="absolute -bottom-32 left-1/3 w-96 h-96 bg-blue-400/30 dark:bg-indigo-900/40 rounded-full mix-blend-multiply dark:mix-blend-screen filter blur-[100px] animate-blob animation-delay-4000">
+            <img src="../images/dwlogo3.svg" class="w-100 h-100" alt="">
+        </div>
+        <!-- Dark mode specific grid overlay -->
+        <div
+            class="absolute inset-0 bg-[url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iNjAiIGhlaWdodD0iNjAiIHhtbG5zPSJodHRwOi8vd3d3LnczLm9yZy8yMDAwL3N2ZyI+CjxwYXRoIGQ9Ik02MCAwaC0xdjYwaDFWMHptLTYwIDYwaDYwdi0xaC02MHYxeiIgZmlsbD0icmdiYSgyNTUsMjU1LDI1NSwwLjAyKSIgZmlsbC1ydWxlPSJldmVub2RkIi8+Cjwvc3ZnPg==')] opacity-0 dark:opacity-100">
+        </div>
+    </div>
+
+    <!-- Top Bar (Nur Darkmode Toggle & Logo) -->
+    <div class="absolute top-6 right-6 z-20">
+        <button id="theme-toggle"
+            class="p-2.5 rounded-full bg-white/10 backdrop-blur-md border border-slate-200 dark:border-slate-800 text-slate-700 dark:text-amber-300 hover:scale-110 transition-transform focus:outline-none focus:ring-2 focus:ring-violet-500 shadow-lg">
+            <i data-lucide="moon" class="w-5 h-5 hidden dark:block"></i>
+            <i data-lucide="sun" class="w-5 h-5 block dark:hidden"></i>
+        </button>
+    </div>
+
+    <!-- CONTENT AREA -->
+    <div class="min-h-screen relative w-full">
+
+        <!-- Zentrierter Main-Container mit Grid-Split -->
+        <main
+            class="relative z-10 max-w-7xl mx-auto px-6 lg:px-12 pt-24 pb-24 grid grid-cols-1 lg:grid-cols-12 gap-12 items-start h-full min-h-screen content-center">
+
+            <!-- Linke Seite: Header Info -->
+            <header class="text-left lg:col-span-5 lg:sticky lg:top-1/3">
+                <div class="flex items-center gap-3 mb-6">
+                    <div
+                        class="w-12 h-12 rounded-xl bg-gradient-to-br from-violet-500 to-fuchsia-600 flex items-center justify-center shadow-lg shadow-violet-500/30">
+                        <img src="../images/dwlogo3.svg" class="text-white w-6 h-6"></img>
+                    </div>
+                    <span class="text-xl font-bold tracking-tight">Dialektwerk</span>
+                </div>
+                <h1 class="text-5xl md:text-7xl font-extrabold mb-6 tracking-tight">
+                    Mach <span
+                        class="text-transparent bg-clip-text bg-gradient-to-r from-violet-500 to-fuchsia-500">Mit!</span>
+                </h1>
+                <p class="text-slate-600 dark:text-slate-400 max-w-md text-lg leading-relaxed">
+                    Werde Teil der grössten Schweizer Dialekt-Community. Füge Artists hinzu, verwalte dein Profil oder
+                    hilf uns, besser zu werden.
+                </p>
+            </header>
+
+            <!-- Rechte Seite: Bento Grid -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 gap-6 lg:col-span-7">
+
+                <!-- Bento Box: Artist hinzufügen -->
+                <div onclick="openModal('modal-add')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 sm:col-span-2 hover:-translate-y-2 transition-all duration-300 hover:shadow-violet-500/20 dark:hover:shadow-violet-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="user-plus" class="w-32 h-32"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="music" class="w-7 h-7 text-violet-600 dark:text-violet-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Artist hinzufügen</h2>
+                        <p class="text-slate-600 dark:text-slate-400 max-w-sm">Kennst du einen neuen Künstler? Trage ihn
+                            in unsere Datenbank ein und erweitere das Dialektwerk.</p>
+                        <div
+                            class="mt-8 flex items-center text-violet-600 dark:text-violet-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Jetzt eintragen <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Box: Profil claimen -->
+                <div onclick="openModal('modal-claim')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 hover:shadow-fuchsia-500/20 dark:hover:shadow-fuchsia-500/30 relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="badge-check" class="w-24 h-24"></i>
+                    </div>
+                    <div class="relative z-10 h-full flex flex-col">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-fuchsia-100 dark:bg-fuchsia-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="shield-check" class="w-7 h-7 text-fuchsia-600 dark:text-fuchsia-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Profil claimen</h2>
+                        <p class="text-slate-600 dark:text-slate-400 flex-grow">Übernimm die Kontrolle über dein
+                            Artist-Profil.</p>
+                        <div
+                            class="mt-8 flex items-center text-fuchsia-600 dark:text-fuchsia-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Verifizieren <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Box: Release einreichen -->
+                <div onclick="openModal('modal-release')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 hover:-translate-y-2 transition-all duration-300 hover:shadow-cyan-500/20 dark:hover:shadow-cyan-500/30 relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="disc-3" class="w-24 h-24"></i>
+                    </div>
+                    <div class="relative z-10 h-full flex flex-col">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-cyan-100 dark:bg-cyan-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="headphones" class="w-7 h-7 text-cyan-600 dark:text-cyan-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Release eintragen</h2>
+                        <p class="text-slate-600 dark:text-slate-400 flex-grow">Neuer Track gedroppt? Hilf uns,
+                            Diskografien aktuell zu halten.</p>
+                        <div
+                            class="mt-8 flex items-center text-cyan-600 dark:text-cyan-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Hinzufügen <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Box: Event eintragen -->
+                <div onclick="openModal('modal-event')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 sm:col-span-2 hover:-translate-y-2 transition-all duration-300 hover:shadow-emerald-500/20 dark:hover:shadow-emerald-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="calendar-days" class="w-32 h-32"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-emerald-100 dark:bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="ticket" class="w-7 h-7 text-emerald-600 dark:text-emerald-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Konzert / Event melden</h2>
+                        <p class="text-slate-600 dark:text-slate-400 max-w-sm">Steht ein Gig, eine Cypher oder eine
+                            Plattentaufe an? Trag das Event in unseren Kalender ein.</p>
+                        <div
+                            class="mt-8 flex items-center text-emerald-600 dark:text-emerald-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Event erstellen <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Box: Lyrics beisteuern -->
+                <div onclick="openModal('modal-lyrics')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 sm:col-span-2 hover:-translate-y-2 transition-all duration-300 hover:shadow-pink-500/20 dark:hover:shadow-pink-500/30 relative overflow-hidden">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="mic-vocal" class="w-32 h-32"></i>
+                    </div>
+                    <div class="relative z-10">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-pink-100 dark:bg-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform">
+                            <i data-lucide="book-type" class="w-7 h-7 text-pink-600 dark:text-pink-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Songtexte (Lyrics) beisteuern</h2>
+                        <p class="text-slate-600 dark:text-slate-400 max-w-sm">Dialekt verstehen ist eine Kunst für
+                            sich. Hilf der Community und reiche Texte zu deinen Lieblingssongs ein.</p>
+                        <div
+                            class="mt-8 flex items-center text-pink-600 dark:text-pink-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Text einreichen <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bento Box: Fehler melden -->
+                <div onclick="openModal('modal-report')"
+                    class="glass-card group cursor-pointer rounded-3xl p-8 sm:col-span-2 hover:-translate-y-2 transition-all duration-300 hover:shadow-orange-500/20 dark:hover:shadow-orange-500/30 relative overflow-hidden flex flex-col">
+                    <div class="absolute top-0 right-0 p-8 opacity-10 group-hover:opacity-20 transition-opacity">
+                        <i data-lucide="bug" class="w-24 h-24"></i>
+                    </div>
+                    <div class="relative z-10 h-full flex flex-col">
+                        <div
+                            class="w-14 h-14 rounded-2xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center mb-6 group-hover:rotate-12 transition-transform">
+                            <i data-lucide="alert-triangle" class="w-7 h-7 text-orange-600 dark:text-orange-400"></i>
+                        </div>
+                        <h2 class="text-2xl font-bold mb-3">Fehler melden</h2>
+                        <p class="text-slate-600 dark:text-slate-400 flex-grow">Falscher Link oder Schreibfehler? Lass
+                            es uns wissen.</p>
+                        <div
+                            class="mt-8 flex items-center text-orange-600 dark:text-orange-400 font-semibold group-hover:translate-x-2 transition-transform">
+                            Report senden <i data-lucide="arrow-right" class="w-4 h-4 ml-2"></i>
+                        </div>
+                    </div>
+                </div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal 1: Artist hinzufügen -->
+    <div id="modal-add" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-add')"></div>
+        <div
+            class="glass-card relative z-10 w-full max-w-2xl rounded-[2rem] p-6 md:p-10 max-h-[90vh] overflow-y-auto animate-modal-in">
+            <button onclick="closeModal('modal-add')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-4 mb-8">
+                <div class="w-12 h-12 rounded-xl bg-violet-100 dark:bg-violet-500/20 flex items-center justify-center">
+                    <i data-lucide="user-plus" class="text-violet-600 dark:text-violet-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold">Artist hinzufügen</h3>
+            </div>
+            <form onsubmit="event.preventDefault(); closeModal('modal-add');" class="space-y-6">
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="md:col-span-2">
+                        <label class="fancy-label" for="artist-name">Artist Name *</label>
+                        <input type="text" id="artist-name" class="fancy-input" placeholder="Wie heisst der Act?"
+                            required>
+                    </div>
+                    <div>
+                        <label class="fancy-label" for="artist-region">Kanton / Region</label>
+                        <select id="artist-region" class="fancy-input">
+                            <option value="">Bitte wählen...</option>
+                            <option value="AG">Aargau</option>
+                            <option value="BE">Bern</option>
+                            <option value="BL">Basel</option>
+                            <option value="LU">Luzern</option>
+                            <option value="ZH">Zürich</option>
+                        </select>
+                    </div>
+                    <div>
+                        <label class="fancy-label" for="artist-location">Genauer Ort</label>
+                        <input type="text" id="artist-location" class="fancy-input" placeholder="z.B. Bern">
+                    </div>
+                </div>
+                <div class="mt-8 pt-6 border-t border-slate-200 dark:border-slate-800 flex justify-end">
+                    <button type="submit"
+                        class="px-8 py-3 bg-violet-600 hover:bg-violet-700 text-white rounded-xl font-semibold transition-colors shadow-lg shadow-violet-500/30">Hinzufügen</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Fehler melden -->
+    <div id="modal-report" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-report')"></div>
+        <div class="glass-card relative z-10 w-full max-w-lg rounded-[2rem] p-6 md:p-10 animate-modal-in">
+            <button onclick="closeModal('modal-report')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-4 mb-4">
+                <div class="w-12 h-12 rounded-xl bg-orange-100 dark:bg-orange-500/20 flex items-center justify-center">
+                    <i data-lucide="bug" class="text-orange-600 dark:text-orange-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold">Fehler melden</h3>
+            </div>
+            <form onsubmit="event.preventDefault(); closeModal('modal-report');">
+                <div class="mb-6">
+                    <label class="fancy-label" for="error-description">Fehlerbeschreibung *</label>
+                    <textarea id="error-description" rows="5" class="fancy-input resize-none"
+                        placeholder="Beschreibe das Problem..." required></textarea>
+                </div>
+                <button type="submit"
+                    class="w-full py-3 bg-slate-900 dark:bg-white text-white dark:text-slate-900 rounded-xl font-bold transition-colors">Absenden</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Profil claimen -->
+    <div id="modal-claim" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-claim')"></div>
+        <div class="glass-card relative z-10 w-full max-w-lg rounded-[2rem] p-6 md:p-10 animate-modal-in">
+            <button onclick="closeModal('modal-claim')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <div class="flex items-center gap-4 mb-8">
+                <div
+                    class="w-12 h-12 rounded-xl bg-fuchsia-100 dark:bg-fuchsia-500/20 flex items-center justify-center">
+                    <i data-lucide="shield-check" class="text-fuchsia-600 dark:text-fuchsia-400"></i>
+                </div>
+                <h3 class="text-2xl font-bold">Profil claimen</h3>
+            </div>
+            <form onsubmit="event.preventDefault(); closeModal('modal-claim');" class="space-y-5">
+                <div>
+                    <label class="fancy-label" for="claim-email">E-Mail *</label>
+                    <input type="email" id="claim-email" class="fancy-input" placeholder="deine@email.ch" required>
+                </div>
+                <button type="submit"
+                    class="w-full py-3 bg-fuchsia-600 hover:bg-fuchsia-700 text-white rounded-xl font-bold transition-colors">Anfrage
+                    senden</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Release -->
+    <div id="modal-release" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-release')"></div>
+        <div class="glass-card relative z-10 w-full max-w-lg rounded-[2rem] p-6 md:p-10 animate-modal-in">
+            <button onclick="closeModal('modal-release')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4">Release eintragen</h3>
+            <form onsubmit="event.preventDefault(); closeModal('modal-release');" class="space-y-4">
+                <input type="text" class="fancy-input" placeholder="Artist Name" required>
+                <input type="text" class="fancy-input" placeholder="Release Titel" required>
+                <button type="submit" class="w-full py-3 bg-cyan-600 text-white rounded-xl font-bold">Speichern</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Event -->
+    <div id="modal-event" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-event')"></div>
+        <div class="glass-card relative z-10 w-full max-w-lg rounded-[2rem] p-6 md:p-10 animate-modal-in">
+            <button onclick="closeModal('modal-event')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4">Event eintragen</h3>
+            <form onsubmit="event.preventDefault(); closeModal('modal-event');" class="space-y-4">
+                <input type="text" class="fancy-input" placeholder="Event Name / Headliner" required>
+                <input type="date" class="fancy-input" required>
+                <button type="submit"
+                    class="w-full py-3 bg-emerald-600 text-white rounded-xl font-bold">Eintragen</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal: Lyrics -->
+    <div id="modal-lyrics" class="fixed inset-0 z-50 hidden items-center justify-center px-4">
+        <div class="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onclick="closeModal('modal-lyrics')"></div>
+        <div class="glass-card relative z-10 w-full max-w-lg rounded-[2rem] p-6 md:p-10 animate-modal-in">
+            <button onclick="closeModal('modal-lyrics')"
+                class="absolute top-6 right-6 p-2 rounded-full hover:bg-slate-200 dark:hover:bg-slate-800 transition-colors">
+                <i data-lucide="x" class="w-5 h-5"></i>
+            </button>
+            <h3 class="text-2xl font-bold mb-4">Songtexte einreichen</h3>
+            <form onsubmit="event.preventDefault(); closeModal('modal-lyrics');" class="space-y-4">
+                <textarea rows="6" class="fancy-input resize-none" placeholder="Songtext hier einfügen..."
+                    required></textarea>
+                <button type="submit" class="w-full py-3 bg-pink-600 text-white rounded-xl font-bold">Einsenden</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        // Initialize Lucide Icons
+        if (typeof lucide !== 'undefined') {
+            lucide.createIcons();
+        }
+
+        // Modal Logic
+        function openModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+            }
+        }
+
+        function closeModal(id) {
+            const modal = document.getElementById(id);
+            if (modal) {
+                modal.classList.add('hidden');
+                modal.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+            }
+        }
+
+        // Close modal on Escape key
+        document.addEventListener('keydown', function (e) {
+            if (e.key === 'Escape') {
+                const openModals = document.querySelectorAll('.fixed.inset-0.flex');
+                openModals.forEach(function (modal) {
+                    closeModal(modal.id);
+                });
+            }
+        });
+
+        // Theme Toggle Logic
+        const themeToggleBtn = document.getElementById('theme-toggle');
+        const htmlElement = document.documentElement;
+
+        if (themeToggleBtn) {
+            themeToggleBtn.addEventListener('click', function () {
+                htmlElement.classList.toggle('dark');
+                if (htmlElement.classList.contains('dark')) {
+                    localStorage.setItem('theme', 'dark');
+                } else {
+                    localStorage.setItem('theme', 'light');
+                }
+            });
+        }
+    </script>
+</body>
+
+</html>
